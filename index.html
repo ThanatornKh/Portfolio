@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — Full Stack Developer</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --black: #0E0E0E;
+      --white: #F7F4EF;
+      --red: #C5181F;
+      --gold: #A8893A;
+      --mid: #6B6660;
+      --line: #D8D3CB;
+      --bg: #F7F4EF;
+      --bg2: #EEEAE2;
+      --ink: #1C1B18;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Kanit', sans-serif;
+      font-weight: 300;
+      cursor: none;
+      overflow-x: hidden;
+    }
+
+    /* CURSOR */
+    #cursor {
+      width: 10px;
+      height: 10px;
+      background: var(--red);
+      border-radius: 50%;
+      position: fixed;
+      z-index: 9999;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: width .2s, height .2s, background .2s, border .2s;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 58px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--black);
+    }
+
+    .nav-logo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 0;
+      list-style: none;
+    }
+
+    .nav-menu li {
+      position: relative;
+    }
+
+    .nav-menu a {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--mid);
+      padding: 0 18px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      transition: color 0.25s;
+    }
+
+    /* bottom line slide */
+    .nav-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 18px;
+      right: 18px;
+      height: 2px;
+      background: var(--red);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .nav-menu a:hover {
+      color: var(--ink);
+    }
+
+    .nav-menu a:hover::after {
+      transform: scaleX(1);
+    }
+
+    /* active state */
+    .nav-menu a.active {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .nav-menu a.active::after {
+      transform: scaleX(1);
+    }
+
+    /* red dot indicator */
+    .nav-menu a.active::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: dotpop 0.3s ease forwards;
+    }
+
+    @keyframes dotpop {
+      from {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .nav-issue {
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.15em;
+      color: var(--mid);
+    }
+
+    /* HERO */
+    #hero {
+      margin-top: 58px;
+      display: grid;
+      grid-template-columns: 55% 45%;
+      min-height: calc(100vh - 58px);
+      border-bottom: 1px solid var(--black);
+    }
+
+    .hero-col-left {
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--black);
+    }
+
+    .hero-kicker {
+      padding: 22px 40px;
+      border-bottom: 1px solid var(--black);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hero-kicker-line {
+      width: 28px;
+      height: 1.5px;
+      background: var(--red);
+    }
+
+    .hero-kicker-text {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--red);
+    }
+
+    .hero-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 50px 40px 40px;
+    }
+
+    .hero-name {
+      font-size: clamp(50px, 7.5vw, 100px);
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.035em;
+      margin-bottom: 28px;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      font-weight: 200;
+      color: var(--mid);
+      display: block;
+    }
+
+    .hero-role {
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--mid);
+      line-height: 1.9;
+      border-left: 2px solid var(--red);
+      padding-left: 16px;
+      max-width: 340px;
+    }
+
+    .hero-col-right {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-photo-area {
+      flex: 1;
+      position: relative;
+      background: var(--bg2);
+      overflow: hidden;
+    }
+
+    .hero-photo-area img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      transition: transform 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .hero-photo-area:hover img {
+      transform: scale(1.04);
+    }
+
+    .hero-info-bar {
+      padding: 18px 28px;
+      border-top: 1px solid var(--black);
+      background: var(--black);
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-f .lbl {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 3px;
+    }
+
+    .info-f .val {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* SECTION */
+    .sec {
+      padding: 88px 48px 80px;
+      border-bottom: 1px solid var(--black);
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .sec.in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .sec-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 42px;
+    }
+
+    .sec-num {
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--red);
+      color: var(--white);
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sec-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .sec-title {
+      font-size: clamp(32px, 4.5vw, 60px);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+    }
+
+    .sec-title em {
+      font-style: italic;
+      font-weight: 200;
+      color: var(--mid);
+    }
+
+    /* ABOUT */
+    #about {
+      background: var(--bg);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      margin-top: 52px;
+      align-items: start;
+    }
+
+    .about-quote {
+      font-size: clamp(17px, 2vw, 24px);
+      font-weight: 600;
+      line-height: 1.55;
+      border-top: 2px solid var(--red);
+      padding-top: 20px;
+      margin-bottom: 26px;
+    }
+
+    .about-body {
+      font-size: 15px;
+      line-height: 1.95;
+      font-weight: 300;
+      color: #3A3733;
+      margin-bottom: 14px;
+    }
+
+    .about-table {
+      border-top: 1px solid var(--black);
+    }
+
+    .about-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .about-key {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+      flex-shrink: 0;
+    }
+
+    .about-val {
+      font-size: 13px;
+      font-weight: 400;
+      text-align: right;
+    }
+
+    /* SKILLS */
+    #skills {
+      background: var(--bg2);
+    }
+
+    .skills-grid {
+      margin-top: 52px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--black);
+    }
+
+    .sk-card {
+      padding: 36px 28px 32px;
+      border-right: 1px solid var(--black);
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+
+    .sk-card:nth-child(3),
+    .sk-card:nth-child(6) {
+      border-right: none;
+    }
+
+    .sk-card:nth-child(4),
+    .sk-card:nth-child(5),
+    .sk-card:nth-child(6) {
+      border-top: 1px solid var(--black);
+    }
+
+    .sk-card:hover {
+      background: var(--white);
+    }
+
+    .sk-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 100%;
+      width: 2px;
+      background: var(--red);
+      transition: bottom 0.4s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .sk-card:hover::before {
+      bottom: 0;
+    }
+
+    .sk-num {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--red);
+      letter-spacing: 0.2em;
+      margin-bottom: 12px;
+    }
+
+    .sk-icon {
+      font-size: 30px;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .sk-name {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .sk-desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.75;
+    }
+
+    .sk-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    .sk-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: 1px solid var(--line);
+      padding: 4px 10px;
+      color: var(--mid);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .sk-card:hover .sk-tag {
+      border-color: var(--ink);
+      color: var(--ink);
+    }
+
+    /* WORKS */
+    #works {
+      background: var(--bg);
+    }
+
+    .works-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 48px;
+    }
+
+    .works-big-num {
+      font-size: 100px;
+      font-weight: 800;
+      color: var(--line);
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .works-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--black);
+      background: var(--black);
+      gap: 1px;
+    }
+
+    .work-card {
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .work-card:hover {
+      transform: translateY(-3px);
+      z-index: 2;
+    }
+
+    .work-thumb {
+      aspect-ratio: 4/3;
+      background: var(--bg2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .work-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .work-card:hover .work-thumb img {
+      transform: scale(1.06);
+    }
+
+    .work-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(14, 14, 14, 0.45);
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .work-card:hover .work-overlay {
+      opacity: 1;
+    }
+
+    .work-overlay-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 4px 10px;
+    }
+
+    .work-body {
+      padding: 22px 22px 26px;
+    }
+
+    .work-tag {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+
+    .work-t {
+      font-size: 17px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .work-t a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .work-d {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--mid);
+      line-height: 1.65;
+    }
+
+    .work-yr {
+      font-size: 10px;
+      color: var(--mid);
+      margin-top: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+    }
+
+    /* EXPERIENCE */
+    #experience {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .exp-list {
+      margin-top: 52px;
+    }
+
+    .exp-row {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      gap: 36px;
+      padding: 30px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      align-items: start;
+    }
+
+    .exp-date {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.35);
+      line-height: 1.5;
+      padding-top: 3px;
+    }
+
+    .exp-role {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .exp-co {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .exp-desc {
+      font-size: 12px;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.5);
+      line-height: 1.7;
+    }
+
+    .exp-chip {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 6px 14px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.4);
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    /* CONTACT */
+    #contact {
+      background: var(--ink);
+      color: var(--white);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-bottom: none;
+      padding: 0;
+      min-height: 480px;
+    }
+
+    .contact-left {
+      padding: 72px 48px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .contact-hl {
+      font-size: clamp(48px, 6vw, 88px);
+      font-weight: 800;
+      line-height: 0.9;
+      letter-spacing: -0.03em;
+    }
+
+    .contact-hl em {
+      font-style: italic;
+      font-weight: 200;
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .contact-links {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cl {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-decoration: none;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 400;
+      transition: color 0.2s, padding-left 0.2s;
+    }
+
+    .cl:hover {
+      color: var(--red);
+      padding-left: 8px;
+    }
+
+    .cl-ico {
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .contact-right {
+      padding: 72px 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 28px;
+    }
+
+    .contact-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      margin-bottom: 8px;
+    }
+
+    .contact-types {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .contact-note {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.9;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-dl {
+      display: inline-block;
+      background: var(--red);
+      color: var(--white);
+      padding: 16px 32px;
+      font-family: 'Kanit', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-dl:hover {
+      background: var(--white);
+      color: var(--ink);
+      transform: translateY(-2px);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--black);
+      color: rgba(255, 255, 255, 0.25);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 48px;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      nav {
+        padding: 0 16px;
+      }
+
+      .nav-issue {
+        display: none;
+      }
+
+      .nav-menu a {
+        padding: 0 10px;
+        font-size: 10px;
+      }
+
+      #hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-col-left {
+        border-right: none;
+      }
+
+      .hero-text {
+        padding: 36px 24px;
+      }
+
+      .hero-kicker {
+        padding: 18px 24px;
+      }
+
+      .sec {
+        padding: 60px 20px;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sk-card {
+        border-right: none;
+        border-top: 1px solid var(--black);
+      }
+
+      .sk-card:first-child {
+        border-top: none;
+      }
+
+      .works-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .exp-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      #contact {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-left {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+      }
+
+      #cursor {
+        display: none;
+      }
+
+      body {
+        cursor: auto;
+      }
+    }
+
+    @media print {
+
+      nav,
+      #cursor {
+        display: none !important;
+      }
+
+      body {
+        cursor: auto;
+      }
+
+      .sec {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cursor"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">PORTFOLIO</div>
+    <ul class="nav-menu">
+      <li><a href="#hero" data-section="hero">หน้าหลัก</a></li>
+      <li><a href="#about" data-section="about">เกี่ยวกับ</a></li>
+      <li><a href="#skills" data-section="skills">ทักษะ</a></li>
+      <li><a href="#works" data-section="works">ผลงาน</a></li>
+      <li><a href="#experience" data-section="experience">ประสบการณ์</a></li>
+      <li><a href="#contact" data-section="contact">ติดต่อ</a></li>
+    </ul>
+    <div class="nav-issue">Vol. 01 — 2568</div>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-col-left">
+      <div class="hero-kicker">
+        <div class="hero-kicker-line"></div>
+        <div class="hero-kicker-text">Portfolio · ฉบับสมัครงาน</div>
+      </div>
+      <div class="hero-text">
+        <h1 class="hero-name">
+          <span>THANATORN</span><br>
+          <em>KHWANMANKONG</em>
+        </h1>
+        <p class="hero-role">
+          Full Stack Developer<br>
+          มหาวิทยาลัยเกษตรศาสตร์<br>
+          มองหาโอกาสฝึกงาน
+        </p>
+      </div>
+    </div>
+    <div class="hero-col-right">
+      <div class="hero-photo-area">
+        <img src="https://i.ibb.co/pjhgCmzb/9613.jpg" alt="Profile Photo">
+      </div>
+      <div class="hero-info-bar">
+        <div class="info-f">
+          <div class="lbl">คณะ</div>
+          <div class="val">ศิลปศาสตร์และวิทยาศาสตร์</div>
+        </div>
+        <div class="info-f">
+          <div class="lbl">สาขา</div>
+          <div class="val">เทคโนโลยีสารสนเทศ</div>
+        </div>
+        <div class="info-f">
+          <div class="lbl">ชั้นปี</div>
+          <div class="val">ปีที่ 3</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="sec">
+    <div class="sec-eyebrow">
+      <div class="sec-num">01</div>
+      <div class="sec-lbl">เกี่ยวกับฉัน</div>
+    </div>
+    <div class="sec-title">เกี่ยวกับ <em>ตัวเอง</em></div>
+    <div class="about-grid">
+      <div>
+        <p class="about-quote">"ทำปัจจุบันให้ดี — แล้วจะมีอนาคต"</p>
+        <p class="about-body">ฉันเป็นนักศึกษาสาขาเทคโนโลยีสารสนเทศที่หลงใหลในการพัฒนาซอฟต์แวร์แบบครบวงจร
+          มีความสามารถทั้งฝั่ง Frontend และ Backend สามารถสร้างระบบที่ใช้งานได้จริงตั้งแต่ UI ไปจนถึง Database</p>
+        <p class="about-body">
+          ต้องการหาประสบการณ์ฝึกงาน เพื่อพัฒนาทักษะ และเติบโตในสายงาน Full Stack Development ได้เรียนรู้จากการทำงานจริง ร่วมงานกับทีมที่มีความกระตือรือร้น และมีโอกาสได้สร้างผลงานในอนาคต
+      </div>
+      <div class="about-table">
+        <div class="about-row"><span class="about-key">มหาวิทยาลัย</span>
+          <span
+            class="about-val">มหาวิทยาลัยเกษตรศาสตร์
+          </span>
+          </div>
+        <div class="about-row"><span class="about-key">คณะ / สาขา</span><span class="about-val">ศิลปศาสตร์และวิทยาศาสตร์ / เทคโนโลยีสารสนเทศ</span>
+        </div>
+        <div class="about-row"><span class="about-key">ชั้นปี</span><span class="about-val">ปีที่ 3 · ปีการศึกษา 2568</span>
+        </div>
+        <div class="about-row"><span class="about-key">อีเมล</span><span class="about-val">Qwanmankong@gmail.com</span>
+        </div>
+        <div class="about-row"><span class="about-key">เบอร์โทรศัพท์</span><span class="about-val">061-603-4862</span>
+        </div>
+        <div class="about-row"><span class="about-key">ที่อยู่</span><span class="about-val">กรุงเทพมหานคร</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="sec" style="background:var(--bg2);">
+    <div class="sec-eyebrow">
+      <div class="sec-num">02</div>
+      <div class="sec-lbl">ความสามารถ</div>
+    </div>
+    <div class="sec-title">ทักษะ &amp; <em>ความเชี่ยวชาญ</em></div>
+    <div class="skills-grid" id="skillsGrid"></div>
+  </section>
+
+  <!-- WORKS -->
+  <section id="works" class="sec">
+    <div class="sec-eyebrow">
+      <div class="sec-num">03</div>
+      <div class="sec-lbl">ผลงาน</div>
+    </div>
+    <div class="works-header">
+      <div class="sec-title">Selected <em>Works</em></div>
+      <div class="works-big-num">06</div>
+    </div>
+    <div class="works-grid" id="worksGrid"></div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="sec" style="background:var(--black);color:var(--white);">
+    <div class="sec-eyebrow">
+      <div class="sec-num">04</div>
+      <div class="sec-lbl" style="color:rgba(255,255,255,0.4);">ประสบการณ์</div>
+    </div>
+    <div class="sec-title" style="color:var(--white);">Education &amp; <em
+        style="color:rgba(255,255,255,0.25);">Experience</em></div>
+    <div class="exp-list" id="expList"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="sec">
+    <div class="contact-left">
+      <div>
+        <div
+          style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:16px;">
+          พร้อมร่วมงาน</div>
+        <div class="contact-hl">Let's<br>Work<br><em>Together</em></div>
+      </div>
+      <div class="contact-links">
+        <a href="mailto:yourname@email.com" class="cl">
+          <div class="cl-ico">✉</div><span>Qwanmankong@email.com</span>
+        </a>
+        <a href="tel:0987654321" class="cl">
+          <div class="cl-ico">☎</div><span>061-603-4862</span>
+        </a>
+        <a href="https://www.facebook.com/tanatorn.qwanmankong?locale=th_TH" class="cl">
+          <div class="cl-ico">F</div><span>facebook.com/Thanatorn KHWANMANKONG</span>
+        </a>
+        <a href="https://github.com/ThanatornKh" class="cl">
+          <div class="cl-ico">gh</div><span>github.com/ThanatornKh</span>
+        </a>
+      </div>
+    </div>
+    <div class="contact-right">
+      <div>
+        <div class="contact-eyebrow">พร้อมรับ</div>
+        <div class="contact-types">ฝึกงาน</div>
+      </div>
+      <p class="contact-note">กำลังมองหาโอกาสทำงานในสาขา Full Stack Development, Frontend, Backend หรือ Mobile Development
+        ที่ให้โอกาสพัฒนาทักษะและเติบโตไปพร้อมกับทีม<br><br>ยินดีนำเสนอ Portfolio เพิ่มเติมและพูดคุยรายละเอียดตามต้องการ
+      </p>
+      <a href="#" class="btn-dl" onclick="window.print();return false;">↓ ดาวน์โหลด / พิมพ์ PDF</a>
+    </div>
+  </section>
+
+  <footer>
+    <div>© 2569 THANATORN KHWANMANKONG — Full Stack Developer Portfolio</div>
+    <div>Vol. 01 · สมัครงาน</div>
+  </footer>
+
+  <script>
+    /* CURSOR */
+    const cur = document.getElementById('cursor');
+    document.addEventListener('mousemove', e => { cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px'; });
+    document.querySelectorAll('a, button').forEach(el => {
+      el.addEventListener('mouseenter', () => { cur.style.width = '36px'; cur.style.height = '36px'; cur.style.background = 'transparent'; cur.style.border = '1.5px solid var(--red)'; });
+      el.addEventListener('mouseleave', () => { cur.style.width = '10px'; cur.style.height = '10px'; cur.style.background = 'var(--red)'; cur.style.border = 'none'; });
+    });
+
+    /* ACTIVE NAV ON SCROLL */
+    const sections = ['hero', 'about', 'skills', 'works', 'experience', 'contact'];
+    const navLinks = document.querySelectorAll('.nav-menu a[data-section]');
+
+    function setActive(id) {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.dataset.section === id);
+      });
+    }
+
+    const navObserver = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) setActive(en.target.id);
+      });
+    }, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) navObserver.observe(el);
+    });
+
+    // set hero active on load
+    setActive('hero');
+
+    /* SKILLS */
+    const skills = [
+      { n: '01', icon: '🌐', name: 'HTML & CSS', desc: 'สร้างโครงสร้างและออกแบบหน้าเว็บ ทำ Responsive Layout', tags: ['HTML5', 'CSS', 'Grid'] },
+      { n: '02', icon: '⚡', name: 'JavaScript', desc: 'พัฒนา Logic ฝั่ง Frontend และ Interactivity บนเว็บแอป', tags: ['ES6+', 'Fetch API', 'Async/Await'] },
+      { n: '03', icon: '📱', name: 'Flutter', desc: 'พัฒนา Mobile App ทั้ง iOS และ Android จาก Codebase เดียว', tags: ['Dart', 'Widgets', 'Firebase'] },
+      { n: '04', icon: '🖥️', name: 'PHP', desc: 'พัฒนา Backend และจัดการ Server-side Logic, Database', tags: ['PHP', 'MySQL', 'REST API'] },
+      { n: '05', icon: '🟢', name: 'Node.js', desc: 'พัฒนา Backend ด้วย JavaScript ทั้ง API และ Real-time App', tags: ['Express.js', 'REST API', 'npm',] },
+      { n: '06', icon: '🛠️', name: 'Tools & Others', desc: 'เครื่องมือที่ใช้ในการพัฒนาและจัดการโปรเจกต์', tags: ['Git', 'GitHub', 'VS Code', 'Postman'] },
+    ];
+    const sg = document.getElementById('skillsGrid');
+    skills.forEach(s => {
+      const d = document.createElement('div');
+      d.className = 'sk-card';
+      d.innerHTML = `<div class="sk-num">${s.n}</div><div class="sk-icon">${s.icon}</div><div class="sk-name">${s.name}</div><div class="sk-desc">${s.desc}</div><div class="sk-tags">${s.tags.map(t => `<span class="sk-tag">${t}</span>`).join('')}</div>`;
+      sg.appendChild(d);
+    });
+
+    /* WORKS — ใช้รูปจาก Unsplash โดยตรง */
+    const works = [
+      { tag: 'Project_Car', t: 'DEVILISH | HyperCar', d: 'ระบบร้านค้าขายรถยนต์ออนไลน์ครบวงจร Frontend + Backend พร้อมระบบจัดการสินค้า', yr: '2569', img: 'https://i.ibb.co/qFnK9VGY/Screenshot-2026-03-27-000727.png', url: 'https://devilish-car.web.app/' },
+      { tag: 'IoT', t: 'ระบบตรวจจับควัน และความร้อน', d: 'ระบบสามรถตรวจจับควัน และความร้อน ระบบจะทำงานโดยทำการระบายความร้อน และดูดควันออกตามค่าที่ตั้งไว้ผ่าน Application ', yr: '2569', img: 'https://i.ibb.co/jkrk5YnS/8297.jpg', url: 'https://i.ibb.co/jkrk5YnS/8297.jpg' },
+      { tag: 'pgAdmin 4', t: 'HyperCar db', d: 'Database ในการเก็บของ Project HyperCar Sale ', yr: '2569', img: 'https://i.ibb.co/N2F9fzMb/pg-Admin.png' },
+      { tag: 'Full Stack', t: 'HyperCar Sale', d: 'ออกแบบและพัฒนา REST API ด้วย Node.js และ pgAdmin', yr: '2569', img: 'https://i.ibb.co/Q7cxnZp2/car-new-project.png' },
+      { tag: 'Python', t: 'DETECTION OF DISEASES IN TOMATO LEAVES', d: 'การใช้เทรน AI ในการตรวจหาโรคในใบมะเขือเทศ', yr: '2568', img: 'https://i.ibb.co/kgR1N9Vf/AI.png', url: 'https://drive.google.com/file/d/1oLcsiPh3tTIaNIxgWfoCaf2vIuGOyBbj/view?usp=drive_link' },
+      { tag: 'UNITY', t: 'เกมผจญภัย ของลิงตัวหนึ่งที่ต้องเก็บผลไม้ทำแต้ม เพื่อผ่านด่าน', d: 'ใช้การปั้นโมเดลและพัฒนาเกมด้วย Unity', yr: '2567', img: 'https://i.ibb.co/YBGZWnVy/Screenshot-2026-03-27-013752.png' },
+    ];
+    const wg = document.getElementById('worksGrid');
+    works.forEach(w => {
+      const c = document.createElement('div');
+      c.className = 'work-card';
+      c.innerHTML = `
+    <div class="work-thumb">
+      <img src="${w.img}" alt="${w.t}">
+      <div class="work-overlay"><span class="work-overlay-tag">${w.tag}</span></div>
+    </div>
+    <div class="work-body">
+      <div class="work-tag">${w.tag}</div>
+      <div class="work-t">${w.url ? `<a href="${w.url}" target="_blank">${w.t}</a>` : w.t}</div>
+      <div class="work-d">${w.d}</div>
+      <div class="work-yr">${w.yr}</div>
+    </div>`;
+      wg.appendChild(c);
+    });
+
+    /* EXPERIENCE */
+    const exps = [
+      { date: '2566 – ปัจจุบัน', role: 'นิสิต ปริญญาตรี', co: 'มหาวิทยาลัยเกษตรศาสตร์ — คณะศิลปศาสตร์และวิทยาศาสตร์', desc: 'ศึกษาสาขาเทคโนโลยีสารสนเทศ ครอบคลุม Internet, Database, Web Dev, Mobile App, IoT และ Software Engineering', chip: 'Education' },
+    ];
+    const expEl = document.getElementById('expList');
+    exps.forEach(e => {
+      const d = document.createElement('div');
+      d.className = 'exp-row';
+      d.innerHTML = `<div class="exp-date">${e.date}</div><div><div class="exp-role">${e.role}</div><div class="exp-co">${e.co}</div><div class="exp-desc">${e.desc}</div></div><div class="exp-chip">${e.chip}</div>`;
+      expEl.appendChild(d);
+    });
+
+    /* SCROLL REVEAL */
+    const allSecs = document.querySelectorAll('.sec');
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('in'); });
+    }, { threshold: 0.05 });
+    allSecs.forEach(s => revealObs.observe(s));
+    setTimeout(() => allSecs.forEach(s => s.classList.add('in')), 800);
+  </script>
+</body>
+</html>
