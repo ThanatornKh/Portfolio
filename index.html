@@ -816,6 +816,25 @@
       border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
+    /* MOBILE NAV RIGHT */
+    .nav-mobile-right {
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-current {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      padding: 4px 10px;
+      border: 1px solid var(--red);
+      white-space: nowrap;
+      transition: color 0.25s, border-color 0.25s;
+    }
+
     /* HAMBURGER BUTTON */
     .nav-hamburger {
       display: none;
@@ -859,6 +878,10 @@
 
       .nav-issue {
         display: none;
+      }
+
+      .nav-mobile-right {
+        display: flex;
       }
 
       .nav-hamburger {
@@ -1075,9 +1098,12 @@
   <!-- NAV -->
   <nav>
     <div class="nav-logo">PORTFOLIO</div>
-    <button class="nav-hamburger" id="navToggle" aria-label="เมนู">
-      <span></span><span></span><span></span>
-    </button>
+    <div class="nav-mobile-right">
+      <span class="nav-current" id="navCurrent">หน้าหลัก</span>
+      <button class="nav-hamburger" id="navToggle" aria-label="เมนู">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
     <ul class="nav-menu" id="navMenu">
       <li><a href="#hero" data-section="hero">หน้าหลัก</a></li>
       <li><a href="#about" data-section="about">เกี่ยวกับ</a></li>
@@ -1267,10 +1293,14 @@
     const sections = ['hero', 'about', 'skills', 'works', 'experience', 'contact'];
     const navLinks = document.querySelectorAll('.nav-menu a[data-section]');
 
+    const navCurrentEl = document.getElementById('navCurrent');
+    const sectionLabels = { hero: 'หน้าหลัก', about: 'เกี่ยวกับ', skills: 'ทักษะ', works: 'ผลงาน', experience: 'ประสบการณ์', contact: 'ติดต่อ' };
+
     function setActive(id) {
       navLinks.forEach(a => {
         a.classList.toggle('active', a.dataset.section === id);
       });
+      if (sectionLabels[id]) navCurrentEl.textContent = sectionLabels[id];
     }
 
     const navObserver = new IntersectionObserver(entries => {
