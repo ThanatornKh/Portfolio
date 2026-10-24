@@ -1,0 +1,223 @@
+.contact {
+  overflow: hidden;
+}
+
+.contact__glow {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1200px;
+  height: 700px;
+  transform: translateX(-50%);
+  background: radial-gradient(50% 50% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%);
+  pointer-events: none;
+}
+
+.contact__kicker {
+  font-size: 12px;
+}
+
+.contact__kicker b {
+  color: var(--ink);
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.contact__title {
+  margin-top: 26px;
+  font-size: clamp(36px, 6.6vw, 120px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.contact__lead {
+  max-width: 54ch;
+  margin-top: 32px;
+}
+
+.contact__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 36px;
+}
+
+.contact__grid {
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 24px;
+  margin-top: clamp(56px, 7vw, 100px);
+  align-items: start;
+}
+
+.contact__cards {
+  display: grid;
+  gap: 12px;
+}
+
+.contact__card {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+}
+
+/* ห้ามใส่ transition: transform บน .contact__card — GSAP ใช้ transform ตอน reveal
+   (ScrollTrigger.refresh อ่านค่ากลาง transition เป็นค่าปลายทาง → การ์ดค้างเยื้อง) */
+.contact__arrow {
+  transition: transform 0.5s var(--ease);
+}
+
+a.contact__card:hover .contact__arrow {
+  transform: translate(3px, -3px);
+}
+
+.contact__card--static .contact__arrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--mute);
+}
+
+.contact__card .mono {
+  font-size: 10px;
+}
+
+.contact__val {
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact__arrow {
+  color: var(--ink);
+}
+
+/* ---------- terminal ---------- */
+.term {
+  border-radius: 0;
+  border: 1px solid var(--line-2);
+  background: #080808;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+  cursor: text;
+}
+
+.term__bar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+}
+
+.term__bar i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--line-3);
+}
+
+.term__bar span {
+  margin-left: auto;
+  text-transform: none;
+}
+
+.term__out {
+  height: 320px;
+  overflow-y: auto;
+  padding: 18px 20px 8px;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.85;
+  color: var(--ink);
+}
+
+.term__out b {
+  color: var(--mint);
+  font-weight: 500;
+}
+
+.term__out .out {
+  color: var(--ink-2);
+}
+
+.term__out .err {
+  color: var(--amber);
+}
+
+.term__out .k {
+  display: inline-block;
+  min-width: 120px;
+  color: var(--mute);
+}
+
+.term__out button,
+.term__out a {
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-3);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.term__out strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.term__form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.term__form label {
+  color: var(--mint);
+  font-size: 14px;
+}
+
+.term__form input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  caret-color: var(--ink);
+}
+
+.term__form input::placeholder {
+  color: var(--faint);
+}
+
+@media (max-width: 1000px) {
+  .contact__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact__card {
+    grid-template-columns: 1fr auto;
+  }
+
+  .contact__card .mono {
+    grid-column: 1 / -1;
+  }
+
+  .term__out {
+    height: 280px;
+    font-size: 12px;
+  }
+
+  .term__out .k {
+    min-width: 92px;
+  }
+}

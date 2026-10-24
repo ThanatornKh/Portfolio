@@ -1,0 +1,529 @@
+/* =========================================================
+   DESIGN SYSTEM — HOLO-OS v2
+   โทนมืด · ฟ้า cyan เป็นสีหลัก · ม่วง/อำพันเป็นไฮไลต์
+   ฟอนต์: Unbounded (display) · IBM Plex Sans Thai (เนื้อหา) · JetBrains Mono (ป้าย)
+   ========================================================= */
+:root {
+  /* โทน "จริงจัง" แบบแบรนด์ไฮเปอร์คาร์: ดำ-ขาว เส้นบาง มุมเหลี่ยม สีเน้นใช้น้อยที่สุด */
+  --bg: #050505;
+  --bg-2: #0a0a0a;
+  --bg-3: #101010;
+  --panel: rgba(255, 255, 255, 0.022);
+  --ink: #f2f2ef;
+  --ink-2: #b9b9b4;
+  --mute: #7d7d78;
+  --faint: #45453f;
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.17);
+  --line-3: rgba(255, 255, 255, 0.34);
+  --cyan: #a9d6e8;
+  --violet: #7b8790;
+  --amber: #d8c39b;
+  --mint: #b9e3c6;
+  --accent: var(--cyan);
+  --accent-ink: #050505;
+  --grad: none;
+  --display: 'Amp', 'Archivo Variable', 'IBM Plex Sans Thai', system-ui, sans-serif;
+  --sans: 'IBM Plex Sans Thai', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --gutter: clamp(20px, 4.5vw, 72px);
+  --max: 1520px;
+  --nav-h: 76px;
+  --r: 0px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip; /* กัน layout viewport บนมือถือขยายตามของที่ล้นจอ (clip ไม่ทำลาย position: sticky) */
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+html.is-locked body {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+img,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd,
+ul,
+ol {
+  margin: 0;
+}
+
+ul,
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 4px;
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) var(--bg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip {
+  position: fixed;
+  left: 16px;
+  top: -60px;
+  z-index: 3000;
+  padding: 10px 16px;
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+  transition: top 0.3s var(--ease);
+}
+
+.skip:focus {
+  top: 16px;
+}
+
+/* ---------- layout ---------- */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.section {
+  position: relative;
+  padding-block: clamp(96px, 14vw, 200px);
+  overflow-x: clip;
+}
+
+/* ---------- type ---------- */
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.display {
+  font-family: var(--display);
+  font-stretch: 125%;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+/* คำเน้นแบบเรียบ: สีรอง (ไม่ใช้ gradient / glow) */
+.grad,
+.grad > * {
+  color: var(--mute);
+}
+
+.lead {
+  font-size: clamp(17px, 1.35vw, 20px);
+  line-height: 1.75;
+  color: var(--ink-2);
+  font-weight: 300;
+}
+
+/* ---------- section header (ใช้แบบเดียวกันทุกบท) ---------- */
+.sec-head {
+  display: grid;
+  gap: 22px;
+  margin-bottom: clamp(48px, 7vw, 96px);
+}
+
+.sec-head__meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.sec-head__meta b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.sec-head__meta i {
+  flex: 0 0 64px;
+  height: 1px;
+  background: var(--line-3);
+}
+
+.sec-head__title {
+  font-size: clamp(34px, 5.2vw, 88px);
+}
+
+.sec-head__title em {
+  font-style: normal;
+}
+
+.sec-head__sub {
+  max-width: 60ch;
+}
+
+/* ---------- panels + buttons (เหลี่ยม เส้นบาง ตัวพิมพ์ใหญ่) ---------- */
+.glass {
+  position: relative;
+  background: rgba(8, 8, 8, 0.72);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line-2);
+}
+
+.btn {
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 50px;
+  padding: 0 30px;
+  border: 1px solid var(--line-3);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    color 0.45s var(--ease),
+    border-color 0.45s var(--ease),
+    background-color 0.45s var(--ease);
+}
+
+/* แถบสีเติมจากล่างขึ้นบนเมื่อ hover */
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--ink);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.5s var(--ease);
+}
+
+.btn:hover {
+  color: var(--bg);
+  border-color: var(--ink);
+}
+
+.btn:hover::before {
+  transform: scaleY(1);
+}
+
+.btn--solid {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--bg);
+}
+
+.btn--solid::before {
+  background: var(--bg);
+}
+
+.btn--solid:hover {
+  color: var(--ink);
+}
+
+.btn--glass {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.btn .arrow {
+  display: inline-block;
+  transition: transform 0.4s var(--ease);
+}
+
+.btn:hover .arrow {
+  transform: translateX(5px);
+}
+
+/* chip / tag */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border: 1px solid var(--line-2);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.chip--accent {
+  border-color: var(--line-3);
+  color: var(--ink);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* การ์ดที่ขอบสว่างตามเมาส์ (เบา ๆ สีขาว) */
+.spot {
+  --mx: -500px;
+  --my: -500px;
+  position: relative;
+  background:
+    radial-gradient(420px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.035), transparent 45%),
+    var(--panel);
+  border: 1px solid var(--line);
+}
+
+.spot::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  padding: 1px;
+  background: radial-gradient(240px circle at var(--mx) var(--my), rgba(255, 255, 255, 0.55), transparent 55%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---------- global overlays ---------- */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.2s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* canvas สำหรับฉาก 3D */
+.gl-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.gl-layer canvas {
+  display: block;
+}
+
+/* ป้ายบอกว่าลากหมุนได้ 360° */
+.spin-badge {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-2);
+  background: rgba(5, 5, 5, 0.6);
+  font-size: 10px;
+  color: var(--ink-2);
+  pointer-events: none;
+}
+
+.spin-badge span {
+  display: inline-block;
+  font-size: 13px;
+  color: var(--ink);
+  animation: spin-hint 3.2s var(--ease-io) infinite;
+}
+
+@keyframes spin-hint {
+  0%, 30% { transform: rotate(0deg); }
+  70%, 100% { transform: rotate(-360deg); }
+}
+
+/* พื้นที่ลากหมุน: ปัดแนวตั้งยังเลื่อนหน้าได้ */
+.hero__pin,
+.pipe__stage,
+.stack__gl {
+  touch-action: pan-y;
+}
+
+.hero__pin,
+.pipe__stage {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ภาพผลงานที่หาไม่เจอ → blueprint */
+.media {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-3);
+}
+
+.media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* โฮโลแกรมบนภาพผลงาน: scanline บาง ๆ + แสงกวาดเมื่อ hover + RGB split เล็กน้อย */
+.hol::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0 1px, transparent 1px 3px);
+  pointer-events: none;
+  opacity: 0.6;
+  transition: opacity 0.4s;
+}
+
+.hol::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(110deg, transparent 38%, rgba(214, 237, 246, 0.18) 50%, transparent 62%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+
+:is(.card, .flag__visual):hover .hol::before {
+  transform: translateX(120%);
+  transition: transform 1.1s var(--ease);
+}
+
+:is(.card, .flag__visual):hover .hol::after {
+  opacity: 1;
+}
+
+:is(.card, .flag__visual):hover .hol img {
+  filter: drop-shadow(1.5px 0 0 rgba(255, 80, 80, 0.32)) drop-shadow(-1.5px 0 0 rgba(80, 200, 255, 0.32));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .grain {
+    display: none;
+  }
+}
+
+@media print {
+  .grain,
+  .gl-layer,
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+}

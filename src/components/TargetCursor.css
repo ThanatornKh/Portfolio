@@ -1,0 +1,59 @@
+.tcursor {
+  --lock: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.tcursor__corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: solid var(--ink);
+  border-width: 1px 0 0 1px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.tcursor__dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  will-change: transform;
+}
+
+.tcursor__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 3px 8px;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* ซ่อนลูกศรเดิมเมื่อมีเป้าเล็ง (จุดกลางตามเมาส์ตรงเป๊ะ) แต่ช่องพิมพ์ยังเป็น text cursor */
+html.has-target-cursor,
+html.has-target-cursor * {
+  cursor: none !important;
+}
+
+html.has-target-cursor input,
+html.has-target-cursor textarea {
+  cursor: text !important;
+}

@@ -1,0 +1,42 @@
+# Thanatorn Khwanmankong — portfolio
+# Search engines may index this site. AI training and AI scraping bots may not.
+# © 2026 Thanatorn Khwanmankong — all rights reserved.
+
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: anthropic-ai
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: GoogleOther
+User-agent: Applebot-Extended
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: meta-externalagent
+User-agent: meta-externalfetcher
+User-agent: FacebookBot
+User-agent: cohere-ai
+User-agent: cohere-training-data-crawler
+User-agent: Diffbot
+User-agent: YouBot
+User-agent: Timpibot
+User-agent: ImagesiftBot
+User-agent: img2dataset
+User-agent: omgili
+User-agent: omgilibot
+User-agent: PetalBot
+User-agent: AI2Bot
+User-agent: Ai2Bot-Dolma
+User-agent: DuckAssistBot
+User-agent: MistralAI-User
+User-agent: Kangaroo Bot
+Disallow: /
+
+User-agent: *
+Allow: /
