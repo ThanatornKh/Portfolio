@@ -189,3 +189,121 @@
   left: 16px;
   top: 16px;
 }
+
+/* ---------- ล็อกโฟกัสดาว ---------- */
+.stack__gl::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  pointer-events: none;
+  border: 1px solid transparent;
+  transition: border-color 0.6s var(--ease), inset 0.6s var(--ease);
+}
+
+.stack__gl.is-locked::after {
+  inset: 6px;
+  border-color: rgba(169, 214, 232, 0.22);
+}
+
+.stack__lock {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -2px 0 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--mute);
+}
+
+.stack__lock span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stack__lock i {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  animation: lock-blink 1.6s steps(2, jump-none) infinite;
+}
+
+.stack__lock b {
+  color: var(--cyan);
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.stack__lock button {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font: inherit;
+  color: var(--ink-2);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.stack__lock button:hover,
+.stack__lock button:focus-visible {
+  color: var(--ink);
+}
+
+.stack__lock kbd {
+  padding: 1px 5px;
+  font: inherit;
+  font-size: 10px;
+  border: 1px solid var(--line-2);
+}
+
+.stack__spec li {
+  cursor: pointer;
+}
+
+.stack__spec li.is-locked {
+  padding-left: 12px;
+  box-shadow: inset 2px 0 0 var(--cyan);
+  background: linear-gradient(90deg, rgba(169, 214, 232, 0.06), transparent);
+}
+
+.stack__spec li.is-locked h3 {
+  color: var(--cyan);
+}
+
+.stack__spec li:focus-visible {
+  outline: 1px solid var(--line-3);
+  outline-offset: -1px;
+}
+
+@keyframes lock-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (hover: none) {
+  .stack__lock kbd {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stack__lock i {
+    animation: none;
+  }
+}

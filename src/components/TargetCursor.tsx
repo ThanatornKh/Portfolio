@@ -47,13 +47,17 @@ export default function TargetCursor() {
     let raf = 0;
     let last = 0;
 
+    let labelText = '';
+    const showLabel = (text: string) => {
+      labelText = text;
+      if (labelRef.current && text) labelRef.current.textContent = text;
+      root.dataset.label = text ? '1' : '';
+    };
     const lockOn = (next: Element | null) => {
       if (next === target) return;
       target = next;
       if (target) quarter = Math.round(turn.x / (Math.PI / 2));
-      const text = target?.getAttribute('data-cursor-label') ?? '';
-      if (labelRef.current && text) labelRef.current.textContent = text;
-      root.dataset.label = text ? '1' : '';
+      showLabel(target?.getAttribute('data-cursor-label') ?? '');
     };
     const find = (el: Element | null) => {
       const t = el?.closest(TARGETS) ?? null;
@@ -65,6 +69,11 @@ export default function TargetCursor() {
       const dt = last ? Math.min(0.05, (now - last) / 1000) : 1 / 60;
       last = now;
       if (target && !target.isConnected) lockOn(null);
+      // ป้ายเปลี่ยนได้ระหว่างล็อกเป้าเดิม (เช่น ชี้ดาวในกลุ่มดาว → click · focus)
+      else if (target) {
+        const text = target.getAttribute('data-cursor-label') ?? '';
+        if (text !== labelText) showLabel(text);
+      }
       const rect = target?.getBoundingClientRect();
       const locked = !!rect && p.inside;
       const w = 4.6 / 0.22;

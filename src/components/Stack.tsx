@@ -1,13 +1,14 @@
 /* =========================================================
    05 · TECH STACK — กลุ่มดาว 3D + spec sheet + แถบเทคโนโลยีวิ่ง
+   คลิกดาว (หรือหัวข้อใน spec sheet) = ล็อกโฟกัสในโมเดล · Esc / คลิกที่ว่าง = ปลด
    ========================================================= */
-import { lazy, Suspense, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { SKILLS } from '../data/content';
 import { TECHS, workById } from '../data/derived';
-import { gsap, reduceMotion, useGSAP } from '../lib/motion';
+import { gsap, isNarrow, reduceMotion, scrollToTarget, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
 import { hasWebGL, useInView, usePageHidden } from '../lib/useInView';
-import { spins } from '../lib/store';
+import { spins, useUI } from '../lib/store';
 import { useDragRotate } from '../lib/useDragRotate';
 import SectionHead from './ui/SectionHead';
 import './Stack.css';
@@ -17,19 +18,41 @@ const StackScene = lazy(() => import('../gl/StackScene'));
 const ROW_A = [...TECHS].sort((a, b) => b.works.length - a.works.length);
 const ROW_B = [...ROW_A].reverse();
 
+const hubOf = (id: string) => SKILLS.find(s => s.tags.includes(id));
+
 export default function Stack() {
   const ref = useRef<HTMLElement>(null);
   const glRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   const [focusGroup, setFocusGroup] = useState<number | null>(null);
   const [gl] = useState(() => hasWebGL());
   const inView = useInView(glRef, '0px');
   const hidden = usePageHidden();
   useDragRotate(glRef, spins.stack, { touchOnly: true });
 
-  const tech = hover && !hover.startsWith('hub:') ? TECHS.find(t => t.name === hover) : null;
-  const hubKey = hover?.startsWith('hub:') ? hover.slice(4) : focusGroup !== null ? SKILLS[focusGroup].key : null;
-  const hub = hubKey ? SKILLS.find(s => s.key === hubKey) : null;
+  // Esc = ปลดโฟกัส (ถ้าหน้ารายละเอียดผลงาน/เมนูเปิดอยู่ ให้ Esc ปิดสิ่งนั้นก่อน)
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      const ui = useUI.getState();
+      if (e.key === 'Escape' && !ui.openId && !ui.menuOpen) setSelected(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected]);
+
+  const focusHub = (key: string) => {
+    setSelected(`hub:${key}`);
+    if (isNarrow() && glRef.current) scrollToTarget(glRef.current, -80);
+  };
+
+  // แผงข้อมูลแสดง: ดาวที่ชี้อยู่ → กลุ่มที่ชี้ใน spec list → ดาวที่ล็อกไว้
+  const shown = hover ?? (focusGroup !== null ? `hub:${SKILLS[focusGroup].key}` : selected);
+  const hub = shown?.startsWith('hub:') ? SKILLS.find(s => `hub:${s.key}` === shown) : null;
+  const tech = shown && !hub ? TECHS.find(t => t.name === shown) : null;
+  const techHub = shown && !hub ? hubOf(shown) : null;
+  const selLabel = selected?.startsWith('hub:') ? selected.slice(4) : selected;
 
   useGSAP(
     () => {
@@ -50,27 +73,42 @@ export default function Stack() {
               Everything, <span className="grad">connected.</span>
             </>
           }
-          sub={`แผนที่ดาวของ ${TECHS.length} เทคโนโลยีที่ใช้จริงในผลงาน — เลื่อนเมาส์ไปที่ดาวเพื่อดูว่าใช้ในงานไหน ลากเพื่อหมุน`}
+          sub={`แผนที่ดาวของ ${TECHS.length} เทคโนโลยีที่ใช้จริงในผลงาน — คลิกที่ดาวเพื่อโฟกัสและดูว่าใช้ในงานไหน ลากเพื่อหมุน`}
         />
         <div className="stack__grid">
-          <div className="stack__gl" ref={glRef} data-cursor data-cursor-label="drag · 360°">
+          <div
+            className={`stack__gl${selected ? ' is-locked' : ''}`}
+            ref={glRef}
+            data-cursor
+            data-cursor-label={hover && hover !== selected ? 'click · focus' : selected ? 'drag · orbit' : 'drag · 360°'}
+          >
             {gl && (
               <p className="spin-badge mono stack__spin" aria-hidden="true">
-                <span>⟲</span> drag · 360°
+                <span>⟲</span> {selected ? 'drag · orbit' : 'drag · 360°'}
               </p>
             )}
             {gl ? (
               <Suspense fallback={null}>
-                <StackScene active={inView && !hidden} hover={hover} focusGroup={focusGroup} onHover={setHover} />
+                <StackScene active={inView && !hidden} hover={hover} selected={selected} focusGroup={focusGroup} onHover={setHover} onSelect={setSelected} />
               </Suspense>
             ) : (
               <p className="mono stack__nogl">WebGL ไม่พร้อมใช้งาน — ดูรายการทักษะด้านขวา</p>
             )}
             <div className="stack__panel glass" aria-live="polite">
+              {selected && (
+                <div className="stack__lock mono">
+                  <span>
+                    <i aria-hidden="true" /> focus · <b>{selLabel}</b>
+                  </span>
+                  <button type="button" onClick={() => setSelected(null)} data-cursor-label="release">
+                    ปลดล็อก <kbd>Esc</kbd>
+                  </button>
+                </div>
+              )}
               {tech ? (
                 <>
                   <p className="mono">
-                    <b>{tech.name}</b> · ใช้ใน {tech.works.length} ผลงาน
+                    <b>{tech.name}</b> · ใช้ใน {tech.works.length} ผลงาน{techHub && <> · กลุ่ม {techHub.key}</>}
                   </p>
                   <div className="chips">
                     {tech.works.map(w => (
@@ -83,13 +121,27 @@ export default function Stack() {
               ) : hub ? (
                 <>
                   <p className="mono">
-                    <b>{hub.key}</b>
+                    <b>{hub.key}</b> · {hub.tags.length} เทคโนโลยี
                   </p>
                   <p className="stack__hubdesc">{hub.desc}</p>
+                  {selected === shown && (
+                    <div className="chips">
+                      {hub.tags.map(t => (
+                        <button key={t} type="button" className="chip" onClick={() => setSelected(t)}>
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </>
+              ) : shown ? (
+                <p className="mono">
+                  <b>{shown}</b>
+                  {techHub && <> · กลุ่ม {techHub.key}</>} · ยังไม่มีในผลงานที่แสดงในหน้านี้
+                </p>
               ) : (
                 <p className="mono">
-                  hover a star · <b>{TECHS.length}</b> technologies · <b>{SKILLS.length}</b> groups
+                  click a star to focus · <b>{TECHS.length}</b> technologies · <b>{SKILLS.length}</b> groups
                 </p>
               )}
             </div>
@@ -98,12 +150,20 @@ export default function Stack() {
             {SKILLS.map((s, i) => (
               <li
                 key={s.key}
-                className={focusGroup === i ? 'is-on' : ''}
-                onPointerEnter={() => setFocusGroup(i)}
+                className={`${focusGroup === i ? 'is-on' : ''}${selected === `hub:${s.key}` ? ' is-locked' : ''}`}
+                onPointerEnter={e => e.pointerType === 'mouse' && setFocusGroup(i)}
                 onPointerLeave={() => setFocusGroup(null)}
                 onFocus={() => setFocusGroup(i)}
                 onBlur={() => setFocusGroup(null)}
+                onClick={() => focusHub(s.key)}
+                onKeyDown={e => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return;
+                  e.preventDefault();
+                  focusHub(s.key);
+                }}
                 tabIndex={0}
+                data-cursor
+                data-cursor-label="focus"
               >
                 <span className="mono stack__no">{String(i + 1).padStart(2, '0')}</span>
                 <div>
