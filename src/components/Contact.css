@@ -61,11 +61,23 @@
   align-items: center;
   gap: 14px;
   padding: 20px 22px;
+}
+
+/* ห้ามใส่ transition: transform บน .contact__card — GSAP ใช้ transform ตอน reveal
+   (ScrollTrigger.refresh อ่านค่ากลาง transition เป็นค่าปลายทาง → การ์ดค้างเยื้อง) */
+.contact__arrow {
   transition: transform 0.5s var(--ease);
 }
 
-.contact__card:hover {
-  transform: translateX(6px);
+a.contact__card:hover .contact__arrow {
+  transform: translate(3px, -3px);
+}
+
+.contact__card--static .contact__arrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--mute);
 }
 
 .contact__card .mono {
@@ -81,12 +93,6 @@
 
 .contact__arrow {
   color: var(--ink);
-}
-
-.contact__loc {
-  margin-top: 8px;
-  font-size: 11px;
-  text-transform: none;
 }
 
 /* ---------- terminal ---------- */

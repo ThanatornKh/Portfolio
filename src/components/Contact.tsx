@@ -197,7 +197,11 @@ export default function Contact() {
                 </span>
               </a>
             ))}
-            <p className="mono contact__loc">📍 {PROFILE.location}</p>
+            <div className="contact__card contact__card--static spot">
+              <span className="mono">location</span>
+              <span className="contact__val">{PROFILE.location}, ประเทศไทย</span>
+              <span className="contact__arrow">GMT+7</span>
+            </div>
           </div>
 
           <div className="term" onClick={() => inRef.current?.focus()}>

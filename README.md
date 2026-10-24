@@ -10,12 +10,11 @@ Scroll-story portfolio with real-time 3D. Built with **React + Vite + TypeScript
 | 01 | About | Holographic profile card, word-by-word reveal, `profile.json` |
 | 02 | Data → Deploy | 6,000 particles morph cloud → helix → neural net → globe (vertex shader). Drag to rotate. |
 | 03 | Flagship works | Sticky stacking cards with an "AI scan" over each screenshot and real metrics |
-| 04 | Under the hood | Annotated plate of the real B&P Parking dashboard (markers + SVG leader lines) and a paper-style Quality Report whose bars draw once |
-| 05 | All projects | Category filters with GSAP Flip |
-| 06 | Tech stack | 3D constellation of every technology used, linked to projects |
-| 07 | Journey | `git log --graph` timeline |
-| 08 | Q&A | Accordion with links into projects |
-| 09 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
+| 04 | All projects | Category filters with GSAP Flip |
+| 05 | Tech stack | 3D constellation of every technology used, linked to projects. Click a star (or a group in the list) to lock focus on it: the camera flies to the clearest angle and orbits it. Esc or a click on empty space releases. |
+| 06 | Journey | `git log --graph` timeline |
+| 07 | Q&A | Accordion with links into projects |
+| 08 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
 
 Project pages open as an overlay at `#/work/<id>` (shareable links, works on static hosting).
 

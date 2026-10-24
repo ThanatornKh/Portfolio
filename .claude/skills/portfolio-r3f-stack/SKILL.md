@@ -16,7 +16,6 @@ description: How this portfolio is built and how to extend it — React + Vite +
 | `src/lib/useDragRotate.ts` | 360° drag with inertia; touch: horizontal swipe only (`touch-action: pan-y`) |
 | `src/gl/*Scene.tsx` | Lazy-loaded R3F canvases. Each takes `active` and switches `frameloop` between `always` and `never`. |
 | `src/gl/Projections.tsx` | Hologram shader over real screenshots; beams from the chip's interface layer |
-| `src/components/UnderTheHood.tsx` | Annotated plate (B&P dashboard) and the Quality Report on paper |
 | `src/components/*` | One file per chapter, plus a CSS file next to it |
 
 ## Rules that keep it smooth
@@ -33,6 +32,13 @@ description: How this portfolio is built and how to extend it — React + Vite +
 - **Lighting.** Use `Environment` with `Lightformer`s and `frames={1}`: reflections with no HDR download.
 - **Procedural textures.** `src/gl/textures.ts` draws on canvas and uses the result as an `emissiveMap`: black = off, white = glow.
 - **Images used as textures** must be same-origin (`public/projects`). Remote images (i.ibb.co) are DOM `<img>` only.
+- **No CSS `transition` on a property GSAP animates on the same element** (transform, opacity, filter). `ScrollTrigger.refresh()` reverts and re-reads `from()` tweens; it reads the mid-transition value as the end value, so cards stayed 22–40px low in All projects and Contact. Put hover motion on a child (e.g. the arrow), and add `clearProps` to reveal tweens.
+- **Click-to-focus (Tech stack).** `StackScene.tsx`:
+  - Each star has a larger invisible hit sphere. A click with `e.delta > 6` is a drag, not a click.
+  - On lock, `bestView` scores about 50 camera directions. It penalises stars and hub labels that overlap the star on screen (in front counts more than behind), prefers outward views and small swings, and skips steep angles.
+  - `CameraRig` pans target and camera together, eases distance, lifts the view above the info panel and fogs relative to distance. The user taking over (OrbitControls `start`, touch drag) stops the steering.
+  - When locked, touch swipes orbit the camera instead of spinning the group.
+  - Reduced motion jumps, then calls `invalidate()` once more so Billboards face the new camera.
 
 ## Rules adopted from `scroll-film-site` (owner-provided skill)
 
@@ -41,8 +47,6 @@ description: How this portfolio is built and how to extend it — React + Vite +
 - **Active chapter = the one entering.** Use a "decision band" at the top third: ScrollTrigger `start: 'top 33%'`, `end: 'bottom 33%'`. Set `aria-current` on nav and rail links.
 - **The menu closes three ways:** Esc, a click on empty space, and choosing a link.
 - **Canvas layers** use `height: 100lvh` (no gap when the iOS URL bar collapses). Each has `role="img"` and an `sr-only` description.
-- **Annotated plate** (`UnderTheHood.tsx`): markers are positioned in % of the screenshot. SVG leads run from the note's edge, elbow at 1/3, and end at the marker's rim. `pathLength=1` makes the dash reveal easy. Redraw with a ResizeObserver. Hide the leads when stacked on mobile.
-- **Paper certificate:** scoped tokens (`.paper { --bg; --ink; --line }`). Bars draw from zero **once** (IntersectionObserver adds `.in`, then `transform: scaleX(var(--v))`). That is the only motion in the section.
 - **JSON-LD `Person`** in `index.html`.
 
 ## Theme (sharp, "serious")

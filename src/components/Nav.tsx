@@ -99,9 +99,9 @@ export default function Nav() {
               </a>
             ))}
           </nav>
-          <a className="nav__status mono" href={`mailto:${PROFILE.email}`} data-cursor-label="email">
-            <i /> Open to internship
-          </a>
+          <p className="nav__status mono">
+            <i aria-hidden="true" /> Open to internship
+          </p>
           <button className="nav__menu" type="button" aria-expanded={menuOpen} aria-controls="menu" onClick={() => setMenu(!menuOpen)} data-cursor-label={menuOpen ? 'close' : 'menu'}>
             <span className="mono">{menuOpen ? 'Close' : 'Menu'}</span>
             <span className={`burger${menuOpen ? ' is-x' : ''}`} aria-hidden="true">

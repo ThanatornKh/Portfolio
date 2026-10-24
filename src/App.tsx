@@ -8,7 +8,6 @@ import Hero from './components/Hero';
 import About from './components/About';
 import Pipeline from './components/Pipeline';
 import Flagship from './components/Flagship';
-import UnderTheHood from './components/UnderTheHood';
 import Collection from './components/Collection';
 import Stack from './components/Stack';
 import Journey from './components/Journey';
@@ -39,7 +38,6 @@ export default function App() {
         <About />
         <Pipeline />
         <Flagship />
-        <UnderTheHood />
         <Collection />
         <Stack />
         <Journey />

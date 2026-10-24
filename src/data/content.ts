@@ -12,7 +12,7 @@ export const PROFILE = {
   school: 'มหาวิทยาลัยเกษตรศาสตร์',
   faculty: 'คณะศิลปศาสตร์และวิทยาศาสตร์',
   major: 'เทคโนโลยีสารสนเทศ',
-  year: 'ปีที่ 3 · ปีการศึกษา 2568',
+  year: 'ปีที่ 4 · ปีการศึกษา 2569',
   location: 'กรุงเทพมหานคร',
   email: 'Qwanmankong@gmail.com',
   phone: '061-603-4862',
@@ -447,7 +447,7 @@ export const AI_ACTS: AiAct[] = [
 export const FAQ: Faq[] = [
   {
     q: 'ตอนนี้เรียนอะไร อยู่ชั้นปีไหน?',
-    a: 'นิสิตปีที่ 3 สาขาเทคโนโลยีสารสนเทศ คณะศิลปศาสตร์และวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ (ปีการศึกษา 2568) เรียนครอบคลุม Internet, Database, Web Dev, Mobile App, IoT และ Software Engineering',
+    a: 'นิสิตปีที่ 4 สาขาเทคโนโลยีสารสนเทศ คณะศิลปศาสตร์และวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ (ปีการศึกษา 2569) เรียนครอบคลุม Internet, Database, Web Dev, Mobile App, IoT และ Software Engineering',
   },
   {
     q: 'ถนัดงานด้านไหนที่สุด?',

@@ -1,5 +1,5 @@
 /* =========================================================
-   04 · COLLECTION — ผลงานทั้งหมด จัดเป็นหมวด
+   04 · ALL PROJECTS — ผลงานทั้งหมด จัดเป็นหมวด
    แท็บกรองหมวด + GSAP Flip จัดตำแหน่งการ์ดใหม่แบบลื่น · การ์ด spotlight border
    ========================================================= */
 import { useLayoutEffect, useRef } from 'react';
@@ -51,7 +51,7 @@ export default function Collection() {
       ScrollTrigger.batch('.card', {
         start: 'top 90%',
         once: true,
-        onEnter: els => gsap.from(els, { opacity: 0, y: 50, filter: 'blur(8px)', stagger: 0.08, duration: 1 }),
+        onEnter: els => gsap.from(els, { opacity: 0, y: 50, filter: 'blur(8px)', stagger: 0.08, duration: 1, clearProps: 'opacity,transform,translate,rotate,scale,filter' }),
       });
     },
     { scope: ref },
