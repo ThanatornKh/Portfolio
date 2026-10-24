@@ -1,12 +1,12 @@
 ---
 name: scroll-3d-effects
-description: Recipes for scroll-driven storytelling with 3D and "AI / developer" styling on plain HTML/CSS/JS sites — pinned scenes, scroll-scrubbed Three.js particle morphs, horizontal 3D cover-flow galleries, card tilt, text scramble, velocity marquees, pixel dissolves, word-by-word reveals and Lenis smooth scrolling. Use when building or extending a portfolio / landing page that should feel like an award-site scroll story, or when adding any scroll-linked 3D effect to this repo.
+description: Recipes for scroll-driven storytelling with 3D and "AI / developer" styling on plain HTML/CSS/JS sites — pinned scenes, a holographic part-assembly hero with bloom, scroll-scrubbed Three.js particle morphs, camera fly-throughs, horizontal 3D cover-flow galleries, card tilt, text scramble, velocity marquees, pixel dissolves, word-by-word reveals, boot preloaders, cursor reticles, interactive terminals and Lenis smooth scrolling. Use when building or extending a portfolio / landing page that should feel like an award-site scroll story, or when adding any scroll-linked 3D effect to this repo.
 ---
 
 # Scroll-driven 3D effects (AI / developer theme)
 
 Distilled from how current award-level sites are built (see Sources) and from
-this portfolio's own implementation (`js/main.js`, `js/scene3d.js`).
+this portfolio's own implementation (`js/main.js`, `js/hero3d.js`, `js/scene3d.js`).
 
 ## The pattern everyone converges on
 
@@ -31,8 +31,19 @@ this portfolio's own implementation (`js/main.js`, `js/scene3d.js`).
 | Smooth scroll | `lenis@1.3.26` UMD (`dist/lenis.min.js`, global `Lenis`) | skip on reduced motion; touch stays native |
 | Timelines | vanilla rAF + progress math | GSAP ScrollTrigger is the common alternative when timelines get complex |
 
-Load 3D as `<script type="module" src="js/scene3d.js">` that imports three from
-the CDN, so a CDN failure only loses the 3D layer, never the page.
+Load 3D as `<script type="module">` files that `import * as THREE from 'three'`
+through an importmap, so a CDN failure only loses the 3D layer, never the page:
+
+```html
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/" } }
+</script>
+```
+
+The importmap is what lets `three/addons/postprocessing/*.js` (bloom) resolve
+their own bare `'three'` import.
 
 ## Recipes
 
@@ -127,6 +138,123 @@ requestAnimationFrame(function raf(t){ lenis.raf(t); requestAnimationFrame(raf);
 - Remove `scroll-behavior: smooth` from `html` while Lenis is active
   (Lenis adds `html.lenis`).
 
+### 9. Holographic part assembly (hero signature moment)
+
+Every object is a `Group` of a fresnel face mesh plus `EdgesGeometry` lines.
+Record each part's final transform, start it from an "exploded" position,
+and ease it home one part at a time; flash amber when it locks.
+
+```glsl
+// hologram face: transparent centre, bright rim
+float f = pow(1. - abs(dot(vN, vV)), 2.2);
+gl_FragColor = vec4(uColor, (.035 + f * .32) * uOpacity * uGain);
+```
+
+```js
+const k = clamp((since - part.delay * 1.25) / 1.15);   // 1.15 s per part
+const e = k >= 1 ? 1 : 1 - Math.pow(2, -10 * k);      // easeOutExpo
+part.obj.position.lerpVectors(part.from, part.pos, e);
+part.obj.scale.setScalar(.5 + .5 * e);
+if (k >= 1 && !part.locked) { part.locked = true; part.flash = 1; }
+mat.color.copy(CYAN).lerp(AMBER, part.flash * .85);   // lock flash
+```
+
+- Materials: `AdditiveBlending`, `depthWrite: false`, `DoubleSide`.
+- Large flat surfaces (a desk top) read as a blown-out slab at grazing angles,
+  because of the fresnel term plus front and back faces. Give them their own
+  material clone with `uGain ≈ .3`, and share the opacity uniform object.
+- Extras that sell it:
+  - a scan plane sweeping up during assembly, then every ~7 s;
+  - dashed HUD rings rotating at different speeds;
+  - amber dimension lines and sprite labels ("01 DISPLAY ✓");
+  - floating panels drawn on `CanvasTexture`;
+  - a typing code screen, also a `CanvasTexture`, redrawn only when a character is added.
+- Start the assembly on the preloader's `boot:done` event, not on load, so the
+  user actually sees it.
+
+### 10. Bloom post-processing
+
+```js
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), .85, .5, .12); // strength, radius, threshold
+composer.addPass(bloom);
+composer.addPass(new OutputPass());          // tone mapping + sRGB at the end
+```
+
+- Keep the threshold above ~.1. At .05, every faint face blooms and the scene turns to mush.
+- Render bloom at reduced resolution (`.75×` desktop, `.5×` mobile) and set
+  `composer.setPixelRatio(1)` on mobile.
+- Lower `bloom.strength` as the camera approaches text (screens, labels) so it stays legible.
+
+### 11. Camera fly-through on scroll
+
+`CatmullRomCurve3` for position and a second one for the look-at target.
+Map hero progress `.04 → .7` onto `t`, apply an in-out cubic, and fade the
+pointer parallax as `t → 1`. Use `camera.setViewOffset()` to frame the
+subject off-centre: right of the copy on desktop, below it on mobile. No
+CSS transforms on the canvas.
+
+### 12. Boot preloader (terminal style)
+
+- Show **real** progress from real tasks: `document.fonts.ready`, the 3D
+  scene's `ready` event (with its own timeout), and `window.load`.
+- Cap the duration:
+  - first visit ≈ 1.1 s min and 2.4 s max;
+  - repeat visit (flag in `sessionStorage`) ≈ 0.35 s min and 1 s max.
+- Back the rAF cap with a real `setTimeout`, so a slow device never traps the user.
+- Skippable by click, Enter, Esc or Space. `lenis.stop()` while booting.
+  `html.booting body { overflow: hidden }`.
+- Reduced motion: finish immediately.
+- While the overlay covers the scene, don't re-render it. Compile once
+  (`renderer.compile(scene, camera)`) and render one frame as a warm-up.
+
+### 13. Cursor reticle and magnetic buttons (fine pointers only)
+
+- Gate both on `(hover: hover) and (pointer: fine)` and no reduced motion.
+- Keep the native cursor.
+- Cursor states must mean something: `type`, `drag · explore`, `open`, `filter`, `mail`, `visit ↗`.
+- Magnetic pull is at most ~25% of the element's size, and the element
+  eases back via a CSS `transition: transform`.
+
+### 14. Interactive terminal
+
+- Implement it as a `<form>` with a labelled `<input>`. Commands map to
+  functions: `help`, `ls [cat]`, `open <project>`, `skills`, `stack`,
+  `contact`, `hire`, `clear`.
+- History works with ↑/↓ and Tab completes command names and project ids.
+- Output lines use `esc()` on every interpolated value.
+- Keep the static contact info visible above the prompt, so the terminal is a bonus and never the only way in.
+
+## Frame-loop rules (from the award-site skills)
+
+- **Framerate-independent damping:**
+  `cur += (target - cur) * (1 - Math.pow(1 - ease, dt * 60))`, with `dt` clamped to 1/30.
+- Pause the loop when the canvas is off-screen (IntersectionObserver) or the
+  tab is hidden (`visibilitychange`). Reset the clock on resume.
+- Handle `webglcontextlost`: call `preventDefault()` and fall back to the
+  static layer (here, the SVG rig).
+- Shaders: `precision mediump float`. Cap DPR at 2 on desktop and 1.5 on mobile.
+  Use `antialias: false` when bloom runs anyway.
+- Every canvas and SVG colour comes from the CSS tokens (`--bg`, `--accent`,
+  `--accent-2`), so one theme switch recolours WebGL too.
+
+## Dark "holographic" theme tokens
+
+```css
+--bg:#04070d; --ink:#e6f3ff; --mute:#6f8698; --accent:#36d6ff; --accent-2:#ffb547;
+--line:rgba(110,190,255,.13); --glow:0 0 22px rgba(54,214,255,.35);
+```
+
+- Fonts: Chakra Petch (display), JetBrains Mono (labels), Kanit (Thai).
+- Ornament:
+  - grid and glow on `body::before`;
+  - scanlines and vignette on `body::after` with `pointer-events: none`;
+  - chamfered buttons via `clip-path`;
+  - fixed corner brackets;
+  - a vertical readout up the left edge, so it never covers content.
+- Keep the look original. Don't use film names, logos or characters.
+
 ## Non-negotiables
 
 - **Reduced motion**: no Lenis, no pinning (sections `height: auto`), morphs
@@ -147,6 +275,20 @@ and fonts to `@fontsource/*` CSS. Headless Chromium renders WebGL through
 SwiftShader, so screenshots of the 3D scene are real. Scroll to each chapter's
 progress points (`top + (height - innerHeight) * p`) and screenshot.
 
+### Screenshots of real projects with Docker (one project at a time)
+
+- Start the project's own `docker compose` stack, seed it, screenshot it with
+  Playwright, then run `docker compose down -v` before the next project.
+- Behind a TLS-intercepting proxy, mirror the project's Dockerfile and add the proxy CA:
+
+  ```dockerfile
+  COPY --from=certs ca-bundle.crt /usr/local/share/ca-certificates/proxy.crt
+  ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/proxy.crt
+  ```
+
+  Build with `docker build --build-context certs=<dir> --network host`.
+- Import SQL seeds with `--default-character-set=utf8mb4`. Without it, Thai text turns into mojibake.
+
 ## Sources
 
 - Framer "Particle Cloud" / "MorphField" components — GPU vertex-shader morphs, 20k+ particles, idle-then-gather pattern
@@ -155,3 +297,9 @@ progress points (`top + (height - innerHeight) * p`) and screenshot.
 - Codrops, "The Architecture Behind Trionn: Coordinating GSAP, Three.js, Lenis, and Web Audio"
 - utsubo.com "8 Best Three.js Websites of 2026" and svilenkovic.com SOTD 2026 notes — scroll-driven 3D narratives, one strong effect
 - Framer / shadcn "scramble text decode" components — decode presets, monospace, reduced-motion handling
+- Claude skills on GitHub, read and distilled for this file:
+  - `tsogjavklann/awwwards-3d` — damping formula, context-loss handling, shader warm-up, low-end detection;
+  - `SandroHub013/awwwards-skill` — preloader caps and real progress; cursor and magnetic rules; mask transitions;
+  - `tponscr-debug/claude-skill-awwwards` — one signature moment per page, jury scoring;
+  - `laasya2005/building-3d-scroll-portfolios` — camera-path scroll scenes, fallbacks.
+- three.js examples: `webgl_postprocessing_unreal_bloom`, fresnel/hologram shader pattern

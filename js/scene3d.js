@@ -4,7 +4,11 @@
    main.js เป็นคนคำนวณ progress ของ section แล้วเขียนไว้ที่ --p
    ไฟล์นี้แค่วาด ถ้าโหลด three.js หรือ WebGL ไม่ได้ หน้าเว็บยังใช้งานได้ตามปกติ
    ========================================================= */
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const sec = document.getElementById('ai');
 const canvas = document.getElementById('neuralCanvas');
@@ -17,15 +21,18 @@ function init() {
 
   let renderer;
   try {
-    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
   } catch (e) {
     sec.classList.add('no-3d');
     return;
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-  renderer.setClearColor(0xffffff, 0);
+  const css = getComputedStyle(document.documentElement);
+  const BG = new THREE.Color(css.getPropertyValue('--bg').trim() || '#04070d');
+  renderer.setClearColor(BG, 1);
 
   const scene = new THREE.Scene();
+  scene.background = BG;
   const camera = new THREE.PerspectiveCamera(38, 1, .1, 100);
   camera.position.set(0, 0, 8);
 
@@ -132,14 +139,15 @@ function init() {
     uTime: { value: 0 },
     uSize: { value: mobile ? 22 : 26 },
     uDpr: { value: renderer.getPixelRatio() },
-    uInk: { value: new THREE.Color('#0b0b0b') },
-    uAccent: { value: new THREE.Color('#b8121b') },
+    uInk: { value: new THREE.Color(css.getPropertyValue('--accent').trim() || '#36d6ff') },
+    uAccent: { value: new THREE.Color(css.getPropertyValue('--accent-2').trim() || '#ffb547') },
   };
 
   const material = new THREE.ShaderMaterial({
     uniforms,
     transparent: true,
     depthWrite: false,
+    blending: THREE.AdditiveBlending,
     vertexShader: /* glsl */`
       uniform float uMorph, uTime, uSize, uDpr;
       attribute vec3 aP0, aP1, aP2, aP3;
@@ -158,16 +166,17 @@ function init() {
         vec4 mv = modelViewMatrix * vec4(p, 1.);
         gl_PointSize = uSize * uDpr * (.55 + aRand2 * .7) / -mv.z;
         gl_Position = projectionMatrix * mv;
-        vAlpha = smoothstep(12., 5.5, -mv.z) * (.35 + .65 * aRand2);
-        vAcc = step(.965, aRand);
+        vAlpha = smoothstep(12., 5.5, -mv.z) * (.25 + .55 * aRand2);
+        vAcc = step(.955, aRand);
       }`,
     fragmentShader: /* glsl */`
+      precision mediump float;
       uniform vec3 uInk, uAccent;
       varying float vAlpha, vAcc;
       void main() {
         float d = length(gl_PointCoord - .5);
         if (d > .5) discard;
-        float a = smoothstep(.5, .15, d) * vAlpha;
+        float a = pow(smoothstep(.5, .0, d), 1.6) * vAlpha;
         gl_FragColor = vec4(mix(uInk, uAccent, vAcc), a);
       }`,
   });
@@ -177,11 +186,21 @@ function init() {
   group.add(points);
   scene.add(group);
 
+  /* ---------- bloom ---------- */
+  const composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), mobile ? .7 : .9, .6, .0);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
   /* ---------- sizing ---------- */
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
+    composer.setPixelRatio(mobile ? 1 : renderer.getPixelRatio());
+    composer.setSize(w, h);
+    bloom.resolution.set(w * .6, h * .6);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     const narrow = w < 900;
@@ -224,7 +243,7 @@ function init() {
     mouse.y += (mouse.ty - mouse.y) * .05;
     group.rotation.y = (reduce ? -.3 : -.3 + Math.sin(t * .15) * .32) + mouse.x * .45;
     group.rotation.x = .12 + Math.sin(t * .2) * .06 + mouse.y * .25;
-    renderer.render(scene, camera);
+    composer.render();
     const idx = Math.min(3, Math.round(morph));
     if (shapeEl && idx !== last) { shapeEl.textContent = SHAPES[idx]; last = idx; }
   }

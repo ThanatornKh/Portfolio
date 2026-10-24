@@ -7,17 +7,52 @@
   <title>Thanatorn Khwanmankong — Full Stack Developer</title>
   <meta name="description"
     content="Portfolio ของ Thanatorn Khwanmankong นิสิตเทคโนโลยีสารสนเทศ มหาวิทยาลัยเกษตรศาสตร์ — ผลงาน Full Stack, Web, IoT, DevOps, Data & AI">
-  <meta name="theme-color" content="#ffffff">
+  <meta name="theme-color" content="#04070d">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Kanit:wght@200;300;400;500&family=Michroma&family=Montserrat:wght@300;400;500;600&family=Mrs+Saint+Delafield&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Kanit:wght@200;300;400;500&family=Michroma&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+      }
+    }
+  </script>
   <script>document.documentElement.classList.add('js');</script>
 </head>
 
 <body>
+
+  <a class="skip" href="#about">ข้ามไปที่เนื้อหา</a>
+
+  <!-- ================= BOOT SEQUENCE ================= -->
+  <div class="boot" id="boot" aria-hidden="true">
+    <div class="boot-inner">
+      <div class="boot-core">
+        <svg viewBox="0 0 150 150" fill="none" stroke="#36d6ff">
+          <circle class="r1" cx="75" cy="75" r="70" stroke-width="1" stroke-dasharray="2 6" opacity=".7" />
+          <circle class="r2" cx="75" cy="75" r="56" stroke-width="2" stroke-dasharray="60 24 8 24" />
+          <circle class="r3" cx="75" cy="75" r="42" stroke-width="1" stroke-dasharray="120 144" opacity=".9" />
+          <circle cx="75" cy="75" r="26" stroke-width="1" opacity=".5" />
+          <path d="M75 49v8M75 93v8M49 75h8M93 75h8" stroke-width="1" />
+        </svg>
+      </div>
+      <div class="boot-pct" id="bootPct">000</div>
+      <div class="boot-bar"><i id="bootBar"></i></div>
+      <pre class="boot-log" id="bootLog"></pre>
+      <button type="button" class="boot-skip" id="bootSkip">skip intro ↵</button>
+    </div>
+  </div>
+
+  <!-- HUD: มุมจอ + สถานะระบบ -->
+  <div class="hud-frame" aria-hidden="true"><i></i><i></i><i></i><i></i><b>HOLO-OS v1.0 · <span id="hudChapter">PROLOGUE</span> · <span id="hudPct">000%</span></b></div>
+
+  <!-- เคอร์เซอร์เป้าเล็ง (เฉพาะเมาส์) -->
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor-ring"></span><span class="cursor-dot"></span><span class="cursor-label" id="cursorLabel"></span></div>
 
   <!-- เส้นกริดไกด์ทั้งหน้า -->
   <div class="guides" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
@@ -80,8 +115,9 @@
   <main id="top">
 
     <!-- ================= HERO (ซูมเข้าจอคอม) ================= -->
-    <section id="hero" class="hero">
+    <section id="hero" class="hero" data-photo="https://i.ibb.co/pjhgCmzb/9613.jpg">
       <div class="hero-pin">
+        <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
         <div class="hero-copy" id="heroCopy">
           <div class="mono-label hero-in" style="--d:0">// portfolio — vol.01 / 2568</div>
           <h1 class="hero-title hero-in" style="--d:1">
@@ -135,6 +171,9 @@
 
         <div class="about-grid">
           <div class="about-text reveal">
+            <figure class="about-photo" id="aboutPhoto">
+              <img src="https://i.ibb.co/pjhgCmzb/9613.jpg" alt="Thanatorn Khwanmankong" loading="lazy">
+            </figure>
             <div class="file-tab">README.md</div>
             <p>ฉันเป็นนักศึกษาสาขาเทคโนโลยีสารสนเทศที่หลงใหลในการพัฒนาซอฟต์แวร์แบบครบวงจร
               มีความสามารถทั้งฝั่ง Frontend และ Backend สามารถสร้างระบบที่ใช้งานได้จริงตั้งแต่ UI ไปจนถึง Database</p>
@@ -275,7 +314,7 @@
 
         <div class="terminal reveal" id="terminal">
           <div class="editor-bar"><i></i><i></i><i></i><span>zsh — contact</span></div>
-          <div class="terminal-body">
+          <div class="terminal-body" id="termOut" aria-live="polite">
             <p><b>$</b> whoami</p>
             <p class="out">thanatorn khwanmankong — full stack developer</p>
             <p><b>$</b> cat contact.txt</p>
@@ -285,8 +324,13 @@
             <p class="out"><span class="k">facebook</span><a href="https://www.facebook.com/tanatorn.qwanmankong?locale=th_TH" target="_blank" rel="noopener">Thanatorn Khwanmankong</a></p>
             <p class="out"><span class="k">location</span>กรุงเทพมหานคร</p>
             <p><b>$</b> status</p>
-            <p class="out">available for <strong>internship · ฝึกงาน</strong><span class="caret"></span></p>
+            <p class="out">available for <strong>internship · ฝึกงาน</strong></p>
+            <p class="out">พิมพ์ <strong>help</strong> เพื่อดูคำสั่งทั้งหมด</p>
           </div>
+          <form class="term-input" id="termForm" autocomplete="off">
+            <label for="termIn"><b>$</b></label>
+            <input id="termIn" type="text" spellcheck="false" placeholder="help · ls · open fleet-management · hire" aria-label="พิมพ์คำสั่ง terminal">
+          </form>
         </div>
       </div>
     </section>
@@ -341,6 +385,7 @@
   <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script type="module" src="js/hero3d.js"></script>
   <script type="module" src="js/scene3d.js"></script>
 </body>
 

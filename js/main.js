@@ -59,9 +59,74 @@
   const techs = [...techMap.values()];
 
   /* =========================================================
+     BOOT SEQUENCE — preloader แบบเทอร์มินัล (ความคืบหน้าจริง, กดข้ามได้, จำกัดเวลา)
+     ========================================================= */
+  const root = document.documentElement;
+  (() => {
+    const boot = $('#boot');
+    if (!boot) { root.classList.add('booted'); return; }
+    let repeat = false;
+    try { repeat = sessionStorage.getItem('holo-booted') === '1'; } catch (e) { /* storage blocked */ }
+    const finish = () => {
+      if (root.classList.contains('booted')) return;
+      root.classList.remove('booting');
+      root.classList.add('booted');
+      if (lenis) lenis.start();
+      try { sessionStorage.setItem('holo-booted', '1'); } catch (e) { /* ignore */ }
+      window.dispatchEvent(new Event('boot:done'));
+    };
+    if (reduceMotion) { finish(); return; }
+    root.classList.add('booting');
+    if (lenis) lenis.stop();
+
+    const log = $('#bootLog'), pctEl = $('#bootPct'), bar = $('#bootBar');
+    const tasks = {
+      fonts: document.fonts ? document.fonts.ready : Promise.resolve(),
+      scene: new Promise(res => { window.addEventListener('hero3d:ready', res, { once: true }); setTimeout(res, 2200); }),
+      page: document.readyState === 'complete' ? Promise.resolve() : new Promise(res => window.addEventListener('load', res, { once: true })),
+    };
+    const LINES = [
+      ['HOLO-OS v1.0 // portfolio of Thanatorn Khwanmankong', null],
+      ['mount /projects', `${PROJECTS.length} found`],
+      ['index categories', `${CATEGORIES.length} ok`],
+      ['link technologies', `${techMap.size} nodes`],
+      ['load typefaces', 'fonts'],
+      ['assemble holographic workstation', 'scene'],
+      ['calibrate scroll engine', lenis ? 'lenis ok' : 'native ok'],
+      ['all systems online', 'page'],
+    ];
+    let done = 0;
+    const total = Object.keys(tasks).length;
+    Object.values(tasks).forEach(pr => pr.then(() => { done++; }));
+    const t0 = performance.now(), MIN = repeat ? 350 : 1100, MAX = repeat ? 1000 : 2400;
+    let shown = 0, lineIdx = 0, ended = false;
+    const tick = now => {
+      const el = now - t0;
+      const timeP = Math.min(.9, el / (MIN * 1.1));
+      const target = Math.max(Math.min(timeP, (done / total) * .9 + .1), done === total ? Math.min(1, el / MIN) : 0);
+      shown += (target - shown) * .12;
+      pctEl.textContent = String(Math.round(shown * 100)).padStart(3, '0');
+      bar.style.transform = `scaleX(${shown})`;
+      while (lineIdx < LINES.length && shown >= lineIdx / LINES.length) {
+        const [txt, ok] = LINES[lineIdx++];
+        log.insertAdjacentHTML('beforeend', ok === null ? `${esc(txt)}\n` : `[ <span class="ok">ok</span> ] ${esc(txt)} <span class="ok">· ${esc(['fonts', 'scene', 'page'].includes(ok) ? 'ready' : ok)}</span>\n`);
+      }
+      if (!ended && ((done === total && el >= MIN && shown > .985) || el >= MAX)) { ended = true; setTimeout(finish, 180); }
+      if (!ended) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+    // เผื่อเครื่องช้าจน rAF ห่าง: ปิดตามเวลาจริงเสมอ ไม่ขังผู้ใช้ไว้
+    setTimeout(() => { if (!ended) { ended = true; finish(); } }, MAX + 250);
+    const skip = () => { ended = true; finish(); };
+    $('#bootSkip').addEventListener('click', skip);
+    window.addEventListener('keydown', e => { if (!root.classList.contains('booted') && (e.key === 'Enter' || e.key === 'Escape' || e.key === ' ')) skip(); });
+  })();
+
+
+  /* =========================================================
      BLUEPRINT COVER — ภาพปกเส้นแบบพิมพ์เขียว สำหรับผลงานที่ไม่มีรูป
      ========================================================= */
-  const S = 'stroke="#0b0b0b" stroke-width="1.3" fill="none"';
+  const S = 'stroke="#36d6ff" stroke-width="1.3" fill="none"';
   const GLYPHS = {
     fullstack: `
       <rect x="230" y="135" width="250" height="175" ${S}/>
@@ -76,7 +141,7 @@
       <path d="M480 230h40" ${S} stroke-dasharray="4 4"/>`,
     web: `
       <rect x="285" y="125" width="210" height="190" ${S} stroke-dasharray="4 5"/>
-      <rect x="315" y="150" width="210" height="190" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>
+      <rect x="315" y="150" width="210" height="190" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/>
       <line x1="315" y1="174" x2="525" y2="174" ${S}/>
       <path d="M392 232l-26 22 26 22M448 232l26 22-26 22M432 222l-24 64" ${S}/>`,
     iot: `
@@ -86,7 +151,7 @@
         const o = 360 + i * 20;
         return `<path d="M${o} 190v-14M${o} 300v14M345 ${o - 155}h-14M455 ${o - 155}h14" ${S}/>`;
       }).join('')}
-      <circle cx="400" cy="152" r="3.5" fill="#0b0b0b"/>
+      <circle cx="400" cy="152" r="3.5" fill="#36d6ff"/>
       <path d="M383 135a24 24 0 0 1 34 0M371 123a41 41 0 0 1 58 0M359 111a58 58 0 0 1 82 0" ${S}/>`,
     backend: [0, 1, 2].map(i => {
       const y = 140 + i * 58;
@@ -96,19 +161,19 @@
     }).join('') + `<path d="M400 314v24M330 338h140" ${S}/>`,
     data: `
       <path d="M280 125v200h260" ${S}/>
-      <path d="M280 275h260M280 225h260M280 175h260" stroke="#0b0b0b" stroke-width=".6" stroke-dasharray="3 5" fill="none"/>
+      <path d="M280 275h260M280 225h260M280 175h260" stroke="#36d6ff" stroke-width=".6" stroke-dasharray="3 5" fill="none"/>
       <polyline points="295,295 340,250 385,268 430,200 475,214 520,150" ${S}/>
-      ${[[295, 295], [340, 250], [385, 268], [430, 200], [475, 214], [520, 150]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>`).join('')}`,
+      ${[[295, 295], [340, 250], [385, 268], [430, 200], [475, 214], [520, 150]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="4.5" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/>`).join('')}`,
     game: `
       <path d="M380 140l78 45v90l-78 45-78-45v-90z" ${S}/>
       <path d="M302 185l78 45 78-45M380 230v90" ${S}/>
-      <path d="M302 275l78-45M458 275l-78-45M380 140v90" stroke="#0b0b0b" stroke-width=".7" stroke-dasharray="3 5" fill="none"/>
+      <path d="M302 275l78-45M458 275l-78-45M380 140v90" stroke="#36d6ff" stroke-width=".7" stroke-dasharray="3 5" fill="none"/>
       <circle cx="520" cy="285" r="30" ${S}/>
       <ellipse cx="520" cy="285" rx="30" ry="9" ${S} stroke-dasharray="3 4"/>`,
   };
 
   // ภาพลายเส้นเฉพาะของแต่ละผลงาน (ไม่มี = ใช้ภาพของหมวด)
-  const T = (x, y, s, size = 12, anchor = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#0b0b0b">${s}</text>`;
+  const T = (x, y, s, size = 12, anchor = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#36d6ff">${s}</text>`;
   const arrow = (x1, y1, x2, y2) => {
     const a = Math.atan2(y2 - y1, x2 - x1), h = 10;
     const p1 = [x2 - h * Math.cos(a - .4), y2 - h * Math.sin(a - .4)], p2 = [x2 - h * Math.cos(a + .4), y2 - h * Math.sin(a + .4)];
@@ -118,22 +183,22 @@
     'smart-parking-3d': [300, 252, 204, 156].map(c => `<path d="M260 ${c}L400 ${c - 42}L540 ${c}L400 ${c + 42}Z" ${S}${c === 156 ? '' : ' stroke-dasharray="5 4"'}/>`).join('') + `
       <path d="M260 156V300M540 156V300M400 198V342" ${S}/>
       <path d="M338 150l22-8 22 8-22 8zM418 162l22-8 22 8-22 8z" ${S}/>
-      <circle cx="580" cy="230" r="4" fill="#0b0b0b"/>
+      <circle cx="580" cy="230" r="4" fill="#36d6ff"/>
       <path d="M592 218a16 16 0 0 1 0 24M601 209a28 28 0 0 1 0 42" ${S}/>
       ${T(612, 290, 'ESP32', 11, 'start')}`,
     'equipment-management': `
       <rect x="290" y="110" width="220" height="240" rx="6" ${S}/>
-      <rect x="360" y="98" width="80" height="26" rx="4" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>
+      <rect x="360" y="98" width="80" height="26" rx="4" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/>
       ${[0, 1, 2, 3].map(i => `<rect x="310" y="${148 + i * 36}" width="16" height="16" ${S}/><path d="M340 ${156 + i * 36}H${470 - i * 22}" ${S}/>`).join('')}
       <path d="M313 155l5 5 9-10M313 191l5 5 9-10" ${S}/>
-      ${[0, 4, 7, 9, 14, 17, 22, 26, 28, 33, 38, 41, 46, 50, 53, 58, 63, 66, 71, 75].map((o, i) => `<path d="M${330 + o * 2} 300v30" stroke="#0b0b0b" stroke-width="${i % 3 ? 1 : 2.4}"/>`).join('')}`,
+      ${[0, 4, 7, 9, 14, 17, 22, 26, 28, 33, 38, 41, 46, 50, 53, 58, 63, 66, 71, 75].map((o, i) => `<path d="M${330 + o * 2} 300v30" stroke="#36d6ff" stroke-width="${i % 3 ? 1 : 2.4}"/>`).join('')}`,
     'fleet-management': `
       <path d="M150 170C260 120 330 210 430 160S580 110 620 135" ${S} stroke-dasharray="5 6"/>
-      <circle cx="150" cy="170" r="5" fill="#0b0b0b"/>
+      <circle cx="150" cy="170" r="5" fill="#36d6ff"/>
       <path d="M620 100c-14 0-22 10-22 22 0 16 22 36 22 36s22-20 22-36c0-12-8-22-22-22z" ${S}/><circle cx="620" cy="121" r="6" ${S}/>
       <rect x="230" y="210" width="200" height="96" ${S}/>
       <path d="M430 236h60l40 40v30H430zM442 246h42l26 26h-68z" ${S}/>
-      <circle cx="285" cy="312" r="22" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/><circle cx="485" cy="312" r="22" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>
+      <circle cx="285" cy="312" r="22" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/><circle cx="485" cy="312" r="22" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/>
       <path d="M190 334H610" ${S}/>`,
     'angular-first-app': `
       <rect x="340" y="116" width="120" height="40" ${S}/>${T(400, 140, '&lt;app-root&gt;', 11)}
@@ -143,47 +208,47 @@
     'sa-schedule-system': `
       <rect x="230" y="120" width="340" height="230" ${S}/>
       <path d="M230 160H570M300 108v24M500 108v24" ${S}/>
-      ${[1, 2, 3, 4].map(k => `<path d="M${230 + 68 * k} 160V350" stroke="#0b0b0b" stroke-width=".6"/>`).join('')}
-      ${[1, 2, 3].map(k => `<path d="M230 ${160 + 47.5 * k}H570" stroke="#0b0b0b" stroke-width=".6"/>`).join('')}
-      ${[[1, 0], [3, 0], [0, 1], [2, 2], [4, 1], [1, 3]].map(([c, r]) => `<rect x="${234 + 68 * c}" y="${164 + 47.5 * r}" width="60" height="39" fill="rgba(11,11,11,.08)" ${S}/>`).join('')}
+      ${[1, 2, 3, 4].map(k => `<path d="M${230 + 68 * k} 160V350" stroke="#36d6ff" stroke-width=".6"/>`).join('')}
+      ${[1, 2, 3].map(k => `<path d="M230 ${160 + 47.5 * k}H570" stroke="#36d6ff" stroke-width=".6"/>`).join('')}
+      ${[[1, 0], [3, 0], [0, 1], [2, 2], [4, 1], [1, 3]].map(([c, r]) => `<rect x="${234 + 68 * c}" y="${164 + 47.5 * r}" width="60" height="39" fill="rgba(54,214,255,.08)" ${S}/>`).join('')}
       <rect x="600" y="240" width="44" height="36" rx="4" ${S}/><path d="M610 240v-12a12 12 0 0 1 24 0v12" ${S}/>`,
     'sa-activity-planner': [210, 330, 450].map((x, ci) => `
       <rect x="${x}" y="120" width="110" height="230" ${S}/><path d="M${x} 150h110" ${S}/>
       ${T(x + 55, 140, ['TODO', 'DOING', 'DONE'][ci], 10)}
-      ${Array.from({ length: [2, 3, 1][ci] }, (_, i) => `<rect x="${x + 10}" y="${160 + i * 50}" width="90" height="38" ${S}/><path d="M${x + 20} ${174 + i * 50}h50M${x + 20} ${186 + i * 50}h32" stroke="#0b0b0b" stroke-width=".7"/>`).join('')}`).join('') +
-      `<path d="M528 168l8 8 16-16" stroke="#b8121b" stroke-width="2" fill="none"/>`,
+      ${Array.from({ length: [2, 3, 1][ci] }, (_, i) => `<rect x="${x + 10}" y="${160 + i * 50}" width="90" height="38" ${S}/><path d="M${x + 20} ${174 + i * 50}h50M${x + 20} ${186 + i * 50}h32" stroke="#36d6ff" stroke-width=".7"/>`).join('')}`).join('') +
+      `<path d="M528 168l8 8 16-16" stroke="#ffb547" stroke-width="2" fill="none"/>`,
     'cambodia-culture-music': `
       <path d="M370 330V220Q400 110 430 220V330M300 330V250Q325 180 350 250V330M450 330V250Q475 180 500 250V330" ${S}/>
-      <path d="M372 250h56M372 280h56M302 280h46M452 280h46M380 190h40" stroke="#0b0b0b" stroke-width=".7" fill="none"/>
+      <path d="M372 250h56M372 280h56M302 280h46M452 280h46M380 190h40" stroke="#36d6ff" stroke-width=".7" fill="none"/>
       <path d="M260 330h280v14H260zM240 344h320v12H240z" ${S}/>
       <path d="M576 150v62M606 140v62M576 150l30-10M576 162l30-10" ${S}/>
-      <ellipse cx="568" cy="213" rx="9" ry="6" fill="#0b0b0b"/><ellipse cx="598" cy="203" rx="9" ry="6" fill="#0b0b0b"/>`,
+      <ellipse cx="568" cy="213" rx="9" ry="6" fill="#36d6ff"/><ellipse cx="598" cy="203" rx="9" ry="6" fill="#36d6ff"/>`,
     'portfolio-website': `
       <rect x="220" y="120" width="360" height="230" ${S}/><path d="M220 144h360" ${S}/>
       <circle cx="234" cy="132" r="3" ${S}/><circle cx="246" cy="132" r="3" ${S}/><circle cx="258" cy="132" r="3" ${S}/>
-      <path d="M250 196h200M250 224h150" stroke="#0b0b0b" stroke-width="7" fill="none"/>
-      <path d="M250 250h240M250 264h200" stroke="#0b0b0b" stroke-width=".8" fill="none"/>
-      <rect x="250" y="286" width="96" height="28" rx="14" fill="#0b0b0b"/><rect x="356" y="286" width="80" height="28" rx="14" ${S}/>
-      <path d="M520 290v34l9-9 7 15 6-3-7-14h12z" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>`,
+      <path d="M250 196h200M250 224h150" stroke="#36d6ff" stroke-width="7" fill="none"/>
+      <path d="M250 250h240M250 264h200" stroke="#36d6ff" stroke-width=".8" fill="none"/>
+      <rect x="250" y="286" width="96" height="28" rx="14" fill="#36d6ff"/><rect x="356" y="286" width="80" height="28" rx="14" ${S}/>
+      <path d="M520 290v34l9-9 7 15 6-3-7-14h12z" fill="#08111c" stroke="#36d6ff" stroke-width="1.3"/>`,
     'netpie-device-control': `
       <path d="M300 250a36 36 0 0 1 22-62 52 52 0 0 1 98-14 40 40 0 0 1 60 40 30 30 0 0 1-6 58H312a30 30 0 0 1-12-22z" ${S}/>
       ${T(400, 238, 'NETPIE', 13)}
       ${arrow(370, 282, 370, 318)}${arrow(430, 318, 430, 282)}
       ${T(446, 304, 'MQTT', 10, 'start')}
       <rect x="320" y="320" width="160" height="44" rx="4" ${S}/>
-      <rect x="338" y="332" width="44" height="20" rx="10" ${S}/><circle cx="372" cy="342" r="7" fill="#0b0b0b"/>
-      <circle cx="450" cy="342" r="7" fill="#b8121b"/>`,
+      <rect x="338" y="332" width="44" height="20" rx="10" ${S}/><circle cx="372" cy="342" r="7" fill="#36d6ff"/>
+      <circle cx="450" cy="342" r="7" fill="#ffb547"/>`,
     'dht-lcd-alert': `
       <path d="M300 130v148a24 24 0 1 0 20 0V130a10 10 0 0 0-20 0z" ${S}/>
-      <path d="M310 170v128" stroke="#b8121b" stroke-width="5"/><circle cx="310" cy="298" r="12" fill="#b8121b"/>
+      <path d="M310 170v128" stroke="#ffb547" stroke-width="5"/><circle cx="310" cy="298" r="12" fill="#ffb547"/>
       ${[0, 1, 2, 3, 4, 5].map(i => `<path d="M326 ${150 + i * 22}h${i % 2 ? 6 : 10}" ${S}/>`).join('')}
-      <rect x="380" y="170" width="230" height="96" ${S}/><rect x="394" y="184" width="202" height="68" fill="rgba(11,11,11,.06)" ${S}/>
+      <rect x="380" y="170" width="230" height="96" ${S}/><rect x="394" y="184" width="202" height="68" fill="rgba(54,214,255,.06)" ${S}/>
       ${T(408, 212, 'TEMP  28.5°C', 15, 'start')}${T(408, 238, 'HUMID 64 %', 15, 'start')}
-      <circle cx="560" cy="310" r="10" fill="#b8121b"/>
+      <circle cx="560" cy="310" r="10" fill="#ffb547"/>
       <path d="M560 284v-8M580 292l6-6M540 292l-6-6M586 310h8M534 310h-8" ${S}/>`,
     'mqtt-button-publish': `
       <rect x="240" y="230" width="100" height="96" rx="8" ${S}/>
-      <circle cx="290" cy="278" r="30" ${S}/><circle cx="290" cy="278" r="18" fill="#0b0b0b"/>
+      <circle cx="290" cy="278" r="30" ${S}/><circle cx="290" cy="278" r="18" fill="#36d6ff"/>
       ${arrow(345, 278, 462, 278)}${T(404, 264, 'publish', 11)}
       <rect x="380" y="186" width="48" height="32" ${S}/><path d="M380 186l24 18 24-18" ${S}/>
       <circle cx="520" cy="278" r="50" ${S}/>${T(520, 283, 'MQTT', 14)}
@@ -191,7 +256,7 @@
     'mqtt-counter-lcd': `
       <circle cx="285" cy="260" r="50" ${S}/>${T(285, 265, 'MQTT', 14)}
       ${arrow(338, 260, 398, 260)}${T(368, 246, 'sub', 11)}
-      <rect x="402" y="212" width="210" height="96" ${S}/><rect x="414" y="224" width="186" height="72" fill="rgba(11,11,11,.06)" ${S}/>
+      <rect x="402" y="212" width="210" height="96" ${S}/><rect x="414" y="224" width="186" height="72" fill="rgba(54,214,255,.06)" ${S}/>
       ${T(507, 274, '0042', 38)}`,
     'spring-boot-workshop': `
       ${[['Controller', 130], ['Service', 202], ['Repository', 274]].map(([s, y]) => `<rect x="260" y="${y}" width="230" height="48" ${S}/>${T(375, y + 29, s, 13)}`).join('')}
@@ -204,13 +269,13 @@
       <path d="M326 250h134M436 250v22M456 250v14" ${S}/>
       ${arrow(472, 250, 528, 250)}${T(500, 238, 'ssh', 11)}
       <rect x="540" y="170" width="120" height="160" ${S}/>
-      ${[0, 1, 2].map(i => `<path d="M552 ${188 + i * 48}h96v32h-96z" ${S}/><circle cx="636" cy="${204 + i * 48}" r="4" fill="#0b0b0b"/><path d="M562 ${204 + i * 48}h40" ${S}/>`).join('')}
+      ${[0, 1, 2].map(i => `<path d="M552 ${188 + i * 48}h96v32h-96z" ${S}/><circle cx="636" cy="${204 + i * 48}" r="4" fill="#36d6ff"/><path d="M562 ${204 + i * 48}h40" ${S}/>`).join('')}
       ${T(600, 350, 'VPS', 12)}`,
     'owasp-juice-shop': `
       <path d="M400 120l100 35v85c0 60-45 95-100 110-55-15-100-50-100-110v-85z" ${S}/>
       <ellipse cx="400" cy="256" rx="26" ry="36" ${S}/><circle cx="400" cy="208" r="12" ${S}/>
       <path d="M374 240h-22M374 260h-24M376 280h-20M426 240h22M426 260h24M424 280h20M390 198l-10-12M410 198l10-12M400 222v70" ${S}/>
-      <circle cx="574" cy="196" r="34" ${S}/><path d="M598 220l40 40" stroke="#0b0b0b" stroke-width="4"/>`,
+      <circle cx="574" cy="196" r="34" ${S}/><path d="M598 220l40 40" stroke="#36d6ff" stroke-width="4"/>`,
     'airflow-pipeline-lab': `
       ${[[200, 220, 'extract'], [340, 150, 'transform'], [340, 290, 'validate'], [480, 220, 'load']].map(([x, y, s]) => `<rect x="${x}" y="${y}" width="100" height="38" rx="19" ${S}/>${T(x + 50, y + 23, s, 11)}`).join('')}
       ${arrow(300, 232, 338, 178)}${arrow(300, 246, 338, 300)}${arrow(440, 178, 478, 232)}${arrow(440, 300, 478, 246)}
@@ -220,20 +285,20 @@
   function blueprint(p) {
     const c = catById[p.cat];
     let grid = '';
-    for (let x = 0; x <= 800; x += 25) grid += `<line x1="${x}" y1="0" x2="${x}" y2="500" stroke="${x % 100 ? '#ebebe7' : '#dcdcd7'}" stroke-width="${x % 100 ? .6 : .8}"/>`;
-    for (let y = 0; y <= 500; y += 25) grid += `<line x1="0" y1="${y}" x2="800" y2="${y}" stroke="${y % 100 ? '#ebebe7' : '#dcdcd7'}" stroke-width="${y % 100 ? .6 : .8}"/>`;
+    for (let x = 0; x <= 800; x += 25) grid += `<line x1="${x}" y1="0" x2="${x}" y2="500" stroke="${x % 100 ? 'rgba(54,214,255,.07)' : 'rgba(54,214,255,.14)'}" stroke-width="${x % 100 ? .6 : .8}"/>`;
+    for (let y = 0; y <= 500; y += 25) grid += `<line x1="0" y1="${y}" x2="800" y2="${y}" stroke="${y % 100 ? 'rgba(54,214,255,.07)' : 'rgba(54,214,255,.14)'}" stroke-width="${y % 100 ? .6 : .8}"/>`;
     return `<svg class="bp" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(p.name)}">
-      <rect width="800" height="500" fill="#f5f5f3"/>${grid}
+      <rect width="800" height="500" fill="#08111c"/>${grid}
       <g>${PROJECT_GLYPHS[p.id] || GLYPHS[c.glyph] || ''}</g>
-      <g stroke="#0b0b0b" stroke-width="1" fill="none">
+      <g stroke="#36d6ff" stroke-width="1" fill="none">
         <path d="M270 378h260M270 371v14M530 371v14M270 378l10-4v8zM530 378l-10-4v8z"/>
       </g>
-      <text x="400" y="404" text-anchor="middle" font-size="11" letter-spacing="2" fill="#858580">${esc(p.stack.slice(0, 3).join(' · '))}</text>
-      <text x="96" y="62" font-size="15" font-weight="500" letter-spacing="3" fill="#0b0b0b">${p.code}</text>
-      <text x="96" y="82" font-size="10" letter-spacing="1" fill="#858580">${esc(p.path)}</text>
-      <text x="704" y="62" text-anchor="end" font-size="10" letter-spacing="2" fill="#858580">NO. ${pad(p.no)}</text>
-      <text x="96" y="452" font-size="13" font-weight="500" letter-spacing="3" fill="#0b0b0b">${esc(p.name.toUpperCase())}</text>
-      <path d="M96 465h40" stroke="#b8121b" stroke-width="2"/>
+      <text x="400" y="404" text-anchor="middle" font-size="11" letter-spacing="2" fill="#6f8698">${esc(p.stack.slice(0, 3).join(' · '))}</text>
+      <text x="96" y="62" font-size="15" font-weight="500" letter-spacing="3" fill="#36d6ff">${p.code}</text>
+      <text x="96" y="82" font-size="10" letter-spacing="1" fill="#6f8698">${esc(p.path)}</text>
+      <text x="704" y="62" text-anchor="end" font-size="10" letter-spacing="2" fill="#6f8698">NO. ${pad(p.no)}</text>
+      <text x="96" y="452" font-size="13" font-weight="500" letter-spacing="3" fill="#36d6ff">${esc(p.name.toUpperCase())}</text>
+      <path d="M96 465h40" stroke="#ffb547" stroke-width="2"/>
     </svg>`;
   }
 
@@ -256,7 +321,7 @@
      HERO — ภาพลายเส้นโต๊ะทำงาน Developer
      ========================================================= */
   function buildRig() {
-    const L = 'stroke="#0b0b0b" fill="none"';
+    const L = 'stroke="#36d6ff" fill="none"';
     const keys = [];
     for (let r = 0; r < 4; r++) {
       const yA = 674 + r * 16, yB = yA + 12;
@@ -275,8 +340,8 @@
       });
     }
     return `
-      <text x="40" y="24" font-size="12" fill="#858580" class="fade">FIG. 01 — DEVELOPER WORKSTATION</text>
-      <text x="1160" y="24" font-size="12" fill="#858580" text-anchor="end" class="fade">SCALE 1:10 · DWG TK-2568</text>
+      <text x="40" y="24" font-size="12" fill="#6f8698" class="fade">FIG. 01 — DEVELOPER WORKSTATION</text>
+      <text x="1160" y="24" font-size="12" fill="#6f8698" text-anchor="end" class="fade">SCALE 1:10 · DWG TK-2568</text>
 
       <!-- desk -->
       <path class="draw" d="M40 640H1160" ${L} stroke-width="1.2"/>
@@ -287,8 +352,8 @@
         <path d="M330 66H930M330 58v16M930 58v16M330 66l10-4v8zM930 66l-10-4v8z"/>
         <path d="M968 90V480M960 90h16M960 480h16M968 90l-4 10h8zM968 480l-4-10h8z"/>
       </g>
-      <text x="630" y="56" font-size="12" fill="#858580" text-anchor="middle" class="fade">600</text>
-      <text x="988" y="290" font-size="12" fill="#858580" class="fade">390</text>
+      <text x="630" y="56" font-size="12" fill="#6f8698" text-anchor="middle" class="fade">600</text>
+      <text x="988" y="290" font-size="12" fill="#6f8698" class="fade">390</text>
 
       <!-- monitor -->
       <rect class="draw" x="330" y="90" width="600" height="390" rx="16" ${L} stroke-width="1.5"/>
@@ -313,7 +378,7 @@
 
       <!-- photo frame -->
       <rect class="draw" x="104" y="458" width="136" height="182" ${L} stroke-width="1.3"/>
-      <rect x="114" y="468" width="115" height="156" fill="#f5f5f3"/>
+      <rect x="114" y="468" width="115" height="156" fill="#08111c"/>
 
       <!-- lamp -->
       <rect class="draw" x="1035" y="628" width="80" height="12" rx="6" ${L} stroke-width="1.2"/>
@@ -330,7 +395,7 @@
         <circle cx="260" cy="721" r="3"/><path d="M260 721 220 760H130"/>
         <circle cx="850" cy="740" r="3"/><path d="M850 740 880 760H980"/>
       </g>
-      <g class="fade" font-size="11" fill="#0b0b0b">
+      <g class="fade" font-size="11" fill="#36d6ff">
         <text x="200" y="64">01 DISPLAY</text>
         <text x="60" y="404">02 DEVELOPER</text>
         <text x="130" y="754">03 FUEL</text>
@@ -428,6 +493,7 @@
 
   /* ---------- hero scroll: zoom into the screen + pixel dissolve ---------- */
   const hero = $('#hero');
+  hero.dataset.projects = ordered.length;
   const heroPin = $('.hero-pin');
   const stage = $('#rigStage');
   const screen = $('#rigScreen');
@@ -474,8 +540,8 @@
     pctx.clearRect(0, 0, width, height);
     if (q <= 0) return;
     for (const c of cells) {
-      if (c.th < q) pctx.fillStyle = '#ffffff';
-      else if (c.th < q + .07) pctx.fillStyle = c.th < q + .035 ? '#e6e6e2' : '#2a2c30';
+      if (c.th < q) pctx.fillStyle = '#04070d';
+      else if (c.th < q + .07) pctx.fillStyle = c.th < q + .035 ? '#36d6ff' : '#0d2a3a';
       else continue;
       pctx.fillRect(c.x, c.y, c.s + .5, c.s + .5);
     }
@@ -488,11 +554,15 @@
     const r = hero.getBoundingClientRect();
     const span = r.height - window.innerHeight;
     const p = clamp(-r.top / span);
-    const e = easeInOut(clamp((p - .06) / .62));
-    const k = 1 + (geo.scale - 1) * e;
-    const x = lerp(geo.cx, geo.tx, e) - k * geo.cx;
-    const y = lerp(geo.cy, geo.ty, e) - k * geo.cy;
-    stage.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${k})`;
+    hero.style.setProperty('--p', p.toFixed(4));
+    // 3D hero (js/hero3d.js) อ่าน --p เอง; ภาพ SVG ซูมแบบ 2D ใช้เมื่อ WebGL ไม่พร้อมเท่านั้น
+    if (!hero.classList.contains('hero-3d')) {
+      const e = easeInOut(clamp((p - .06) / .62));
+      const k = 1 + (geo.scale - 1) * e;
+      const x = lerp(geo.cx, geo.tx, e) - k * geo.cx;
+      const y = lerp(geo.cy, geo.ty, e) - k * geo.cy;
+      stage.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${k})`;
+    }
 
     const f = clamp(p / .2);
     heroCopy.style.opacity = 1 - f;
@@ -543,8 +613,8 @@
   processSteps.push(...$$('#processSteps li'));
 
   // ลายเส้นแต่ละบท: ทุกเส้นใช้ pathLength=1 แล้ววาดตาม scroll ผ่าน --t / --o
-  const ln = (d, o, extra = '') => `<path class="ln" pathLength="1" d="${d}" style="--o:${o}" stroke="#0b0b0b" stroke-width="1.4" fill="none" ${extra}/>`;
-  const tx = (x, y, s, o, size = 12, anchor = 'start') => `<text class="tx" x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#0b0b0b" style="--o:${o}">${s}</text>`;
+  const ln = (d, o, extra = '') => `<path class="ln" pathLength="1" d="${d}" style="--o:${o}" stroke="#36d6ff" stroke-width="1.4" fill="none" ${extra}/>`;
+  const tx = (x, y, s, o, size = 12, anchor = 'start') => `<text class="tx" x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#36d6ff" style="--o:${o}">${s}</text>`;
   const rectD = (x, y, w, h) => `M${x} ${y}h${w}v${h}h${-w}Z`;
   const STAGES = [
     // design — wireframe
@@ -577,7 +647,7 @@
      ${ln('M560 150l10-10M600 132v-14M640 150l-10-10', .6)}`,
   ];
   processArt.innerHTML = `
-    <g stroke="#ebebe7" stroke-width=".6">${Array.from({ length: 17 }, (_, i) => `<path d="M${i * 50} 0V600"/>`).join('')}${Array.from({ length: 13 }, (_, i) => `<path d="M0 ${i * 50}H800"/>`).join('')}</g>
+    <g stroke="rgba(54,214,255,.07)" stroke-width=".6">${Array.from({ length: 17 }, (_, i) => `<path d="M${i * 50} 0V600"/>`).join('')}${Array.from({ length: 13 }, (_, i) => `<path d="M0 ${i * 50}H800"/>`).join('')}</g>
     ${STAGES.map((s, i) => `<g class="stage${i === 0 ? ' on' : ''}">${s}</g>`).join('')}`;
   const stageEls = $$('.stage', processArt);
 
@@ -870,6 +940,7 @@
   const catNodes = CATEGORIES.map(c => ({ type: 'cat', c, x: 0, y: 0 }));
   const techNodes = techs.map(t => ({ type: 'tech', t, x: 0, y: 0, phase: seeded(hashStr(t.name))() * 6.28 }));
   let dust = [], W = 0, H = 0, mobile = false, hovered = null, starsP = 0, starsVisible = false, rafId = 0;
+  let starsCenter = null, starsDrag = 0, dragX = null;
 
   function layoutStars() {
     const r = starsPin.getBoundingClientRect();
@@ -920,8 +991,8 @@
       n.r = s * 2.3;
       n.lw = (!mobile || n.t.projects.length >= 2) ? sctx.measureText(n.t.name).width + 8 : 0;
     });
-    const catFont = mobile ? 19 : 28;
-    sctx.font = `italic 400 ${catFont}px "Instrument Serif", Georgia, serif`;
+    const catFont = mobile ? 17 : 24;
+    sctx.font = `italic 500 ${catFont}px "Chakra Petch", "Kanit", sans-serif`;
     catNodes.forEach(n => {
       const right = n.x >= W * (mobile ? .5 : .66);
       const w = sctx.measureText(n.c.name).width;
@@ -959,6 +1030,18 @@
       });
     }
 
+ // 2.5D: เก็บตำแหน่งที่จัดวางไว้เป็นฐาน แล้วให้ความลึก z ตามวงของหมวดหมู่
+    starsCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2, d: unit * 2.4 };
+    catNodes.forEach((n, i) => {
+      n.bx = n.x; n.by = n.y;
+      n.z = Math.sin(-Math.PI / 2 + i * (Math.PI * 2 / catNodes.length) + .3 + Math.PI / 2) * unit * .32;
+    });
+    techNodes.forEach(n => {
+      n.bx = n.x; n.by = n.y;
+      const cs = [...n.t.cats].map(id => catNodes.find(c => c.c.id === id));
+      n.z = cs.reduce((a, c) => a + c.z, 0) / cs.length + (seeded(hashStr(n.t.name) + 3)() - .5) * unit * .2;
+    });
+
     const rnd = seeded(7);
     dust = Array.from({ length: Math.round(W * H / 9000) }, () => ({ x: rnd() * W, y: rnd() * H, r: .4 + rnd() * .9, ph: rnd() * 6.28 }));
   }
@@ -981,14 +1064,33 @@
     sctx.fill();
   }
 
+  // หมุนแผนที่ดาวใน 3D (แกว่งช้า ๆ + ลากเพื่อหมุน) แล้วฉายกลับเป็นตำแหน่งบนจอ
+  function projectStars(t) {
+    if (!starsCenter) return;
+    const th = (reduceMotion ? 0 : Math.sin(t * .18) * .3 + (starsP - .5) * .45) + starsDrag;
+    const ph = reduceMotion ? 0 : Math.sin(t * .13) * .1;
+    const ct = Math.cos(th), st = Math.sin(th), cp = Math.cos(ph), sp = Math.sin(ph);
+    const { x: cx, y: cy, d } = starsCenter;
+    [...catNodes, ...techNodes].forEach(n => {
+      if (n.bx === undefined) return;
+      const dx = n.bx - cx, dy = n.by - cy;
+      const x1 = dx * ct + n.z * st, z1 = -dx * st + n.z * ct;
+      const y1 = dy * cp - z1 * sp, z2 = dy * sp + z1 * cp;
+      const f = d / (d + z2);
+      n.x = cx + x1 * f;
+      n.y = cy + y1 * f;
+    });
+  }
+
   function drawStars(time) {
     const t = time / 1000;
     const p = reduceMotion ? 1 : starsP;
+    projectStars(t);
     sctx.clearRect(0, 0, W, H);
 
     // ฝุ่นดาว
     dust.forEach(d => {
-      sctx.fillStyle = `rgba(11,11,11,${.1 + .08 * Math.sin(t * .8 + d.ph)})`;
+      sctx.fillStyle = `rgba(54,214,255,${.1 + .08 * Math.sin(t * .8 + d.ph)})`;
       sctx.beginPath();
       sctx.arc(d.x, d.y, d.r, 0, 6.283);
       sctx.fill();
@@ -1001,7 +1103,7 @@
       n.t.cats.forEach(id => {
         const c = catNodes.find(cn => cn.c.id === id);
         const lit = hovered && isLit(n) && isLit(c) && (hovered === n || hovered === c);
-        sctx.strokeStyle = lit ? 'rgba(11,11,11,.8)' : `rgba(11,11,11,${hovered ? .05 : .16})`;
+        sctx.strokeStyle = lit ? 'rgba(54,214,255,.8)' : `rgba(54,214,255,${hovered ? .05 : .16})`;
         sctx.lineWidth = lit ? 1.1 : .8;
         sctx.beginPath();
         sctx.moveTo(n.x, n.y);
@@ -1015,23 +1117,23 @@
     catNodes.forEach(n => {
       const lit = isLit(n);
       sctx.globalAlpha = ca * (lit ? 1 : .25);
-      sctx.strokeStyle = '#0b0b0b';
+      sctx.strokeStyle = '#36d6ff';
       sctx.lineWidth = 1;
       sctx.beginPath();
       sctx.arc(n.x, n.y, 15 + (n === hovered ? 3 : 0), 0, 6.283);
       sctx.stroke();
-      sctx.fillStyle = n === hovered ? '#b8121b' : '#0b0b0b';
+      sctx.fillStyle = n === hovered ? '#ffb547' : '#36d6ff';
       sctx.beginPath();
       sctx.arc(n.x, n.y, 4, 0, 6.283);
       sctx.fill();
 
       const lx = n.x + (n.right ? -26 : 26);
       sctx.textAlign = n.right ? 'right' : 'left';
-      sctx.fillStyle = '#858580';
+      sctx.fillStyle = '#6f8698';
       sctx.font = `400 ${mobile ? 9 : 10}px "JetBrains Mono", monospace`;
       sctx.fillText(`${n.c.code} · ${pad(countIn(n.c.id))}`, lx, n.y - (mobile ? 12 : 16));
-      sctx.fillStyle = '#0b0b0b';
-      sctx.font = `italic 400 ${mobile ? 19 : 28}px "Instrument Serif", Georgia, serif`;
+      sctx.fillStyle = '#e6f3ff';
+      sctx.font = `italic 500 ${mobile ? 17 : 24}px "Chakra Petch", "Kanit", sans-serif`;
       sctx.fillText(n.c.name, lx, n.y + (mobile ? 6 : 9));
       sctx.globalAlpha = 1;
     });
@@ -1045,13 +1147,13 @@
       const s = 2 + Math.min(count, 6) * .9;
       const tw = reduceMotion ? 1 : 1 + .18 * Math.sin(t * 1.6 + n.phase);
       sctx.globalAlpha = a * (lit ? 1 : .18);
-      sctx.fillStyle = n === hovered ? '#b8121b' : '#0b0b0b';
+      sctx.fillStyle = n === hovered ? '#ffb547' : '#36d6ff';
       if (count >= 3) {
-        sctx.fillStyle = 'rgba(11,11,11,.05)';
+        sctx.fillStyle = 'rgba(54,214,255,.05)';
         sctx.beginPath();
         sctx.arc(n.x, n.y, s * (mobile ? 2.8 : 4.2) * tw, 0, 6.283);
         sctx.fill();
-        sctx.fillStyle = n === hovered ? '#b8121b' : '#0b0b0b';
+        sctx.fillStyle = n === hovered ? '#ffb547' : '#36d6ff';
       }
       sparkle(n.x, n.y, s * 2.3 * tw);
       sctx.beginPath();
@@ -1060,7 +1162,7 @@
 
       if (!mobile || count >= 2 || n === hovered) {
         sctx.textAlign = 'left';
-        sctx.fillStyle = lit ? '#3d3d3b' : '#858580';
+        sctx.fillStyle = lit ? '#b4c7d8' : '#6f8698';
         sctx.font = `400 ${mobile ? 9.5 : 11}px "JetBrains Mono", monospace`;
         sctx.fillText(n.t.name, n.x + s * 2.3 + 6, n.y + 4);
       }
@@ -1107,6 +1209,16 @@
     if (!rafId) drawStars(performance.now());
   }
 
+  // ลากเพื่อหมุนแผนที่ดาว (แนวนอน; แนวตั้งยังเลื่อนหน้าได้ตามปกติ)
+  starsCanvas.addEventListener('pointerdown', e => { dragX = e.clientX; });
+  window.addEventListener('pointerup', () => { dragX = null; });
+  starsCanvas.addEventListener('pointermove', e => {
+    if (dragX !== null && e.buttons) {
+      starsDrag += (e.clientX - dragX) * .006;
+      dragX = e.clientX;
+      if (!rafId) drawStars(performance.now());
+    }
+  });
   starsCanvas.addEventListener('pointermove', e => {
     if (e.pointerType !== 'mouse') return;
     const r = starsCanvas.getBoundingClientRect();
@@ -1235,6 +1347,7 @@
     lastY = y;
     const max = document.documentElement.scrollHeight - window.innerHeight;
     progressBar.style.transform = `scaleX(${clamp(y / max)})`;
+    if (hudPct) hudPct.textContent = `${String(Math.round(clamp(y / max) * 100)).padStart(3, '0')}%`;
   }
 
   const CHAPTERS = [
@@ -1251,6 +1364,7 @@
       const id = en.target.id;
       const ch = CHAPTERS.find(c => c[0] === id);
       navCurrent.textContent = `~/${ch[2]}`;
+      if (hudChapter) hudChapter.textContent = ch[1].toUpperCase();
       $$('a', rail).forEach(a => a.classList.toggle('active', a.dataset.ch === id));
       $$('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.section === id));
       en.target.classList.add('is-active');
@@ -1360,7 +1474,7 @@
         const v = clamp((n - .42) / .32) * (.25 + edge * .95);
         const idx = Math.min(CHARS.length - 1, Math.floor(v * CHARS.length));
         if (idx <= 0) continue;
-        fctx.fillStyle = `rgba(11,11,11,${(.08 + v * .2).toFixed(3)})`;
+        fctx.fillStyle = `rgba(54,214,255,${(.08 + v * .2).toFixed(3)})`;
         fctx.fillText(CHARS[idx], x * faqCell + faqCell / 2, y * faqCell + faqCell / 2);
       }
     }
@@ -1409,7 +1523,7 @@
     if (q >= 1) return;
     for (const c of fmCells) {
       if (c.th < q) continue;
-      fmCtx.fillStyle = c.th < q + .05 ? '#0b0b0b' : '#f5f5f3';
+      fmCtx.fillStyle = c.th < q + .05 ? '#36d6ff' : '#08111c';
       fmCtx.fillRect(c.x, c.y, c.s + .5, c.s + .5);
     }
   }
@@ -1523,6 +1637,136 @@
     };
     requestAnimationFrame(step);
   }
+
+  /* =========================================================
+     CURSOR RETICLE + MAGNETIC BUTTONS (เฉพาะเมาส์)
+     ========================================================= */
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (finePointer && !reduceMotion) {
+    const cursor = $('#cursor'), cursorLabel = $('#cursorLabel');
+    const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 }, tgt = { ...pos };
+    let lastT = performance.now();
+    window.addEventListener('pointermove', e => { tgt.x = e.clientX; tgt.y = e.clientY; cursor.classList.add('on'); }, { passive: true });
+    document.documentElement.addEventListener('pointerleave', () => cursor.classList.remove('on'));
+    const STATES = [
+      ['#termIn', 'type'], ['#starsCanvas', 'drag · explore'], ['.fl-panel', 'open'], ['[data-open]', 'open'],
+      ['[data-cat], .filter', 'filter'], ['a[href^="mailto:"]', 'mail'], ['a[href^="http"]', 'visit ↗'], ['a, button, summary', ''],
+    ];
+    document.addEventListener('pointerover', e => {
+      let state = null;
+      for (const [sel, label] of STATES) { if (e.target.closest(sel)) { state = label; break; } }
+      cursor.classList.toggle('active', state !== null);
+      cursorLabel.textContent = state || '';
+    });
+    const follow = now => {
+      const dt = Math.min(64, now - lastT) / 16.67; lastT = now;
+      const f = 1 - Math.pow(1 - .24, dt);
+      pos.x += (tgt.x - pos.x) * f; pos.y += (tgt.y - pos.y) * f;
+      cursor.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0)`;
+      requestAnimationFrame(follow);
+    };
+    requestAnimationFrame(follow);
+
+    // ปุ่มดูดตามเมาส์เล็กน้อย (ไม่เกิน ~25% ของขนาดปุ่ม)
+    let magnet = null;
+    document.addEventListener('pointermove', e => {
+      const el = e.target.closest('.pill, .nav-cta');
+      if (magnet && magnet !== el) { magnet.style.transform = ''; magnet = null; }
+      if (!el) return;
+      magnet = el;
+      const b = el.getBoundingClientRect();
+      const x = clamp((e.clientX - (b.left + b.width / 2)) * .25, -b.width * .25, b.width * .25);
+      const y = clamp((e.clientY - (b.top + b.height / 2)) * .35, -b.height * .25, b.height * .25);
+      el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+    }, { passive: true });
+  }
+
+  /* =========================================================
+     HUD READOUT + ABOUT PHOTO
+     ========================================================= */
+  const hudChapter = $('#hudChapter'), hudPct = $('#hudPct');
+  const aboutPhoto = $('#aboutPhoto');
+  if (aboutPhoto) {
+    const img = $('img', aboutPhoto);
+    const fail = () => aboutPhoto.classList.add('failed');
+    if (img.complete && !img.naturalWidth) fail();
+    img.addEventListener('error', fail);
+  }
+
+  /* =========================================================
+     INTERACTIVE TERMINAL — พิมพ์คำสั่งเพื่อสำรวจผลงาน
+     ========================================================= */
+  const termOut = $('#termOut'), termForm = $('#termForm'), termIn = $('#termIn');
+  const termHistory = [];
+  let termIdx = 0;
+  const say = (html, cls = 'out') => {
+    termOut.insertAdjacentHTML('beforeend', `<p class="${cls}">${html}</p>`);
+    termOut.scrollTop = termOut.scrollHeight;
+  };
+  const row = (k, v) => `<span class="k">${esc(k)}</span>${v}`;
+  const findProject = q => {
+    q = q.toLowerCase();
+    return ordered.find(p => p.id === q || p.code.toLowerCase() === q || String(p.no) === q.replace(/^0+/, ''))
+      || ordered.find(p => p.id.includes(q) || p.name.toLowerCase().includes(q));
+  };
+  const COMMANDS = {
+    help: () => [
+      ['help', 'แสดงคำสั่งทั้งหมด'], ['whoami', 'ข้อมูลเจ้าของ portfolio'], ['ls [หมวด]', 'ดูหมวดหมู่ หรือผลงานในหมวด เช่น ls fs'],
+      ['open <ผลงาน>', 'เปิดรายละเอียด เช่น open fleet หรือ open FS-04'], ['skills', 'ทักษะทั้งหมด'], ['stack', 'เทคโนโลยีที่ใช้บ่อยที่สุด'],
+      ['contact', 'ช่องทางติดต่อ'], ['hire', 'สถานะรับงาน'], ['clear', 'ล้างหน้าจอ'],
+    ].forEach(([k, v]) => say(row(k, esc(v)))),
+    whoami: () => { say('thanatorn khwanmankong — full stack developer'); say('นิสิตปี 3 เทคโนโลยีสารสนเทศ มหาวิทยาลัยเกษตรศาสตร์'); },
+    ls: arg => {
+      if (!arg) {
+        CATEGORIES.forEach(c => say(row(`${c.code}/`, `${esc(c.name)} · ${pad(countIn(c.id))} ผลงาน`)));
+        say('พิมพ์ <strong>ls fs</strong> เพื่อดูผลงานในหมวด', 'out');
+        return;
+      }
+      const c = CATEGORIES.find(c => c.id === arg.toLowerCase() || c.code.toLowerCase() === arg.toLowerCase().replace('/', ''));
+      if (!c) { say(`ls: ไม่พบหมวด '${esc(arg)}' — ลอง ls`, 'err'); return; }
+      ordered.filter(p => p.cat === c.id).forEach(p => say(row(p.code, `<button data-open="${p.id}">${esc(p.name)}</button>`)));
+    },
+    open: arg => {
+      if (!arg) { say('open: ต้องระบุผลงาน เช่น open fleet', 'err'); return; }
+      const p = findProject(arg);
+      if (!p) { say(`open: ไม่พบผลงาน '${esc(arg)}'`, 'err'); return; }
+      say(`opening ${esc(p.code)} · ${esc(p.name)} …`);
+      setTimeout(() => openDetail(p.id, termIn), 250);
+    },
+    skills: () => SKILLS.forEach(s => say(row(s.key, esc(s.tags.join(' · '))))),
+    stack: () => techs.slice().sort((a, b) => b.projects.length - a.projects.length).slice(0, 10)
+      .forEach(t => say(row(t.name, `${'▮'.repeat(t.projects.length)} ${t.projects.length}`))),
+    contact: () => {
+      say(row('email', '<a href="mailto:Qwanmankong@gmail.com">Qwanmankong@gmail.com</a>'));
+      say(row('phone', '<a href="tel:0616034862">061-603-4862</a>'));
+      say(row('github', '<a href="https://github.com/ThanatornKh" target="_blank" rel="noopener">github.com/ThanatornKh</a>'));
+    },
+    hire: () => { say('available for <strong>internship · ฝึกงาน</strong> — Full Stack / Frontend / Backend / Mobile'); say('→ <a href="mailto:Qwanmankong@gmail.com">Qwanmankong@gmail.com</a>'); },
+    clear: () => { termOut.innerHTML = ''; },
+    sudo: () => say('permission denied — ลอง <strong>hire</strong> แทน', 'err'),
+  };
+  termForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const line = termIn.value.trim();
+    termIn.value = '';
+    if (!line) return;
+    termHistory.push(line); termIdx = termHistory.length;
+    say(`<b>$</b> <span class="cmd">${esc(line)}</span>`, '');
+    const [cmd, ...rest] = line.split(/\s+/);
+    const fn = COMMANDS[cmd.toLowerCase()];
+    if (fn) fn(rest.join(' '));
+    else say(`command not found: ${esc(cmd)} — พิมพ์ help`, 'err');
+  });
+  termIn.addEventListener('keydown', e => {
+    if (e.key === 'ArrowUp' && termIdx > 0) { termIn.value = termHistory[--termIdx]; e.preventDefault(); }
+    if (e.key === 'ArrowDown') { termIdx = Math.min(termHistory.length, termIdx + 1); termIn.value = termHistory[termIdx] || ''; e.preventDefault(); }
+    if (e.key === 'Tab' && termIn.value) {
+      const [cmd, arg] = termIn.value.split(/\s+/);
+      const pool = arg !== undefined ? ordered.map(p => `${cmd} ${p.id}`) : Object.keys(COMMANDS);
+      const hit = pool.find(c => c.startsWith(termIn.value) && c !== termIn.value);
+      if (hit) { termIn.value = hit; e.preventDefault(); }
+    }
+  });
 
   /* =========================================================
      SCROLL / RESIZE LOOP

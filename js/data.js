@@ -136,8 +136,8 @@ const PROJECTS = [
     images: [
       'assets/projects/fleet-dashboard.jpg',
       'assets/projects/fleet-trip.jpg',
+      'assets/projects/fleet-maintenance.jpg',
       'assets/projects/fleet-vehicles.jpg',
-      'assets/projects/fleet-login.jpg',
     ],
     links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/Software_Developer_Coop_Sections_Exam' }],
     featured: true,
