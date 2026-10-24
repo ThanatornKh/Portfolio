@@ -1,6 +1,7 @@
 /* หัวข้อบทแบบเดียวกันทั้งเว็บ: เลขบท + ชื่อ (scramble) · หัวเรื่องใหญ่ (mask reveal ทีละบรรทัด) · คำอธิบาย (blur-in) */
 import { useRef, type ReactNode } from 'react';
 import { chapter, type ChapterId } from '../../data/chapters';
+import { useLang } from '../../lib/i18n';
 import { gsap, reduceMotion, SplitText, useGSAP } from '../../lib/motion';
 
 interface Props {
@@ -10,7 +11,13 @@ interface Props {
   align?: 'left' | 'center';
 }
 
-export default function SectionHead({ id, title, sub, align = 'left' }: Props) {
+/** เปลี่ยนภาษา = mount ใหม่ เพื่อให้ SplitText แบ่งบรรทัดใหม่จากข้อความชุดใหม่ (ไม่ชนกับ DOM ที่ React คุม) */
+export default function SectionHead(props: Props) {
+  const lang = useLang(s => s.lang);
+  return <Head key={lang} {...props} />;
+}
+
+function Head({ id, title, sub, align = 'left' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const ch = chapter(id);
 

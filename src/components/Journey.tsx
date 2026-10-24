@@ -4,6 +4,7 @@
 import { useRef } from 'react';
 import { EXPERIENCE } from '../data/content';
 import { WORKS } from '../data/derived';
+import { locExperience, useL } from '../data/localize';
 import { gsap, reduceMotion, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
 import SectionHead from './ui/SectionHead';
@@ -20,6 +21,7 @@ const YEARS = [...new Set(WORKS.map(w => w.year).filter(Boolean) as string[])].s
 const UNDATED = WORKS.filter(w => !w.year);
 
 export default function Journey() {
+  const L = useL();
   const ref = useRef<HTMLElement>(null);
   useGSAP(
     () => {
@@ -33,7 +35,7 @@ export default function Journey() {
   );
 
   const Row = ({ id, head }: { id: string; head?: boolean }) => {
-    const w = WORKS.find(x => x.id === id)!;
+    const w = L.w(WORKS.find(x => x.id === id)!);
     return (
       <li className="log__row">
         <span className="log__dot" aria-hidden="true" />
@@ -61,13 +63,13 @@ export default function Journey() {
               git log <span className="grad">--graph</span>
             </>
           }
-          sub="เส้นทางการเรียนและผลงาน เรียงจากล่าสุด — กดที่ commit เพื่อเปิดผลงาน"
+          sub={L.tr('เส้นทางการเรียนและผลงาน เรียงจากล่าสุด — กดที่ commit เพื่อเปิดผลงาน', 'My study and work, newest first — click a commit to open the project')}
         />
         <div className="log">
           <span className="log__line" aria-hidden="true" />
           {YEARS.map((y, yi) => (
             <div className="log__year" key={y}>
-              <h3 className="display log__y">{y}</h3>
+              <h3 className="display log__y">{L.year(y)}</h3>
               <ul>
                 {WORKS.filter(w => w.year === y).map((w, i) => (
                   <Row key={w.id} id={w.id} head={yi === 0 && i === 0} />
@@ -77,7 +79,7 @@ export default function Journey() {
           ))}
           {UNDATED.length > 0 && (
             <div className="log__year">
-              <h3 className="display log__y">งานวิชา &amp; องค์กร</h3>
+              <h3 className="display log__y">{L.tr('งานวิชา & องค์กร', 'Coursework & company')}</h3>
               <ul>
                 {UNDATED.map(w => (
                   <Row key={w.id} id={w.id} />
@@ -85,15 +87,15 @@ export default function Journey() {
               </ul>
             </div>
           )}
-          {EXPERIENCE.map(e => (
-            <div className="log__year" key={e.date}>
+          {locExperience(L.lang).map((e, i) => (
+            <div className="log__year" key={i}>
               <h3 className="display log__y">{e.date}</h3>
               <ul>
                 <li className="log__row log__row--root">
                   <span className="log__dot" aria-hidden="true" />
                   <div className="log__btn">
                     <span className="log__hash mono">
-                      {hash(e.org)} <em>(root commit)</em>
+                      {hash(EXPERIENCE[i].org)} <em>(root commit)</em>
                     </span>
                     <span className="log__msg">
                       <span className="mono log__type">init:</span> {e.role} — {e.org}

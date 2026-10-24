@@ -4,7 +4,8 @@
    ========================================================= */
 import { useEffect, useRef } from 'react';
 import { CHAPTERS } from '../data/chapters';
-import { PROFILE } from '../data/content';
+import { useL } from '../data/localize';
+import { useLang } from '../lib/i18n';
 import { gsap, lockScroll, reduceMotion, scrollToTarget, ScrollTrigger, useGSAP } from '../lib/motion';
 import { useUI } from '../lib/store';
 import './Nav.css';
@@ -19,7 +20,29 @@ export function go(e: React.MouseEvent, id: string) {
   scrollToTarget(id === 'top' ? 0 : `#${id}`);
 }
 
+/** ปุ่มสลับภาษา TH / EN */
+export function LangToggle({ className = '' }: { className?: string }) {
+  const lang = useLang(s => s.lang);
+  const setLang = useLang(s => s.setLang);
+  const next = lang === 'th' ? 'en' : 'th';
+  return (
+    <button
+      type="button"
+      className={`lang mono ${className}`}
+      onClick={() => setLang(next)}
+      aria-label={lang === 'th' ? 'Switch to English' : 'เปลี่ยนเป็นภาษาไทย'}
+      data-cursor-label={lang === 'th' ? 'english' : 'ภาษาไทย'}
+    >
+      <span className={lang === 'th' ? 'is-on' : ''}>TH</span>
+      <i aria-hidden="true">/</i>
+      <span className={lang === 'en' ? 'is-on' : ''}>EN</span>
+    </button>
+  );
+}
+
 export default function Nav() {
+  const L = useL();
+  const PROFILE = L.profile;
   const navRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -85,14 +108,14 @@ export default function Nav() {
     <>
       <header className={`nav${booted ? ' is-in' : ''}`} ref={navRef}>
         <div className="nav__inner">
-          <a href="#top" className="nav__brand" onClick={e => go(e, 'top')} data-cursor-label="home" aria-label="กลับด้านบน">
+          <a href="#top" className="nav__brand" onClick={e => go(e, 'top')} data-cursor-label="home" aria-label={L.tr('กลับด้านบน', 'Back to top')}>
             <span className="nav__mark" aria-hidden="true">TK</span>
             <span className="nav__name">Thanatorn&nbsp;K.</span>
           </a>
           <div className="nav__where mono" aria-live="polite">
             <b>{current.no}</b> ~/{current.path}
           </div>
-          <nav className="nav__links" aria-label="เมนูหลัก">
+          <nav className="nav__links" aria-label={L.tr('เมนูหลัก', 'Main menu')}>
             {(['works', 'stack', 'contact'] as const).map(id => (
               <a key={id} href={`#${id}`} onClick={e => go(e, id)} className="mono" aria-current={chapter === id ? 'true' : undefined}>
                 {CHAPTERS.find(c => c.id === id)!.label.replace('Flagship works', 'Works')}
@@ -102,6 +125,7 @@ export default function Nav() {
           <p className="nav__status mono">
             <i aria-hidden="true" /> Open to internship
           </p>
+          <LangToggle />
           <button className="nav__menu" type="button" aria-expanded={menuOpen} aria-controls="menu" onClick={() => setMenu(!menuOpen)} data-cursor-label={menuOpen ? 'close' : 'menu'}>
             <span className="mono">{menuOpen ? 'Close' : 'Menu'}</span>
             <span className={`burger${menuOpen ? ' is-x' : ''}`} aria-hidden="true">
@@ -113,7 +137,7 @@ export default function Nav() {
         <span className="nav__bar" ref={barRef} aria-hidden="true" />
       </header>
 
-      <nav className="rail no-print" ref={railRef} aria-label="บทของหน้า">
+      <nav className="rail no-print" ref={railRef} aria-label={L.tr('บทของหน้า', 'Page chapters')}>
         {CHAPTERS.map(c => (
           <a key={c.id} href={`#${c.id}`} onClick={e => go(e, c.id)} className={c.id === chapter ? 'is-active' : ''} aria-current={c.id === chapter ? 'true' : undefined} aria-label={`${c.no} ${c.label}`} data-cursor="none">
             <span className="rail__label mono">{c.label}</span>
@@ -129,7 +153,7 @@ export default function Nav() {
           ref={menuRef}
           role="dialog"
           aria-modal="true"
-          aria-label="เมนู"
+          aria-label={L.tr('เมนู', 'Menu')}
           data-lenis-prevent
           onClick={e => {
             // ปิดได้ 3 ทาง: Esc, คลิกพื้นที่ว่าง, เลือกลิงก์
@@ -154,6 +178,7 @@ export default function Nav() {
               <a href={PROFILE.github} target="_blank" rel="noopener">GitHub ↗</a>
               <a href={PROFILE.facebook} target="_blank" rel="noopener">Facebook ↗</a>
               <p className="mono menu__loc">{PROFILE.location}</p>
+              <LangToggle className="lang--menu" />
             </div>
           </div>
         </div>

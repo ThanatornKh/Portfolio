@@ -317,3 +317,37 @@
     align-items: start;
   }
 }
+
+/* ---------- สลับภาษา TH / EN ---------- */
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--mute);
+  border: 1px solid var(--line-2);
+  transition: border-color 0.3s, color 0.3s;
+}
+
+.lang:hover,
+.lang:focus-visible {
+  border-color: var(--line-3);
+  color: var(--ink-2);
+}
+
+.lang i {
+  font-style: normal;
+  color: var(--faint);
+}
+
+.lang .is-on {
+  color: var(--ink);
+}
+
+.lang--menu {
+  align-self: flex-start;
+  margin-top: 18px;
+}

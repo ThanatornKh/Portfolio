@@ -2,7 +2,8 @@
    08 · CONTACT — CTA ใหญ่ + ช่องทางติดต่อ + เทอร์มินัลที่พิมพ์คำสั่งได้จริง
    ========================================================= */
 import { useRef, useState, type ReactNode } from 'react';
-import { CATEGORIES, PROFILE, SKILLS } from '../data/content';
+import { CATEGORIES, SKILLS } from '../data/content';
+import { useL } from '../data/localize';
 import { chapter } from '../data/chapters';
 import { countIn, TECHS, WORKS } from '../data/derived';
 import { gsap, reduceMotion, SplitText, useGSAP } from '../lib/motion';
@@ -27,6 +28,9 @@ const findWork = (q: string) => {
 };
 
 export default function Contact() {
+  const L = useL();
+  const { tr } = L;
+  const PROFILE = L.profile;
   const ref = useRef<HTMLElement>(null);
   const outRef = useRef<HTMLDivElement>(null);
   const inRef = useRef<HTMLInputElement>(null);
@@ -51,21 +55,21 @@ export default function Contact() {
 
   const COMMANDS: Record<string, (arg: string) => Line[]> = {
     help: () => [
-      ['help', 'แสดงคำสั่งทั้งหมด'],
-      ['whoami', 'ข้อมูลเจ้าของ portfolio'],
-      ['ls [หมวด]', 'ดูหมวด หรือผลงานในหมวด เช่น ls fs'],
-      ['open <ผลงาน>', 'เปิดรายละเอียด เช่น open bp-parking'],
-      ['stack', 'เทคโนโลยีที่ใช้บ่อยที่สุด'],
-      ['skills', 'กลุ่มทักษะ'],
-      ['contact', 'ช่องทางติดต่อ'],
-      ['hire', 'สถานะรับงาน'],
-      ['clear', 'ล้างหน้าจอ'],
+      ['help', tr('แสดงคำสั่งทั้งหมด', 'list all commands')],
+      ['whoami', tr('ข้อมูลเจ้าของ portfolio', 'who owns this portfolio')],
+      [tr('ls [หมวด]', 'ls [category]'), tr('ดูหมวด หรือผลงานในหมวด เช่น ls fs', 'list categories, or the works in one, e.g. ls fs')],
+      [tr('open <ผลงาน>', 'open <work>'), tr('เปิดรายละเอียด เช่น open bp-parking', 'open a project, e.g. open bp-parking')],
+      ['stack', tr('เทคโนโลยีที่ใช้บ่อยที่สุด', 'most-used technologies')],
+      ['skills', tr('กลุ่มทักษะ', 'skill groups')],
+      ['contact', tr('ช่องทางติดต่อ', 'how to reach me')],
+      ['hire', tr('สถานะรับงาน', 'availability')],
+      ['clear', tr('ล้างหน้าจอ', 'clear the screen')],
     ].map(([k, v]) => kv(k, v)),
     whoami: () => [out(`${PROFILE.name.toLowerCase()} — ${PROFILE.role.toLowerCase()}`), out(`${PROFILE.major} ${PROFILE.year} · ${PROFILE.school}`)],
     ls: arg => {
-      if (!arg) return [...CATEGORIES.map(c => kv(`${c.code}/`, `${c.name} · ${countIn(c.id)} ผลงาน`)), out('พิมพ์ ls fs เพื่อดูผลงานในหมวด')];
+      if (!arg) return [...CATEGORIES.map(c => kv(`${c.code}/`, `${c.name} · ${countIn(c.id)} ${tr('ผลงาน', 'works')}`)), out(tr('พิมพ์ ls fs เพื่อดูผลงานในหมวด', 'type ls fs to list the works in a category'))];
       const c = CATEGORIES.find(x => x.id === arg.toLowerCase() || x.code.toLowerCase() === arg.toLowerCase().replace('/', ''));
-      if (!c) return [{ kind: 'err', node: `ls: ไม่พบหมวด '${arg}' — ลอง ls` }];
+      if (!c) return [{ kind: 'err', node: tr(`ls: ไม่พบหมวด '${arg}' — ลอง ls`, `ls: no category '${arg}' — try ls`) }];
       return WORKS.filter(w => w.cat === c.id).map(w =>
         kv(
           w.code,
@@ -76,9 +80,9 @@ export default function Contact() {
       );
     },
     open: arg => {
-      if (!arg) return [{ kind: 'err', node: 'open: ต้องระบุผลงาน เช่น open fleet' }];
+      if (!arg) return [{ kind: 'err', node: tr('open: ต้องระบุผลงาน เช่น open fleet', 'open: name a project, e.g. open fleet') }];
       const w = findWork(arg);
-      if (!w) return [{ kind: 'err', node: `open: ไม่พบผลงาน '${arg}'` }];
+      if (!w) return [{ kind: 'err', node: tr(`open: ไม่พบผลงาน '${arg}'`, `open: no project '${arg}'`) }];
       setTimeout(() => openWorkById(w.id), 250);
       return [out(`opening ${w.code} · ${w.name} …`)];
     },
@@ -93,8 +97,8 @@ export default function Contact() {
       kv('phone', <a href={`tel:${PROFILE.phone.replace(/-/g, '')}`}>{PROFILE.phone}</a>),
       kv('github', <a href={PROFILE.github} target="_blank" rel="noopener">github.com/ThanatornKh</a>),
     ],
-    hire: () => [out('available for internship · ฝึกงาน — Full Stack / Frontend / Backend / Mobile'), out(<a href={`mailto:${PROFILE.email}`}>→ {PROFILE.email}</a>)],
-    sudo: () => [{ kind: 'err', node: 'permission denied — ลอง hire แทน' }],
+    hire: () => [out(tr('available for internship · ฝึกงาน — Full Stack / Frontend / Backend / Mobile', 'available for an internship — Full Stack / Frontend / Backend / Mobile')), out(<a href={`mailto:${PROFILE.email}`}>→ {PROFILE.email}</a>)],
+    sudo: () => [{ kind: 'err', node: tr('permission denied — ลอง hire แทน', 'permission denied — try hire instead') }],
   };
 
   const run = (raw: string) => {
@@ -105,7 +109,7 @@ export default function Contact() {
     const [cmd, ...rest] = line.split(/\s+/);
     if (cmd.toLowerCase() === 'clear') return setLines([]);
     const fn = COMMANDS[cmd.toLowerCase()];
-    print([{ kind: 'cmd', node: line }, ...(fn ? fn(rest.join(' ')) : [{ kind: 'err' as const, node: `command not found: ${cmd} — พิมพ์ help` }])]);
+    print([{ kind: 'cmd', node: line }, ...(fn ? fn(rest.join(' ')) : [{ kind: 'err' as const, node: tr(`command not found: ${cmd} — พิมพ์ help`, `command not found: ${cmd} — type help`) }])]);
   };
 
   const onKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -165,18 +169,21 @@ export default function Contact() {
           something <span className="grad">together.</span>
         </h2>
         <p className="lead contact__lead">
-          กำลังมองหาโอกาสฝึกงานสาย Full Stack, Frontend, Backend หรือ Mobile — ยินดีนำเสนอผลงานเพิ่มเติมและพูดคุยรายละเอียดตามต้องการ
+          {tr(
+            'กำลังมองหาโอกาสฝึกงานสาย Full Stack, Frontend, Backend หรือ Mobile — ยินดีนำเสนอผลงานเพิ่มเติมและพูดคุยรายละเอียดตามต้องการ',
+            "I'm looking for an internship in full stack, frontend, backend or mobile — happy to walk you through more of my work and talk details.",
+          )}
         </p>
         <div className="contact__cta">
           <a className="btn btn--solid" href={`mailto:${PROFILE.email}`} onPointerMove={onButtonGlow} data-cursor-label="send mail">
-            ส่งอีเมล <span className="arrow">→</span>
+            {tr('ส่งอีเมล', 'Send email')} <span className="arrow">→</span>
           </a>
           <button className="btn btn--glass glass" type="button" onClick={copy} onPointerMove={onButtonGlow} data-cursor-label="copy">
-            {copied ? 'คัดลอกแล้ว ✓' : 'คัดลอกอีเมล'}
+            {copied ? tr('คัดลอกแล้ว ✓', 'Copied ✓') : tr('คัดลอกอีเมล', 'Copy email')}
           </button>
           {canPrint && (
             <button className="btn btn--glass glass" type="button" onClick={() => window.print()} onPointerMove={onButtonGlow} data-cursor-label="print">
-              พิมพ์ / PDF
+              {tr('พิมพ์ / PDF', 'Print / PDF')}
             </button>
           )}
         </div>
@@ -199,7 +206,7 @@ export default function Contact() {
             ))}
             <div className="contact__card contact__card--static spot">
               <span className="mono">location</span>
-              <span className="contact__val">{PROFILE.location}, ประเทศไทย</span>
+              <span className="contact__val">{PROFILE.location}, {tr('ประเทศไทย', 'Thailand')}</span>
               <span className="contact__arrow">GMT+7</span>
             </div>
           </div>
@@ -220,7 +227,7 @@ export default function Contact() {
                 <b>$</b> cat status.txt
               </p>
               <p className="out">
-                available for <strong>internship · ฝึกงาน</strong> — พิมพ์ <strong>help</strong> เพื่อดูคำสั่ง
+                available for <strong>{tr('internship · ฝึกงาน', 'internship')}</strong> — {tr('พิมพ์', 'type')} <strong>help</strong> {tr('เพื่อดูคำสั่ง', 'to see the commands')}
               </p>
               {lines.map((l, i) => (
                 <p key={i} className={l.kind === 'cmd' ? '' : l.kind}>
@@ -245,7 +252,7 @@ export default function Contact() {
               <label htmlFor="term-in" className="mono">
                 $
               </label>
-              <input id="term-in" ref={inRef} autoComplete="off" spellCheck={false} placeholder="help · ls · open bp-parking · stack" onKeyDown={onKey} aria-label="พิมพ์คำสั่งเทอร์มินัล" />
+              <input id="term-in" ref={inRef} autoComplete="off" spellCheck={false} placeholder="help · ls · open bp-parking · stack" onKeyDown={onKey} aria-label={tr('พิมพ์คำสั่งเทอร์มินัล', 'Type a terminal command')} />
             </form>
           </div>
         </div>

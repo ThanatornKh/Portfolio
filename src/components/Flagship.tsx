@@ -3,6 +3,7 @@
    การ์ดใบก่อนหดและมืดลงเมื่อใบถัดไปเลื่อนขึ้นมาทับ
    ========================================================= */
 import { useRef } from 'react';
+import { useL } from '../data/localize';
 import { FEATURED, pad } from '../data/derived';
 import { gsap, reduceMotion, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
@@ -12,6 +13,7 @@ import SectionHead from './ui/SectionHead';
 import './Flagship.css';
 
 export default function Flagship() {
+  const L = useL();
   const ref = useRef<HTMLElement>(null);
   useSpotlight(ref);
 
@@ -64,11 +66,12 @@ export default function Flagship() {
               Flagship <span className="grad">works.</span>
             </>
           }
-          sub="งานที่ใหญ่และใช้งานจริงที่สุด — ระบบที่ออนไลน์อยู่, ระบบในองค์กร และงานข้อมูลระดับล้านแถว"
+          sub={L.tr('งานที่ใหญ่และใช้งานจริงที่สุด — ระบบที่ออนไลน์อยู่, ระบบในองค์กร และงานข้อมูลระดับล้านแถว', 'The biggest work, in real use — systems online today, an in-house company system and data work at the scale of millions of rows')}
         />
         <div className="flag__stack">
-          {FEATURED.map((w, i) => {
-            const live = w.links?.find(l => l.label.includes('ระบบจริง') || l.label.includes('เว็บไซต์'));
+          {FEATURED.map((fw, i) => {
+            const w = L.w(fw);
+            const live = fw.links?.find(l => l.label.includes('ระบบจริง') || l.label.includes('เว็บไซต์'));
             return (
               <div className="flag__slot" key={w.id} style={{ ['--i' as string]: i }}>
                 <article className="flag__card spot">
@@ -99,7 +102,7 @@ export default function Flagship() {
                     </div>
                     <div className="flag__cta">
                       <button type="button" className="btn btn--solid" onClick={() => openWorkById(w.id)} onPointerMove={onButtonGlow} data-cursor-label="case study">
-                        รายละเอียด <span className="arrow">→</span>
+                        {L.tr('รายละเอียด', 'Case study')} <span className="arrow">→</span>
                       </button>
                       {live && (
                         <a className="btn btn--glass glass" href={live.url} target="_blank" rel="noopener" onPointerMove={onButtonGlow} data-cursor-label="visit ↗">
@@ -108,7 +111,7 @@ export default function Flagship() {
                       )}
                     </div>
                   </div>
-                  <button type="button" className="flag__visual" onClick={() => openWorkById(w.id)} aria-label={`ดูรายละเอียด ${w.name}`} data-cursor-label="open">
+                  <button type="button" className="flag__visual" onClick={() => openWorkById(w.id)} aria-label={L.tr(`ดูรายละเอียด ${w.name}`, `View details: ${w.name}`)} data-cursor-label="open">
                     <span className="flag__frame">
                       <span className="flag__bar" aria-hidden="true">
                         <i />

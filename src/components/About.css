@@ -24,9 +24,10 @@
   display: block;
   font-family: var(--display);
   font-stretch: 125%;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
+  line-height: 1.35;
   text-transform: uppercase;
 }
 
@@ -35,7 +36,9 @@
 }
 
 .about__id {
+  flex: none;
   font-size: 10px;
+  white-space: nowrap;
   color: var(--mute);
 }
 
@@ -50,6 +53,11 @@
 .about__goal {
   margin-top: 32px;
   max-width: 62ch;
+}
+
+/* min-width: 0 — บรรทัดยาวใน profile.json (เช่นฉบับภาษาอังกฤษ) ต้องเลื่อนในกล่อง ไม่ใช่ดันคอลัมน์ให้กว้างเกินจอ */
+.about__body {
+  min-width: 0;
 }
 
 .about__json {

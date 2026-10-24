@@ -4,6 +4,7 @@
    ========================================================= */
 import { useEffect, useRef, useState } from 'react';
 import { WORKS, getWork } from '../data/derived';
+import { useL } from '../data/localize';
 import { gsap, lockScroll, reduceMotion } from '../lib/motion';
 import { setWorkHash } from '../lib/route';
 import { useUI } from '../lib/store';
@@ -14,7 +15,9 @@ import './WorkDetail.css';
 export default function WorkDetail() {
   const openId = useUI(s => s.openId);
   const openWork = useUI(s => s.openWork);
-  const work = openId ? getWork(openId) : undefined;
+  const L = useL();
+  const base = openId ? getWork(openId) : undefined;
+  const work = base && L.w(base);
   const [img, setImg] = useState(0);
   const rootRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -89,7 +92,7 @@ export default function WorkDetail() {
           <button type="button" className="mono" onClick={() => step(1)} data-cursor-label="next">
             next →
           </button>
-          <button type="button" className="wd__close" ref={closeRef} onClick={close} aria-label="ปิดรายละเอียด" data-cursor-label="close">
+          <button type="button" className="wd__close" ref={closeRef} onClick={close} aria-label={L.tr('ปิดรายละเอียด', 'Close details')} data-cursor-label="close">
             <span className="mono">Close</span>
             <i aria-hidden="true">×</i>
           </button>
@@ -101,15 +104,15 @@ export default function WorkDetail() {
           <div className="wd__gallery wd__reveal">
             <ProjectMedia key={`${work.id}-${img}`} work={work} index={img} className="wd__main" eager />
             {images.length > 1 && (
-              <div className="wd__thumbs" role="tablist" aria-label="ภาพหน้าจอ">
+              <div className="wd__thumbs" role="tablist" aria-label={L.tr('ภาพหน้าจอ', 'Screenshots')}>
                 {images.map((src, i) => (
-                  <button key={src} type="button" role="tab" aria-selected={i === img} className={i === img ? 'is-on' : ''} onClick={() => setImg(i)} aria-label={`ภาพที่ ${i + 1}`}>
+                  <button key={src} type="button" role="tab" aria-selected={i === img} className={i === img ? 'is-on' : ''} onClick={() => setImg(i)} aria-label={L.tr(`ภาพที่ ${i + 1}`, `Screenshot ${i + 1}`)}>
                     <img src={src} alt="" loading="lazy" />
                   </button>
                 ))}
               </div>
             )}
-            {!images.length && <p className="mono wd__noimg">ยังไม่มีภาพหน้าจอที่เผยแพร่ได้ — แสดงภาพปกแบบ blueprint</p>}
+            {!images.length && <p className="mono wd__noimg">{L.tr('ยังไม่มีภาพหน้าจอที่เผยแพร่ได้ — แสดงภาพปกแบบ blueprint', 'No screenshots can be published yet — showing a blueprint cover')}</p>}
           </div>
 
           <div className="wd__info">
@@ -126,13 +129,13 @@ export default function WorkDetail() {
             <p className="wd__overview wd__reveal">{work.overview}</p>
             {work.role && (
               <p className="wd__callout wd__callout--role wd__reveal">
-                <span className="mono">บทบาท</span>
+                <span className="mono">{L.tr('บทบาท', 'Role')}</span>
                 {work.role}
               </p>
             )}
             {work.note && (
               <p className="wd__callout wd__reveal">
-                <span className="mono">หมายเหตุ</span>
+                <span className="mono">{L.tr('หมายเหตุ', 'Note')}</span>
                 {work.note}
               </p>
             )}
@@ -144,17 +147,17 @@ export default function WorkDetail() {
             </ul>
             <dl className="wd__meta wd__reveal">
               <div>
-                <dt className="mono">ประเภท</dt>
+                <dt className="mono">{L.tr('ประเภท', 'Type')}</dt>
                 <dd>{work.type}</dd>
               </div>
               {work.year && (
                 <div>
-                  <dt className="mono">ปี</dt>
+                  <dt className="mono">{L.tr('ปี', 'Year')}</dt>
                   <dd>{work.year}</dd>
                 </div>
               )}
               <div>
-                <dt className="mono">เทคโนโลยี</dt>
+                <dt className="mono">{L.tr('เทคโนโลยี', 'Stack')}</dt>
                 <dd className="chips">
                   {work.stack.map(s => (
                     <span className="chip" key={s}>

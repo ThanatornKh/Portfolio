@@ -1,4 +1,5 @@
 /* ภาพปกแบบพิมพ์เขียว สำหรับผลงานที่ไม่มีภาพหน้าจอ (หรือภาพโหลดไม่ได้) */
+import { useTr } from '../../lib/i18n';
 import { useId } from 'react';
 import type { CategoryId } from '../../data/types';
 
@@ -17,9 +18,10 @@ const GLYPHS: Record<CategoryId, string> = {
 };
 
 export default function Blueprint({ cat, code, label }: { cat: CategoryId; code: string; label: string }) {
+  const tr = useTr();
   const uid = useId().replace(/:/g, '');
   return (
-    <svg className="blueprint" viewBox="0 0 390 300" role="img" aria-label={`${label} — ภาพปกแบบพิมพ์เขียว`} preserveAspectRatio="xMidYMid slice">
+    <svg className="blueprint" viewBox="0 0 390 300" role="img" aria-label={tr(`${label} — ภาพปกแบบพิมพ์เขียว`, `${label} — blueprint cover`)} preserveAspectRatio="xMidYMid slice">
       <defs>
         <pattern id={`bp-grid-${uid}`} width="15" height="15" patternUnits="userSpaceOnUse">
           <path d="M15 0H0V15" fill="none" stroke="rgba(255,255,255,.05)" strokeWidth="1" />

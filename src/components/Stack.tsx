@@ -4,6 +4,7 @@
    ========================================================= */
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { SKILLS } from '../data/content';
+import { locSkills, useL } from '../data/localize';
 import { TECHS, workById } from '../data/derived';
 import { gsap, isNarrow, reduceMotion, scrollToTarget, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
@@ -21,6 +22,8 @@ const ROW_B = [...ROW_A].reverse();
 const hubOf = (id: string) => SKILLS.find(s => s.tags.includes(id));
 
 export default function Stack() {
+  const L = useL();
+  const SKILLS_L = locSkills(L.lang);
   const ref = useRef<HTMLElement>(null);
   const glRef = useRef<HTMLDivElement>(null);
   const [hover, setHover] = useState<string | null>(null);
@@ -73,7 +76,10 @@ export default function Stack() {
               Everything, <span className="grad">connected.</span>
             </>
           }
-          sub={`แผนที่ดาวของ ${TECHS.length} เทคโนโลยีที่ใช้จริงในผลงาน — คลิกที่ดาวเพื่อโฟกัสและดูว่าใช้ในงานไหน ลากเพื่อหมุน`}
+          sub={L.tr(
+            `แผนที่ดาวของ ${TECHS.length} เทคโนโลยีที่ใช้จริงในผลงาน — คลิกที่ดาวเพื่อโฟกัสและดูว่าใช้ในงานไหน ลากเพื่อหมุน`,
+            `A star map of the ${TECHS.length} technologies used in real projects — click a star to focus on it and see where it is used, drag to rotate`,
+          )}
         />
         <div className="stack__grid">
           <div
@@ -92,7 +98,7 @@ export default function Stack() {
                 <StackScene active={inView && !hidden} hover={hover} selected={selected} focusGroup={focusGroup} onHover={setHover} onSelect={setSelected} />
               </Suspense>
             ) : (
-              <p className="mono stack__nogl">WebGL ไม่พร้อมใช้งาน — ดูรายการทักษะด้านขวา</p>
+              <p className="mono stack__nogl">{L.tr('WebGL ไม่พร้อมใช้งาน — ดูรายการทักษะด้านขวา', 'WebGL is not available — see the skills list instead')}</p>
             )}
             <div className="stack__panel glass" aria-live="polite">
               {selected && (
@@ -101,14 +107,15 @@ export default function Stack() {
                     <i aria-hidden="true" /> focus · <b>{selLabel}</b>
                   </span>
                   <button type="button" onClick={() => setSelected(null)} data-cursor-label="release">
-                    ปลดล็อก <kbd>Esc</kbd>
+                    {L.tr('ปลดล็อก', 'Release')} <kbd>Esc</kbd>
                   </button>
                 </div>
               )}
               {tech ? (
                 <>
                   <p className="mono">
-                    <b>{tech.name}</b> · ใช้ใน {tech.works.length} ผลงาน{techHub && <> · กลุ่ม {techHub.key}</>}
+                    <b>{tech.name}</b> · {L.tr(`ใช้ใน ${tech.works.length} ผลงาน`, `used in ${tech.works.length} ${tech.works.length === 1 ? 'work' : 'works'}`)}
+                    {techHub && <> · {L.tr('กลุ่ม', 'group')} {techHub.key}</>}
                   </p>
                   <div className="chips">
                     {tech.works.map(w => (
@@ -121,9 +128,9 @@ export default function Stack() {
               ) : hub ? (
                 <>
                   <p className="mono">
-                    <b>{hub.key}</b> · {hub.tags.length} เทคโนโลยี
+                    <b>{hub.key}</b> · {hub.tags.length} {L.tr('เทคโนโลยี', 'technologies')}
                   </p>
-                  <p className="stack__hubdesc">{hub.desc}</p>
+                  <p className="stack__hubdesc">{SKILLS_L.find(x => x.key === hub.key)?.desc}</p>
                   {selected === shown && (
                     <div className="chips">
                       {hub.tags.map(t => (
@@ -137,7 +144,7 @@ export default function Stack() {
               ) : shown ? (
                 <p className="mono">
                   <b>{shown}</b>
-                  {techHub && <> · กลุ่ม {techHub.key}</>} · ยังไม่มีในผลงานที่แสดงในหน้านี้
+                  {techHub && <> · {L.tr('กลุ่ม', 'group')} {techHub.key}</>} · {L.tr('ยังไม่มีในผลงานที่แสดงในหน้านี้', 'not in the works shown on this page yet')}
                 </p>
               ) : (
                 <p className="mono">
@@ -168,7 +175,7 @@ export default function Stack() {
                 <span className="mono stack__no">{String(i + 1).padStart(2, '0')}</span>
                 <div>
                   <h3>{s.key}</h3>
-                  <p>{s.desc}</p>
+                  <p>{SKILLS_L[i].desc}</p>
                   <div className="chips">
                     {s.tags.map(t => (
                       <span key={t} className="chip">
@@ -198,7 +205,7 @@ export default function Stack() {
           </div>
         ))}
       </div>
-      <p className="sr-only">เทคโนโลยีทั้งหมด: {TECHS.map(t => `${t.name} (${t.works.map(w => workById.get(w.id)?.name).join(', ')})`).join('; ')}</p>
+      <p className="sr-only">{L.tr('เทคโนโลยีทั้งหมด', 'All technologies')}: {TECHS.map(t => `${t.name} (${t.works.map(w => workById.get(w.id)?.name).join(', ')})`).join('; ')}</p>
     </section>
   );
 }

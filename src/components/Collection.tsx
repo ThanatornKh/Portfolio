@@ -5,6 +5,7 @@
 import { useLayoutEffect, useRef } from 'react';
 import { CATEGORIES } from '../data/content';
 import { countIn, WORKS } from '../data/derived';
+import { useL } from '../data/localize';
 import type { CategoryId } from '../data/types';
 import { Flip, gsap, reduceMotion, ScrollTrigger, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
@@ -15,6 +16,7 @@ import SectionHead from './ui/SectionHead';
 import './Collection.css';
 
 export default function Collection() {
+  const L = useL();
   const ref = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const filter = useUI(s => s.filter);
@@ -58,7 +60,8 @@ export default function Collection() {
   );
 
   const shown = WORKS.filter(w => filter === 'all' || w.cat === filter);
-  const cat = CATEGORIES.find(c => c.id === filter);
+  const found = CATEGORIES.find(c => c.id === filter);
+  const cat = found && L.cat(found);
 
   return (
     <section id="collection" className="section coll" ref={ref}>
@@ -70,10 +73,13 @@ export default function Collection() {
               All <span className="grad">projects.</span>
             </>
           }
-          sub={`${WORKS.length} ผลงาน ใน ${CATEGORIES.length} หมวด — กดที่การ์ดเพื่อดูรายละเอียด ภาพหน้าจอ และลิงก์`}
+          sub={L.tr(
+            `${WORKS.length} ผลงาน ใน ${CATEGORIES.length} หมวด — กดที่การ์ดเพื่อดูรายละเอียด ภาพหน้าจอ และลิงก์`,
+            `${WORKS.length} works in ${CATEGORIES.length} categories — open a card for details, screenshots and links`,
+          )}
         />
 
-        <div className="coll__tabs" role="tablist" aria-label="กรองตามหมวด">
+        <div className="coll__tabs" role="tablist" aria-label={L.tr('กรองตามหมวด', 'Filter by category')}>
           <button role="tab" aria-selected={filter === 'all'} className={filter === 'all' ? 'is-on' : ''} onClick={() => choose('all')} type="button" data-cursor-label="filter">
             All <sup>{WORKS.length}</sup>
           </button>
@@ -90,15 +96,17 @@ export default function Collection() {
             </>
           ) : (
             <>
-              <b>ALL/</b> เรียงตามหมวด: {CATEGORIES.map(c => c.name).join(' · ')}
+              <b>ALL/</b> {L.tr('เรียงตามหมวด', 'by category')}: {CATEGORIES.map(c => c.name).join(' · ')}
             </>
           )}
         </p>
 
         <div className="coll__grid" ref={gridRef}>
-          {shown.map(w => (
+          {shown.map(base => {
+            const w = L.w(base);
+            return (
             <article key={w.id} className="card spot" data-flip-id={w.id}>
-              <button type="button" className="card__hit" onClick={() => openWorkById(w.id)} aria-label={`ดูรายละเอียด ${w.name}`} data-cursor-label="open" />
+              <button type="button" className="card__hit" onClick={() => openWorkById(w.id)} aria-label={L.tr(`ดูรายละเอียด ${w.name}`, `View details: ${w.name}`)} data-cursor-label="open" />
               <div className="card__visual">
                 <ProjectMedia work={w} className="card__media hol" />
                 {w.status && <span className="card__status mono">{w.status}</span>}
@@ -122,7 +130,8 @@ export default function Collection() {
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

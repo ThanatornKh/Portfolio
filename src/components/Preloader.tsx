@@ -3,6 +3,7 @@
    ความคืบหน้าจริง (ฟอนต์ · ฉาก 3D · หน้าเว็บ), กดข้ามได้, จำกัดเวลา,
    เข้าซ้ำในแท็บเดิมเร็วขึ้น (sessionStorage) — ตาม awwwards preloader rules
    ========================================================= */
+import { useTr } from '../lib/i18n';
 import { useEffect, useRef, useState } from 'react';
 import { gsap, lockScroll, reduceMotion } from '../lib/motion';
 import { useUI } from '../lib/store';
@@ -13,6 +14,7 @@ import './Preloader.css';
 const KEY = 'holo-booted';
 
 export default function Preloader() {
+  const tr = useTr();
   const [gone, setGone] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const pctRef = useRef<HTMLSpanElement>(null);
@@ -124,7 +126,7 @@ export default function Preloader() {
 
   if (gone) return null;
   return (
-    <div className="boot" ref={rootRef} role="status" aria-label="กำลังโหลด">
+    <div className="boot" ref={rootRef} role="status" aria-label={tr('กำลังโหลด', 'Loading')}>
       <div className="boot__core">
         <div className="boot__brand mono">
           <i /> HOLO-OS v2.0 // portfolio of Thanatorn Khwanmankong

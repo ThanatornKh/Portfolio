@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTr } from '../lib/i18n';
 import { CHAPTERS } from '../data/chapters';
 import { CATEGORIES, PROFILE } from '../data/content';
 import { gsap, reduceMotion, useGSAP } from '../lib/motion';
@@ -7,6 +8,7 @@ import { go } from './Nav';
 import './Footer.css';
 
 export default function Footer() {
+  const tr = useTr();
   const ref = useRef<HTMLElement>(null);
   const setFilter = useUI(s => s.setFilter);
   useGSAP(
@@ -59,7 +61,7 @@ export default function Footer() {
             <span>React · Vite · TypeScript</span>
             <span>Three.js · React Three Fiber</span>
             <span>GSAP · Lenis</span>
-            <span className="footer__small">ฉาก 3D และภาพปกวาดด้วยโค้ดทั้งหมด</span>
+            <span className="footer__small">{tr('ฉาก 3D และภาพปกวาดด้วยโค้ดทั้งหมด', 'All 3D scenes and cover art are drawn in code')}</span>
           </div>
         </div>
         <p className="footer__word display" aria-label="Thanatorn">

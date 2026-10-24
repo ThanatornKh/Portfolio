@@ -4,6 +4,7 @@
 import { lazy, Suspense, useRef, useState } from 'react';
 import { AI_ACTS } from '../data/content';
 import { getWork, pad } from '../data/derived';
+import { locActs, useL } from '../data/localize';
 import { isNarrow, reduceMotion, ScrollTrigger, useGSAP, gsap } from '../lib/motion';
 import { openWorkById } from '../lib/route';
 import { sceneProgress, spins } from '../lib/store';
@@ -15,6 +16,8 @@ import './Pipeline.css';
 const PipelineScene = lazy(() => import('../gl/PipelineScene'));
 
 export default function Pipeline() {
+  const L = useL();
+  const acts = locActs(L.lang);
   const ref = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const [act, setAct] = useState(0);
@@ -48,7 +51,10 @@ export default function Pipeline() {
     <section id="pipeline" className={`pipe${reduceMotion ? ' pipe--static' : ''}`} ref={ref}>
       <div className="pipe__stage" ref={stageRef}>
         <p className="sr-only" id="pipe-film-desc">
-          อนุภาค 3 มิติเปลี่ยนรูปตามการเลื่อน: กลุ่มข้อมูลดิบ → เกลียว pipeline → โครงข่ายประสาทของโมเดล → ลูกโลกของระบบที่ใช้งานจริง
+          {L.tr(
+            'อนุภาค 3 มิติเปลี่ยนรูปตามการเลื่อน: กลุ่มข้อมูลดิบ → เกลียว pipeline → โครงข่ายประสาทของโมเดล → ลูกโลกของระบบที่ใช้งานจริง',
+            '3D particles change shape as you scroll: a cloud of raw data → a pipeline helix → the neural network of a model → a globe of systems in real use',
+          )}
         </p>
         <div className="gl-layer pipe__gl" role="img" aria-describedby="pipe-film-desc">
           {gl && (
@@ -61,7 +67,7 @@ export default function Pipeline() {
         <div className="wrap pipe__inner">
           <SectionHead id="pipeline" title={<>Data → <span className="grad">Deploy</span></>} />
           <div className="pipe__acts" aria-live="polite">
-            {AI_ACTS.map((a, i) => (
+            {acts.map((a, i) => (
               <article key={a.word} className={`pipe__act${i === act ? ' is-on' : ''}`} aria-hidden={!reduceMotion && i !== act}>
                 <p className="mono pipe__no">
                   act {pad(i + 1)} / {pad(AI_ACTS.length)}

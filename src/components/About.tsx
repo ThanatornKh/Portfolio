@@ -2,25 +2,26 @@
    01 · ABOUT — การ์ดโฮโลแกรม + ข้อความสว่างทีละคำ + profile.json
    ========================================================= */
 import { useRef } from 'react';
-import { PROFILE } from '../data/content';
+import { useL } from '../data/localize';
 import { gsap, reduceMotion, useGSAP } from '../lib/motion';
 import SectionHead from './ui/SectionHead';
 import HoloCard from './ui/HoloCard';
 import ScrollWords from './ui/ScrollWords';
 import './About.css';
 
-const JSON_ROWS: [string, string][] = [
-  ['name', PROFILE.name],
-  ['role', PROFILE.role],
-  ['university', PROFILE.school],
-  ['faculty', PROFILE.faculty],
-  ['major', PROFILE.major],
-  ['year', PROFILE.year],
-  ['location', PROFILE.location],
-  ['status', 'open to internship'],
-];
-
 export default function About() {
+  const L = useL();
+  const PROFILE = L.profile;
+  const JSON_ROWS: [string, string][] = [
+    ['name', PROFILE.name],
+    ['role', PROFILE.role],
+    ['university', PROFILE.school],
+    ['faculty', PROFILE.faculty],
+    ['major', PROFILE.major],
+    ['year', PROFILE.year],
+    ['location', PROFILE.location],
+    ['status', 'open to internship'],
+  ];
   const ref = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -46,7 +47,7 @@ export default function About() {
             footer={
               <>
                 <span>
-                  <b>Thanatorn K.</b>
+                  <b>{PROFILE.name}</b>
                   <small className="mono">Full Stack · KU IT</small>
                 </span>
                 <span className="mono about__id">ID · TK-2569</span>
@@ -65,10 +66,11 @@ export default function About() {
               </>
             }
           />
-          <ScrollWords className="about__intro" text={PROFILE.intro} />
+          {/* key = ภาษา: แยกคำใหม่และผูกแอนิเมชันกับคำชุดใหม่ */}
+          <ScrollWords key={L.lang} className="about__intro" text={PROFILE.intro} />
           <p className="lead about__goal">{PROFILE.goal}</p>
 
-          <div className="about__json spot" aria-label="ข้อมูลส่วนตัว">
+          <div className="about__json spot" aria-label={L.tr('ข้อมูลส่วนตัว', 'Profile details')}>
             <div className="about__json-bar mono">
               <i />
               <i />

@@ -2,7 +2,7 @@
    07 · Q&A — accordion (details/summary) · [[id]] = ลิงก์ไปผลงาน
    ========================================================= */
 import { useRef, type ReactNode } from 'react';
-import { FAQ } from '../data/content';
+import { locFaq, useL } from '../data/localize';
 import { getWork } from '../data/derived';
 import { gsap, reduceMotion, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
@@ -24,6 +24,7 @@ function withLinks(text: string): ReactNode[] {
 }
 
 export default function Faq() {
+  const L = useL();
   const ref = useRef<HTMLElement>(null);
   useGSAP(
     () => {
@@ -56,11 +57,11 @@ export default function Faq() {
               Asked before <span className="grad">hiring.</span>
             </>
           }
-          sub="คำถามที่มักถูกถามก่อนรับเข้าทำงาน — ตอบจากผลงานจริงข้างบน"
+          sub={L.tr('คำถามที่มักถูกถามก่อนรับเข้าทำงาน — ตอบจากผลงานจริงข้างบน', 'Questions that usually come up before hiring — answered with the work above')}
         />
         <div className="faq__list">
-          {FAQ.map((f, i) => (
-            <details className="faq__item spot" key={f.q} open={i === 0}>
+          {locFaq(L.lang).map((f, i) => (
+            <details className="faq__item spot" key={i} open={i === 0}>
               <summary onClick={toggle} data-cursor-label="toggle">
                 <span className="mono">{String(i + 1).padStart(2, '0')}</span>
                 <span className="faq__q">{f.q}</span>

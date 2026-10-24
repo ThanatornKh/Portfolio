@@ -4,7 +4,7 @@
    intro: kicker scramble → หัวเรื่อง blur-in ทีละคำ (MotionSites pattern) → ตัวเลขนับขึ้น
    ========================================================= */
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { PROFILE } from '../data/content';
+import { useL } from '../data/localize';
 import { WORKS } from '../data/derived';
 import { gsap, reduceMotion, ScrollTrigger, SplitText, useGSAP } from '../lib/motion';
 import { sceneProgress, spins, useUI } from '../lib/store';
@@ -17,13 +17,15 @@ import './Hero.css';
 const HeroScene = lazy(() => import('../gl/HeroScene'));
 
 const STATS = [
-  { n: WORKS.length, label: 'ผลงานในพอร์ต', suffix: '' },
-  { n: 4, label: 'ระบบที่ใช้งานจริง', suffix: '' },
-  { n: 443, label: 'test cases อัตโนมัติ', suffix: '' },
-  { n: 5.1, label: 'ล้านแถวใน data pipeline', suffix: 'M', decimals: 1 },
+  { n: WORKS.length, th: 'ผลงานในพอร์ต', en: 'works in this portfolio', suffix: '' },
+  { n: 4, th: 'ระบบที่ใช้งานจริง', en: 'systems in real use', suffix: '' },
+  { n: 443, th: 'test cases อัตโนมัติ', en: 'automated test cases', suffix: '' },
+  { n: 5.1, th: 'ล้านแถวใน data pipeline', en: 'million rows in a data pipeline', suffix: 'M', decimals: 1 },
 ];
 
 export default function Hero() {
+  const L = useL();
+  const PROFILE = L.profile;
   const ref = useRef<HTMLElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
   const booted = useUI(s => s.booted);
@@ -109,11 +111,13 @@ export default function Hero() {
   );
 
   return (
-    <section id="top" className="hero" ref={ref} aria-label="แนะนำตัว">
+    <section id="top" className="hero" ref={ref} aria-label={L.tr('แนะนำตัว', 'Introduction')}>
       <div className="hero__pin" ref={pinRef}>
         <p className="sr-only" id="hero-film-desc">
-          ฉาก 3 มิติ: ชิปสี่ชั้นแทน full stack (Infrastructure, Data, Logic/API, Interface) ประกอบตัวเอง แล้วแยกชั้นออกเมื่อเลื่อนลง จากนั้นชั้น Interface
-          ฉายโฮโลแกรมหน้าจอผลงานจริง B&amp;P Parking, Fleet Management และ FX Pipeline ลากเพื่อหมุนได้ 360 องศา
+          {L.tr(
+            'ฉาก 3 มิติ: ชิปสี่ชั้นแทน full stack (Infrastructure, Data, Logic/API, Interface) ประกอบตัวเอง แล้วแยกชั้นออกเมื่อเลื่อนลง จากนั้นชั้น Interface ฉายโฮโลแกรมหน้าจอผลงานจริง B&P Parking, Fleet Management และ FX Pipeline ลากเพื่อหมุนได้ 360 องศา',
+            '3D scene: a four-layer chip standing for the full stack (Infrastructure, Data, Logic/API, Interface) assembles itself, separates as you scroll, and then the Interface layer projects holograms of real project screens — B&P Parking, Fleet Management and FX Pipeline. Drag to rotate 360 degrees.',
+          )}
         </p>
         <div className="gl-layer hero__gl" role="img" aria-describedby="hero-film-desc">
           {gl ? (
@@ -128,21 +132,26 @@ export default function Hero() {
 
         <div className="hero__inner wrap">
           <div className="hero__copy">
-            <p className="hero__kicker mono">● Portfolio — vol.02 / 2569</p>
+            {/* key = ภาษา: ScrambleText เขียนทับ text node ตอน intro ทำให้ React อัปเดตข้อความเดิมไม่ได้ */}
+            <p key={L.lang} className="hero__kicker mono">{`● Portfolio — vol.02 / ${L.year('2569')}`}</p>
             <h1 className="hero__title display">
               <span className="sr-only">{PROFILE.name} — </span>
               From pixels <br />
               to <span className="grad">production.</span>
             </h1>
             <p className="hero__sub lead">
-              <strong>{PROFILE.name}</strong> — Full Stack Developer จาก IT {PROFILE.school} ที่สร้างระบบครบตั้งแต่หน้าจอจนถึงเซิร์ฟเวอร์จริง
+              <strong>{PROFILE.name}</strong>
+              {L.tr(
+                ` — Full Stack Developer จาก IT ${PROFILE.school} ที่สร้างระบบครบตั้งแต่หน้าจอจนถึงเซิร์ฟเวอร์จริง`,
+                ` — a Full Stack Developer studying IT at ${PROFILE.school} who builds complete systems, from the screen to the production server.`,
+              )}
             </p>
             <div className="hero__cta">
               <a href="#works" className="btn btn--solid" onClick={e => go(e, 'works')} onPointerMove={onButtonGlow} data-cursor-label="explore">
-                ดูผลงาน <span className="arrow">→</span>
+                {L.tr('ดูผลงาน', 'View work')} <span className="arrow">→</span>
               </a>
               <a href="#contact" className="btn btn--glass glass" onClick={e => go(e, 'contact')} onPointerMove={onButtonGlow} data-cursor-label="say hi">
-                ติดต่อ
+                {L.tr('ติดต่อ', 'Contact')}
               </a>
             </div>
           </div>
@@ -155,9 +164,9 @@ export default function Hero() {
         </div>
 
         <dl className="hero__stats wrap">
-          {STATS.map(s => (
-            <div key={s.label}>
-              <dt className="mono">{s.label}</dt>
+          {STATS.map((s, i) => (
+            <div key={i}>
+              <dt className="mono">{L.tr(s.th, s.en)}</dt>
               <dd className="display">
                 <span data-count={s.n} data-decimals={s.decimals ?? 0}>
                   {reduceMotion ? s.n : 0}

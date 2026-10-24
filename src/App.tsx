@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLang } from './lib/i18n';
 import { initSmoothScroll, ScrollTrigger } from './lib/motion';
 import { useWorkRoute } from './lib/route';
 import Preloader from './components/Preloader';
@@ -27,6 +28,18 @@ export default function App() {
     window.addEventListener('load', onLoad);
     return () => window.removeEventListener('load', onLoad);
   }, []);
+
+  // เปลี่ยนภาษา: ตั้ง <html lang> และคำนวณตำแหน่ง ScrollTrigger ใหม่ (ข้อความยาวไม่เท่ากัน ความสูงหน้าเปลี่ยน)
+  const lang = useLang(s => s.lang);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+    const skip = document.querySelector('.skip');
+    if (skip) skip.textContent = lang === 'en' ? 'Skip to content' : 'ข้ามไปที่เนื้อหา';
+    let raf = requestAnimationFrame(() => {
+      raf = requestAnimationFrame(() => ScrollTrigger.refresh());
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [lang]);
 
   return (
     <>
