@@ -11,6 +11,17 @@
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Lenis: เลื่อนหน้าแบบนุ่ม เป็นแหล่งข้อมูลการเลื่อนเดียวของทุกฉาก (ปิดเมื่อผู้ใช้ขอลดการเคลื่อนไหว)
+  let lenis = null;
+  if (!reduceMotion && window.Lenis) {
+    try {
+      lenis = new window.Lenis({ lerp: .1 });
+      const lenisRaf = t => { lenis.raf(t); requestAnimationFrame(lenisRaf); };
+      requestAnimationFrame(lenisRaf);
+    } catch (e) { lenis = null; }
+  }
+  const scrollToY = y => lenis ? lenis.scrollTo(y) : window.scrollTo({ top: y, behavior: 'smooth' });
+
   // random แบบกำหนด seed ได้ — layout เดิมทุกครั้งที่โหลด
   const seeded = seed => () => {
     seed |= 0; seed = seed + 0x6D2B79F5 | 0;
@@ -645,6 +656,8 @@
       const b = el.getBoundingClientRect();
       const c = b.left + b.width / 2 - window.innerWidth / 2;
       el.style.setProperty('--px', `${(-c * .06).toFixed(1)}px`);
+      const k = clamp(c / window.innerWidth, -1, 1);
+      el.style.transform = `rotateY(${(-k * 26).toFixed(2)}deg) translateZ(${(-Math.abs(k) * 150).toFixed(1)}px)`;
       if (Math.abs(c) < bd) { bd = Math.abs(c); best = i; }
     });
     flagIndex.textContent = pad(best + 1);
@@ -714,7 +727,7 @@
     if (active) filters.scrollTo({ left: active.offsetLeft - 20, behavior: 'smooth' });
     if (scroll) {
       const y = collection.getBoundingClientRect().top + window.scrollY - filters.offsetHeight - 20;
-      if (window.scrollY > y || scroll === 'force') window.scrollTo({ top: y, behavior: 'smooth' });
+      if (window.scrollY > y || scroll === 'force') scrollToY(y);
     }
   }
   filters.addEventListener('click', e => {
@@ -789,6 +802,7 @@
     detail.classList.add('open');
     detail.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lock');
+    if (lenis) lenis.stop();
     setHash(`#work/${id}`);
     $('#detailClose').focus({ preventScroll: true, focusVisible: false });
   }
@@ -799,6 +813,7 @@
     detail.classList.remove('open');
     detail.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lock');
+    if (lenis) lenis.start();
     setHash('');
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   }
@@ -1176,6 +1191,17 @@
     setFilter(a.dataset.cat, 'force');
   });
 
+  // ลิงก์ในหน้า (#...) ให้ Lenis พาเลื่อนไปแบบนุ่ม
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a || !lenis || a.hasAttribute('data-cat')) return;
+    const href = a.getAttribute('href');
+    const target = href === '#top' ? 0 : href.length > 1 && document.getElementById(href.slice(1));
+    if (target === false || target === null) return;
+    e.preventDefault();
+    lenis.scrollTo(target);
+  });
+
   const menu = $('#menu');
   const menuBtn = $('#menuBtn');
   function toggleMenu(force) {
@@ -1186,6 +1212,7 @@
     menuBtn.setAttribute('aria-label', open ? 'ปิดเมนู' : 'เปิดเมนู');
     $('.menu-label').textContent = open ? 'Close' : 'Menu';
     document.body.classList.toggle('lock', open);
+    if (lenis) open ? lenis.stop() : lenis.start();
     nav.classList.remove('hidden');
   }
   menuBtn.addEventListener('click', () => toggleMenu());
@@ -1212,7 +1239,7 @@
 
   const CHAPTERS = [
     ['hero', 'Prologue', 'home'], ['about', 'Hello, world', 'about'], ['process', 'How I work', 'process'],
-    ['works', 'Flagship', 'flagship'], ['collection-sec', 'Collection', 'collection'], ['skills', 'Constellation', 'skills'],
+    ['ai', 'Data to deploy', 'data-to-deploy'], ['works', 'Flagship', 'flagship'], ['collection-sec', 'Collection', 'collection'], ['skills', 'Constellation', 'skills'],
     ['experience', 'git log', 'git-log'], ['faq', 'Q&A', 'faq'], ['contact', 'Contact', 'contact'],
   ];
   const rail = $('#rail');
@@ -1388,6 +1415,116 @@
   }
 
   /* =========================================================
+     CH.03 FROM DATA TO DEPLOY — คำบรรยายของฉาก 3D (ตัววาดอยู่ใน js/scene3d.js)
+     ========================================================= */
+  const neuralSec = $('#ai');
+  $('#neuralActs').innerHTML = AI_ACTS.map((a, i) => `
+    <div class="n-item${i === 0 ? ' on' : ''}">
+      <h2 class="n-title">${esc(a.lead)} <span class="script">${esc(a.word)}</span>.</h2>
+      <p class="n-desc">${esc(a.desc)}</p>
+      <div class="p-examples">e.g.${a.projects.filter(id => byId[id]).map(id => `<button data-open="${id}">${esc(byId[id].name)}</button>`).join('')}</div>
+    </div>`).join('');
+  $('#neuralSteps').innerHTML = AI_ACTS.map((a, i) => `<li>${pad(i + 1)} ${esc(a.word)}</li>`).join('');
+  const nItems = $$('.n-item', neuralSec);
+  const nSteps = $$('#neuralSteps li');
+
+  function updateNeural() {
+    const r = neuralSec.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    const p = span > 0 ? clamp(-r.top / span) : 1;
+    neuralSec.style.setProperty('--p', p.toFixed(4));
+    const x = Math.min(p, .9999) * AI_ACTS.length;
+    const act = reduceMotion ? AI_ACTS.length - 1 : Math.floor(x);
+    nItems.forEach((el, i) => {
+      el.classList.toggle('on', i === act);
+      el.classList.toggle('past', i < act);
+      $$('button', el).forEach(b => b.tabIndex = i === act ? 0 : -1);
+    });
+    nSteps.forEach((li, i) => {
+      li.classList.toggle('on', i === act);
+      li.style.setProperty('--fill', i < act ? 1 : i === act ? clamp(x - act) : 0);
+    });
+  }
+
+  /* =========================================================
+     VELOCITY MARQUEE — แถบเทคโนโลยี เร็วขึ้นและเอียงตามความเร็วการเลื่อน
+     ========================================================= */
+  const marquee = $('#marquee');
+  const mqItems = techs.slice().sort((a, b) => b.projects.length - a.projects.length).slice(0, 18);
+  const mqHTML = mqItems.map(t => `<span>${esc(t.name)}</span><span>${pad(t.projects.length)} proj</span>`).join('');
+  marquee.innerHTML = mqHTML + mqHTML;
+  let mqX = 0, mqV = 0, mqLastY = window.scrollY, mqLastT = performance.now(), mqVisible = false;
+
+  function marqueeLoop(now) {
+    const dt = Math.min(64, now - mqLastT); mqLastT = now;
+    const y = window.scrollY;
+    const v = (y - mqLastY) / Math.max(dt, 1); mqLastY = y;
+    mqV += (v - mqV) * .12;
+    const half = marquee.scrollWidth / 2;
+    mqX -= (.05 + Math.abs(mqV) * .9) * dt * (mqV < -.05 ? -1 : 1);
+    if (half) mqX = ((mqX % half) - half) % half;
+    marquee.style.transform = `translate3d(${mqX.toFixed(1)}px,0,0) skewX(${clamp(-mqV * 6, -10, 10).toFixed(2)}deg)`;
+    if (mqVisible) requestAnimationFrame(marqueeLoop);
+  }
+  if (!reduceMotion) {
+    new IntersectionObserver(([en]) => {
+      mqVisible = en.isIntersecting;
+      if (mqVisible) { mqLastT = performance.now(); mqLastY = window.scrollY; requestAnimationFrame(marqueeLoop); }
+    }).observe(marquee.parentElement);
+  }
+
+  /* =========================================================
+     CARD TILT — การ์ดเอียงตามเมาส์ + แสงสะท้อน (เฉพาะเมาส์)
+     ========================================================= */
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    collection.addEventListener('pointermove', e => {
+      const m = e.target.closest('.card-media');
+      if (!m) return;
+      const r = m.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+      m.classList.add('tilting');
+      m.style.setProperty('--ry', `${((x - .5) * 12).toFixed(2)}deg`);
+      m.style.setProperty('--rx', `${((.5 - y) * 10).toFixed(2)}deg`);
+      m.style.setProperty('--gx', `${(x * 100).toFixed(1)}%`);
+      m.style.setProperty('--gy', `${(y * 100).toFixed(1)}%`);
+    });
+    collection.addEventListener('pointerout', e => {
+      const m = e.target.closest('.card-media');
+      if (!m || m.contains(e.relatedTarget)) return;
+      m.classList.remove('tilting');
+      m.style.setProperty('--rx', '0deg');
+      m.style.setProperty('--ry', '0deg');
+    });
+  }
+
+  /* =========================================================
+     TEXT SCRAMBLE — ชื่อบทถอดรหัสทีละตัวอักษรเมื่อเลื่อนมาถึง
+     ========================================================= */
+  const SCRAMBLE_CHARS = '!<>-_\\/[]{}=+*^?#01';
+  $$('.chapter-mark').forEach(cm => {
+    const node = [...cm.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+    if (!node) return;
+    const span = document.createElement('span');
+    span.className = 'cm-text';
+    span.textContent = node.textContent;
+    span.setAttribute('aria-label', node.textContent);
+    cm.replaceChild(span, node);
+  });
+
+  function scramble(el) {
+    if (!el || el.dataset.done || reduceMotion) return;
+    el.dataset.done = '1';
+    const final = el.textContent, t0 = performance.now(), dur = 650;
+    const step = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      const fixed = Math.floor(k * final.length);
+      el.textContent = final.slice(0, fixed) + [...final.slice(fixed)].map(c => c === ' ' ? ' ' : SCRAMBLE_CHARS[Math.floor(Math.random() * SCRAMBLE_CHARS.length)]).join('');
+      if (k < 1) requestAnimationFrame(step); else el.textContent = final;
+    };
+    requestAnimationFrame(step);
+  }
+
+  /* =========================================================
      SCROLL / RESIZE LOOP
      ========================================================= */
   let ticking = false;
@@ -1404,6 +1541,7 @@
       updateFlag();
       updateGroups();
       updateFooterMark();
+      updateNeural();
     });
   }
   function onResize() {
@@ -1420,6 +1558,7 @@
     updateFlag();
     updateGroups();
     updateFooterMark();
+    updateNeural();
     drawStars(performance.now());
   }
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -1440,6 +1579,7 @@
     entries.forEach(en => {
       if (en.isIntersecting) {
         en.target.classList.add('in');
+        if (en.target.classList.contains('chapter-mark')) scramble($('.cm-text', en.target));
         revealObs.unobserve(en.target);
       }
     });

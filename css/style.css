@@ -250,8 +250,8 @@ main {
   z-index: 800;
   height: var(--nav-h);
   padding: 0 var(--gutter);
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid transparent;
   transition: background .4s, border-color .4s, transform .5s var(--ease);
@@ -387,19 +387,6 @@ main {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--mute);
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  color: var(--ink);
-}
-
-.logo-mark {
-  width: 26px;
-  height: 30px;
-  flex-shrink: 0;
 }
 
 .logo-word {
@@ -2799,6 +2786,201 @@ main {
 }
 
 /* =========================================================
+   CH.03 — From data to deploy (Three.js particle morph)
+   ========================================================= */
+.neural {
+  position: relative;
+  height: 460vh;
+}
+
+.neural-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(320px, .85fr) 1.15fr;
+  align-items: center;
+  padding: var(--nav-h) var(--gutter) 0;
+}
+
+.neural-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.neural-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.neural-acts {
+  display: grid;
+  margin-top: 26px;
+}
+
+.n-item {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+  transition: opacity .7s var(--ease), transform .9s var(--ease);
+}
+
+.n-item.past {
+  transform: translateY(-50px);
+}
+
+.n-item.on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.n-title {
+  font-family: var(--serif);
+  font-size: clamp(50px, 6.6vw, 112px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+
+.n-desc {
+  margin-top: 24px;
+  max-width: 440px;
+  font-family: var(--th);
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+
+.neural-steps {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.neural-hud {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 26px;
+  z-index: 2;
+  display: flex;
+  gap: 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.neural-hud span:nth-child(2) {
+  color: var(--accent);
+}
+
+.neural.no-3d .neural-hud {
+  display: none;
+}
+
+/* =========================================================
+   Velocity marquee
+   ========================================================= */
+.marquee {
+  position: relative;
+  overflow: hidden;
+  padding: 26px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.marquee-track span {
+  flex-shrink: 0;
+  padding: 0 22px;
+  font-family: var(--serif);
+  font-size: clamp(34px, 4.4vw, 66px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.marquee-track span:nth-child(even) {
+  font-family: var(--mono);
+  font-size: clamp(14px, 1.3vw, 18px);
+  align-self: center;
+  color: var(--accent);
+}
+
+/* =========================================================
+   3D cover-flow (flagship) + card tilt
+   ========================================================= */
+.flagship-pin {
+  perspective: 1700px;
+}
+
+.flagship-track {
+  transform-style: preserve-3d;
+}
+
+.fl-panel {
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+.card-media {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform .6s var(--ease);
+}
+
+.card-media.tilting {
+  transition: transform .12s linear;
+}
+
+.card-media::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .45), rgba(255, 255, 255, 0) 55%);
+  opacity: 0;
+  transition: opacity .4s;
+}
+
+.card-media.tilting::before {
+  opacity: 1;
+}
+
+/* text scramble keeps width stable */
+.cm-text {
+  white-space: nowrap;
+}
+
+/* =========================================================
+   Lenis smooth scroll
+   ========================================================= */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 @media (max-width: 1100px) {
@@ -2924,6 +3106,37 @@ main {
 
   .manifesto {
     height: 220vh;
+  }
+
+  .neural {
+    height: 400vh;
+  }
+
+  .neural-pin {
+    grid-template-columns: 1fr;
+    align-items: start;
+    padding-top: calc(var(--nav-h) + 20px);
+  }
+
+  .n-title {
+    font-size: clamp(42px, 12vw, 66px);
+  }
+
+  .n-desc {
+    margin-top: 14px;
+    font-size: 14px;
+  }
+
+  .neural-hud {
+    left: var(--gutter);
+    right: auto;
+    bottom: 18px;
+    gap: 12px;
+    font-size: 10px;
+  }
+
+  .neural-hud span:first-child {
+    display: none;
   }
 
   .manifesto-text {
@@ -3126,7 +3339,8 @@ main {
   .hero,
   .stars-section,
   .process,
-  .manifesto {
+  .manifesto,
+  .neural {
     height: auto;
   }
 
@@ -3148,7 +3362,8 @@ main {
   .hero-pin,
   .stars-pin,
   .process-pin,
-  .manifesto-pin {
+  .manifesto-pin,
+  .neural-pin {
     position: relative;
     min-height: 100vh;
   }
@@ -3169,6 +3384,8 @@ main {
   .filters,
   .guides,
   .rail,
+  .neural,
+  .marquee,
   .progress,
   .flagship,
   .faq-canvas,

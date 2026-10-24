@@ -42,16 +42,6 @@
       </nav>
     </div>
 
-    <a href="#top" class="logo" aria-label="กลับหน้าแรก">
-      <svg class="logo-mark" viewBox="0 0 40 46" aria-hidden="true">
-        <path d="M20 1.5 38 8v15.5C38 34 30 41.5 20 44.5 10 41.5 2 34 2 23.5V8Z" fill="none" stroke="currentColor"
-          stroke-width="1.4" />
-        <path d="M8 14h12M14 14v19M24 14v19M24 25l9-11M27.6 21.2 33 33" fill="none" stroke="currentColor"
-          stroke-width="1.6" />
-      </svg>
-      <span class="logo-word">THANATORN</span>
-    </a>
-
     <div class="nav-side nav-right">
       <span class="nav-current" id="navCurrent" aria-live="polite">Home</span>
       <a href="#contact" class="nav-cta">Contact</a>
@@ -59,7 +49,7 @@
   </header>
 
   <!-- ================= FULLSCREEN MENU ================= -->
-  <div class="menu" id="menu" aria-hidden="true">
+  <div class="menu" id="menu" aria-hidden="true" data-lenis-prevent>
     <div class="menu-inner">
       <div class="menu-col">
         <div class="menu-eyebrow">Navigation</div>
@@ -67,12 +57,13 @@
           <li><a href="#top"><span>00</span>Prologue<em>หน้าแรก</em></a></li>
           <li><a href="#about"><span>01</span>Hello, world<em>เกี่ยวกับ</em></a></li>
           <li><a href="#process"><span>02</span>How I work<em>วิธีทำงาน</em></a></li>
-          <li><a href="#works"><span>03</span>Flagship<em>ผลงานเด่น</em></a></li>
-          <li><a href="#collection-sec"><span>04</span>Collection<em>ผลงานทั้งหมด</em></a></li>
-          <li><a href="#skills"><span>05</span>Constellation<em>ทักษะ</em></a></li>
-          <li><a href="#experience"><span>06</span>git log<em>เส้นทาง</em></a></li>
-          <li><a href="#faq"><span>07</span>Q&amp;A<em>คำถามที่พบบ่อย</em></a></li>
-          <li><a href="#contact"><span>08</span>Contact<em>ติดต่อ</em></a></li>
+          <li><a href="#ai"><span>03</span>Data to deploy<em>ข้อมูล · AI · 3D</em></a></li>
+          <li><a href="#works"><span>04</span>Flagship<em>ผลงานเด่น</em></a></li>
+          <li><a href="#collection-sec"><span>05</span>Collection<em>ผลงานทั้งหมด</em></a></li>
+          <li><a href="#skills"><span>06</span>Constellation<em>ทักษะ</em></a></li>
+          <li><a href="#experience"><span>07</span>git log<em>เส้นทาง</em></a></li>
+          <li><a href="#faq"><span>08</span>Q&amp;A<em>คำถามที่พบบ่อย</em></a></li>
+          <li><a href="#contact"><span>09</span>Contact<em>ติดต่อ</em></a></li>
         </ol>
       </div>
       <div class="menu-col">
@@ -173,11 +164,26 @@
       </div>
     </section>
 
-    <!-- ================= CH.03 FLAGSHIP (เลื่อนแนวนอน) ================= -->
+    <!-- ================= CH.03 FROM DATA TO DEPLOY (อนุภาค 3D) ================= -->
+    <section id="ai" class="neural" aria-label="จากข้อมูลสู่ระบบจริง">
+      <div class="neural-pin">
+        <canvas class="neural-canvas" id="neuralCanvas" aria-hidden="true"></canvas>
+        <div class="neural-copy">
+          <div class="chapter-mark"><span>CH.03</span>From data to deploy<i></i></div>
+          <div class="neural-acts" id="neuralActs"></div>
+          <ol class="process-steps neural-steps" id="neuralSteps"></ol>
+        </div>
+        <div class="neural-hud" aria-hidden="true">
+          <span>three.js · webgl</span><span id="neuralShape">signal.cloud</span><span id="neuralCount"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CH.04 FLAGSHIP (เลื่อนแนวนอน) ================= -->
     <section id="works" class="flagship" aria-label="ผลงานเด่น">
       <div class="flagship-pin">
         <div class="flagship-head">
-          <div class="chapter-mark"><span>CH.03</span>Flagship<i></i></div>
+          <div class="chapter-mark"><span>CH.04</span>Flagship<i></i></div>
           <div class="flagship-count"><span id="flagIndex">01</span> / <span id="flagTotal">00</span></div>
         </div>
         <div class="flagship-track" id="flagTrack"></div>
@@ -185,11 +191,14 @@
       </div>
     </section>
 
-    <!-- ================= CH.04 COLLECTION ================= -->
+    <!-- แถบเทคโนโลยีวิ่งตามความเร็วการเลื่อน -->
+    <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+    <!-- ================= CH.05 COLLECTION ================= -->
     <section id="collection-sec" class="section section--works">
       <div class="section-head section-head--split reveal">
         <div>
-          <div class="chapter-mark"><span>CH.04</span>Collection<i></i></div>
+          <div class="chapter-mark"><span>CH.05</span>Collection<i></i></div>
           <h2 class="section-title split-title">The <em>collection</em></h2>
           <p class="section-lead">ผลงานทั้งหมด จัดเป็นหมวดหมู่ — กดที่ผลงานเพื่อดูรายละเอียด</p>
         </div>
@@ -208,7 +217,7 @@
       <div class="stars-pin">
         <canvas class="stars-canvas" id="starsCanvas" aria-hidden="true"></canvas>
         <div class="stars-copy">
-          <div class="chapter-mark"><span>CH.05</span>Constellation<i></i></div>
+          <div class="chapter-mark"><span>CH.06</span>Constellation<i></i></div>
           <h2 class="section-title">Everything <span class="script">connected</span></h2>
           <p class="section-lead">แผนที่ดาวของเทคโนโลยี — ทุกจุดคือเครื่องมือที่ใช้จริงในผลงาน เชื่อมกับหมวดหมู่ที่ใช้
             <span class="only-hover">ชี้ที่ดาวเพื่อดูว่าใช้ในผลงานไหน</span></p>
@@ -228,7 +237,7 @@
     <!-- ================= EXPERIENCE ================= -->
     <section id="experience" class="section">
       <div class="section-head reveal">
-        <div class="chapter-mark"><span>CH.06</span>git log<i></i></div>
+        <div class="chapter-mark"><span>CH.07</span>git log<i></i></div>
         <h2 class="section-title split-title">The road <em>so far</em></h2>
         <p class="section-lead">ประวัติการศึกษาและผลงานเรียงตามปี แบบ git log — commit ล่าสุดอยู่บนสุด</p>
       </div>
@@ -238,11 +247,11 @@
       </div>
     </section>
 
-    <!-- ================= CH.07 ASKED BEFORE HIRING ================= -->
+    <!-- ================= CH.08 ASKED BEFORE HIRING ================= -->
     <section id="faq" class="faq">
       <canvas class="faq-canvas" id="faqCanvas" aria-hidden="true"></canvas>
       <div class="faq-inner">
-        <div class="chapter-mark chapter-mark--center"><span>CH.07</span>Q&amp;A<i></i></div>
+        <div class="chapter-mark chapter-mark--center"><span>CH.08</span>Q&amp;A<i></i></div>
         <h2 class="faq-title split-title">Asked before <span class="script">hiring</span></h2>
         <p class="section-lead faq-lead">คำถามที่มักถูกถามก่อนรับเข้าทำงาน — ตอบจากผลงานจริงข้างบน</p>
         <div class="faq-list" id="faqList"></div>
@@ -254,7 +263,7 @@
       <div class="crosshair" aria-hidden="true"></div>
       <div class="contact-grid">
         <div class="reveal">
-          <div class="chapter-mark"><span>CH.08</span>Contact<i></i></div>
+          <div class="chapter-mark"><span>CH.09</span>Contact<i></i></div>
           <h2 class="contact-title">Let's build something <span class="script">together</span></h2>
           <p class="contact-note">กำลังมองหาโอกาสฝึกงานในสาขา Full Stack Development, Frontend, Backend หรือ Mobile Development
             ที่ให้โอกาสพัฒนาทักษะและเติบโตไปพร้อมกับทีม ยินดีนำเสนอ Portfolio เพิ่มเติมและพูดคุยรายละเอียดตามต้องการ</p>
@@ -324,13 +333,15 @@
       <span class="detail-code" id="detailCode"></span>
       <button class="detail-close" id="detailClose">Close <span aria-hidden="true">✕</span></button>
     </div>
-    <div class="detail-scroll" id="detailScroll">
+    <div class="detail-scroll" id="detailScroll" data-lenis-prevent>
       <div class="detail-body" id="detailBody"></div>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/main.js"></script>
+  <script type="module" src="js/scene3d.js"></script>
 </body>
 
 </html>

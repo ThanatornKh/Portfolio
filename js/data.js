@@ -507,6 +507,38 @@ const PROCESS = [
   },
 ];
 
+/* บท 3D "From data to deploy" — อนุภาคเปลี่ยนรูปตามการเลื่อน (shape: cloud | helix | neural | globe) */
+const AI_ACTS = [
+  {
+    lead: 'Collect the',
+    word: 'signal',
+    shape: 'signal.cloud',
+    desc: 'เก็บข้อมูลจากหลายแหล่ง — API, web scraping และเซนเซอร์ IoT บนบอร์ด ESP32',
+    projects: ['fx-multi-source-pipeline', 'smoke-heat-detection'],
+  },
+  {
+    lead: 'Clean the',
+    word: 'pipeline',
+    shape: 'etl.helix',
+    desc: 'จัดลำดับงาน ETL ด้วย Apache Airflow — รวมข้อมูล ตัดข้อมูลซ้ำ และผ่าน quality gate ก่อนเผยแพร่',
+    projects: ['fx-multi-source-pipeline', 'airflow-pipeline-lab'],
+  },
+  {
+    lead: 'Teach the',
+    word: 'model',
+    shape: 'cnn.layers',
+    desc: 'เทรนโมเดล AI ด้วย Python ให้จำแนกโรคในใบมะเขือเทศจากรูปภาพ',
+    projects: ['tomato-leaf-disease'],
+  },
+  {
+    lead: 'Ship the',
+    word: 'product',
+    shape: 'prod.globe',
+    desc: 'ต่อเป็นระบบที่ใช้งานได้จริง — deploy ขึ้น Firebase Hosting, VPS ผ่าน CI/CD หรือ Render ด้วย Docker',
+    projects: ['devilish-hypercars', 'equipment-management', 'fleet-management'],
+  },
+];
+
 /* คำถามที่พบบ่อย (Asked before hiring) — ใส่ [[project-id]] เพื่อทำเป็นลิงก์ไปที่ผลงาน */
 const FAQ = [
   {
