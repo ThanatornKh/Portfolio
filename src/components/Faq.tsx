@@ -1,5 +1,5 @@
 /* =========================================================
-   07 · Q&A — accordion (details/summary) · [[id]] = ลิงก์ไปผลงาน
+   08 · Q&A — accordion (details/summary) · [[id]] = ลิงก์ไปผลงาน
    ========================================================= */
 import { useRef, type ReactNode } from 'react';
 import { locFaq, useL } from '../data/localize';

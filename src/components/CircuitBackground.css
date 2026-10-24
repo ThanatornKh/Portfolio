@@ -1,0 +1,29 @@
+.circuit-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.circuit-bg canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+}
+
+.circuit-bg__traces {
+  will-change: transform;
+}
+
+.circuit-bg__pulses {
+  height: 100%;
+}
+
+@media print {
+  .circuit-bg {
+    display: none;
+  }
+}

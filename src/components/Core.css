@@ -1,0 +1,375 @@
+.core {
+  position: relative;
+  height: 340vh;
+}
+
+.core__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.core__gl {
+  height: 100vh;
+  height: 100lvh;
+}
+
+.core__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, var(--bg) 0%, rgba(5, 5, 5, 0.85) 28%, transparent 50%),
+    linear-gradient(180deg, transparent 70%, rgba(5, 5, 5, 0.7) 100%);
+}
+
+.core__inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-top: calc(var(--nav-h) + 40px);
+  padding-bottom: 48px;
+  pointer-events: none;
+}
+
+.core .sec-head {
+  max-width: 34rem;
+}
+
+.core__inner :is(a, button) {
+  pointer-events: auto;
+}
+
+/* ---------- ขั้นของฉาก (ตาม --p) ---------- */
+.core__stages {
+  display: grid;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.core__stages li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.4s;
+}
+
+.core__stages i {
+  width: 18px;
+  height: 1px;
+  background: var(--line-3);
+  transition: width 0.5s var(--ease), background-color 0.4s;
+}
+
+.core__stages em {
+  font-style: normal;
+  color: var(--faint);
+}
+
+.core__stages .is-done {
+  color: var(--ink);
+}
+
+.core__stages .is-done i {
+  width: 34px;
+  background: var(--cyan);
+}
+
+/* ---------- HUD: memory dump ---------- */
+.core__dump {
+  position: absolute;
+  right: var(--gutter);
+  top: 50%;
+  width: min(400px, 34vw);
+  transform: translateY(-46%);
+  padding: 16px 18px 18px;
+  border: 1px solid var(--line-2);
+  background: rgba(8, 9, 10, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.core__dump-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+
+.core__dump-bar span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-2);
+}
+
+.core__dump-bar i {
+  width: 6px;
+  height: 6px;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan);
+  animation: core-blink 1.4s steps(2, jump-none) infinite;
+}
+
+.core__dump-bar i.is-locked {
+  animation: none;
+}
+
+.core__hex {
+  display: grid;
+  gap: 3px;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.core__hex p {
+  display: grid;
+  grid-template-columns: 7ch 1fr 8ch;
+  gap: 12px;
+  white-space: nowrap;
+  animation: core-row 0.5s var(--ease) both;
+  animation-delay: calc(var(--i) * 60ms);
+}
+
+.core__hex .a {
+  color: var(--faint);
+}
+
+.core__hex .h {
+  color: var(--ink-2);
+}
+
+.core__hex .c {
+  color: var(--cyan);
+  text-align: right;
+}
+
+.core__fields {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line-2);
+  animation: core-row 0.6s var(--ease) both;
+  animation-delay: 0.25s;
+}
+
+.core__fields div {
+  display: grid;
+  grid-template-columns: 7ch 1fr;
+  gap: 12px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.core__fields dt {
+  font-size: 10px;
+  color: var(--faint);
+  text-transform: lowercase;
+}
+
+.core__fields dd {
+  min-width: 0;
+  font-size: 13px;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.core__fields dd.mono {
+  font-size: 11px;
+  color: var(--ink-2);
+}
+
+.core__banks {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.core__banks button {
+  padding: 6px 0;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--mute);
+  border: 1px solid var(--line);
+  transition: color 0.3s, border-color 0.3s, background-color 0.3s;
+}
+
+.core__banks button:hover,
+.core__banks button:focus-visible {
+  color: var(--ink);
+  border-color: var(--line-3);
+}
+
+.core__banks button.is-on {
+  color: var(--bg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.core__banks button[aria-pressed='true'] {
+  box-shadow: 0 0 0 1px var(--cyan);
+}
+
+.core__open {
+  width: 100%;
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.core__spin {
+  right: var(--gutter);
+  top: calc(var(--nav-h) + 30px);
+}
+
+@keyframes core-row {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes core-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (max-width: 1100px) {
+  .core__dump {
+    width: min(360px, 40vw);
+  }
+}
+
+@media (max-width: 900px) {
+  /* จอแคบ: หัวข้อแนะนำแล้วค่อยจางหายเมื่อเริ่มเลื่อน ยกพื้นที่ให้ชิป (CoreScene ใช้ช่วงเดียวกันจัดกล้อง) */
+  .core {
+    --fade: clamp(0, calc((var(--p, 0) - 0.08) / 0.14), 1);
+    height: 300vh;
+  }
+
+  .core--static {
+    --fade: 0;
+  }
+
+  .core .sec-head {
+    opacity: calc(1 - var(--fade));
+    transform: translateY(calc(var(--fade) * -28px));
+  }
+
+  .core__shade {
+    background: linear-gradient(180deg, transparent 56%, rgba(5, 5, 5, 0.85) 74%);
+  }
+
+  .core__shade::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 45%;
+    background: linear-gradient(180deg, var(--bg) 0%, rgba(5, 5, 5, 0.75) 50%, transparent 100%);
+    opacity: calc(1 - var(--fade) * 0.85);
+  }
+
+  .core__inner {
+    padding-top: calc(var(--nav-h) + 20px);
+  }
+
+  .core .sec-head__sub {
+    font-size: 14px;
+  }
+
+  .core__stages {
+    display: none;
+  }
+
+  .core__dump {
+    left: var(--gutter);
+    right: var(--gutter);
+    top: auto;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    width: auto;
+    transform: none;
+    padding: 12px 14px 14px;
+  }
+
+  .core__dump-bar {
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+
+  .core__hex {
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  .core__fields {
+    gap: 4px;
+    margin-top: 10px;
+    padding-top: 9px;
+  }
+
+  .core__fields div:nth-child(2),
+  .core__fields div:nth-child(4) {
+    display: none;
+  }
+
+  .core__banks {
+    gap: 5px;
+    margin-top: 10px;
+  }
+
+  .core__banks button {
+    padding: 5px 0;
+  }
+
+  .core__open {
+    min-height: 42px;
+    margin-top: 10px;
+  }
+
+  .core__spin {
+    display: none;
+  }
+}
+
+/* มือถือจอเตี้ย: ตัดค่าที่ถอดแล้วเหลือแค่ชื่อ + สถานะ */
+@media (max-width: 900px) and (max-height: 760px) {
+  .core__fields div:nth-child(5) {
+    display: none;
+  }
+}
+
+/* reduced motion: ไม่ปักหมุด แสดงฉากนิ่ง + HUD ใช้งานได้ปกติ */
+.core--static {
+  height: auto;
+}
+
+.core--static .core__stage {
+  position: relative;
+  min-height: 100vh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .core__hex p,
+  .core__fields {
+    animation: none;
+  }
+
+  .core__dump-bar i {
+    animation: none;
+  }
+}
