@@ -20,7 +20,7 @@ const STATS = [
   { n: WORKS.length, label: 'ผลงานในพอร์ต', suffix: '' },
   { n: 4, label: 'ระบบที่ใช้งานจริง', suffix: '' },
   { n: 443, label: 'test cases อัตโนมัติ', suffix: '' },
-  { n: 2.2, label: 'ล้านแถวใน data pipeline', suffix: 'M', decimals: 1 },
+  { n: 5.1, label: 'ล้านแถวใน data pipeline', suffix: 'M', decimals: 1 },
 ];
 
 export default function Hero() {

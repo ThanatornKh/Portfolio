@@ -208,8 +208,8 @@ export const PROJECTS: Project[] = [
     cat: 'data',
     name: 'Thai IT Jobs 2014–2026',
     th: 'ตลาดแรงงานไอทีไทย — Big Data + Power BI',
-    desc: 'Pipeline เก็บและวิเคราะห์ประกาศงานไอทีไทยย้อนหลัง 13 ปี จาก 10 แหล่ง รวม 2,213,972 แถว พร้อม NLP, ML และ Power BI',
-    overview: 'Pipeline เก็บและวิเคราะห์ประกาศงานไอทีไทยย้อนหลัง 13 ปี จาก 10 แหล่ง รวม 2,213,972 แถว ทำความสะอาดข้อมูล จัดหมวดด้วย NLP ภาษาไทย สร้างโมเดล ML แล้วแสดงผลบน Power BI และเว็บแดชบอร์ด',
+    desc: 'Pipeline เก็บและวิเคราะห์ประกาศงานไอทีไทยย้อนหลัง 13 ปี จาก 10 แหล่ง รวม 5,134,246 แถว พร้อม NLP, ML และ Power BI',
+    overview: 'Pipeline เก็บและวิเคราะห์ประกาศงานไอทีไทยย้อนหลัง 13 ปี จาก 10 แหล่ง รวม 5,134,246 แถว ทำความสะอาดข้อมูล จัดหมวดด้วย NLP ภาษาไทย สร้างโมเดล ML แล้วแสดงผลบน Power BI และเว็บแดชบอร์ด',
     highlights: [
       'Crawler รายวัน (ตีสอง) จาก JobThai, JobTopGun, JobPub, JobsDB, InternTH ฯลฯ + Common Crawl + data.go.th',
       'เคารพ robots.txt และตัดข้อมูลติดต่อบุคคล (PII) ออกก่อนเก็บ',
@@ -220,7 +220,7 @@ export const PROJECTS: Project[] = [
     stack: ['Python', 'DuckDB', 'Parquet', 'pandas', 'PyThaiNLP', 'LightGBM', 'FastAPI', 'Apache Airflow', 'Apache Spark', 'Docker', 'Power BI', 'pytest'],
     type: 'Data Engineering / BI',
     status: 'PRIVATE DATA',
-    metrics: [['Rows', '2,213,972'], ['Sources', '10'], ['Tests', '119']],
+    metrics: [['Rows', '5,134,246'], ['Sources', '10'], ['Tests', '119']],
     year: '2569',
     note: 'repo เป็น private และข้อมูลห้ามเผยแพร่ — แสดงเฉพาะภาพรวมและตัวเลขสรุป (ภาพหน้าจอจากแดชบอร์ดที่รันบนเครื่อง)',
     images: [
@@ -387,7 +387,7 @@ export const AI_ACTS: AiAct[] = [
     lead: 'Clean the',
     word: 'pipeline',
     shape: 'etl.helix',
-    desc: 'จัดลำดับงานด้วย Apache Airflow — รวมข้อมูล ตัดซ้ำ ผ่าน quality gate ก่อน publish (2.2 ล้านแถวใน Thai IT Jobs)',
+    desc: 'จัดลำดับงานด้วย Apache Airflow — รวมข้อมูล ตัดซ้ำ ผ่าน quality gate ก่อน publish (5.1 ล้านแถวใน Thai IT Jobs)',
     projects: ['thai-it-jobs', 'fx-multi-source-pipeline'],
   },
   {
