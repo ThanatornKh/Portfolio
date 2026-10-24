@@ -47,7 +47,7 @@ export const CATEGORIES: Category[] = [
     code: 'WB',
     name: 'Web & Firebase',
     th: 'เว็บไซต์และระบบบน Firebase',
-    desc: 'HTML · CSS · JavaScript · Firebase Auth · Cloud Firestore',
+    desc: 'HTML · CSS · JavaScript · Firebase Hosting',
     glyph: 'web',
   },
   {
@@ -304,40 +304,6 @@ export const PROJECTS: Project[] = [
     images: [asset('projects/devilish-hero.jpg')],
     links: [{ label: 'เปิดเว็บไซต์', url: 'https://devilish-car.web.app/' }],
   },
-  {
-    id: 'sa-schedule-system',
-    cat: 'web',
-    name: 'Schedule System',
-    th: 'ระบบจัดตารางเรียน (Firebase Auth)',
-    desc: 'ระบบจัดตารางเรียนพร้อมระบบสมาชิก สมัคร/เข้าสู่ระบบ เปลี่ยนรหัสผ่าน แก้ไขโปรไฟล์ เก็บข้อมูลบน Firestore',
-    overview: 'ระบบจัดตารางเรียนพร้อมระบบสมาชิก ผู้ใช้สมัคร เข้าสู่ระบบ เปลี่ยนรหัสผ่าน และแก้ไขโปรไฟล์ได้ ข้อมูลเก็บบน Cloud Firestore เป็นงานวิชา System Analysis',
-    highlights: [
-      'สมัคร / เข้าสู่ระบบ / เปลี่ยนรหัสผ่าน ด้วย Firebase Authentication',
-      'แก้ไขโปรไฟล์และจัดตารางเรียน',
-      'เก็บข้อมูลบน Cloud Firestore',
-    ],
-    stack: ['HTML', 'CSS', 'JavaScript', 'Firebase Auth', 'Cloud Firestore'],
-    type: 'งานวิชา System Analysis',
-    status: 'COURSE',
-    metrics: [['Auth', 'Firebase']],
-  },
-  {
-    id: 'sa-activity-planner',
-    cat: 'web',
-    name: 'Activity Planner',
-    th: 'ระบบวางแผนกิจกรรม (Firebase)',
-    desc: 'เข้าสู่ระบบด้วย Google, ปฏิทินกิจกรรมรายเดือน, หน้าจัดการกิจกรรม และหน้าการแจ้งเตือน',
-    overview: 'ระบบวางแผนกิจกรรม มีหน้าเข้าสู่ระบบที่รองรับบัญชี Google ปฏิทินกิจกรรมรายเดือน หน้าจัดการกิจกรรม และหน้าการแจ้งเตือน เป็นงานวิชา System Analysis',
-    highlights: [
-      'เข้าสู่ระบบด้วย Firebase Authentication (รองรับ Google)',
-      'ปฏิทินกิจกรรมรายเดือน',
-      'หน้าจัดการกิจกรรมและหน้าการแจ้งเตือน',
-    ],
-    stack: ['HTML', 'CSS', 'JavaScript', 'Firebase Auth', 'Cloud Firestore'],
-    type: 'งานวิชา System Analysis',
-    status: 'COURSE',
-    metrics: [['Login', 'Google']],
-  },
 
   /* ---------- IOT & EMBEDDED ---------- */
   {
@@ -389,7 +355,7 @@ export const PROCESS: ProcessStep[] = [
     verb: 'design',
     desc: 'วิเคราะห์โจทย์และออกแบบระบบก่อนลงมือเขียน — UML, โครงหน้าจอ, ข้อมูล และ flow การใช้งาน',
     tags: ['System Analysis', 'UML', 'Database Design', 'UI Flow'],
-    projects: ['bp-parking', 'sa-schedule-system'],
+    projects: ['bp-parking', 'hypercar-sales'],
   },
   {
     verb: 'build',
