@@ -12,6 +12,15 @@ import './Contact.css';
 
 type Line = { kind: 'cmd' | 'out' | 'err'; node: ReactNode };
 
+/** เบราว์เซอร์บางแบบ (หน้าแสดงตัวอย่างใน iframe) เปิดหน้าต่างพิมพ์ไม่ได้ → ซ่อนปุ่ม */
+const canPrint = (() => {
+  try {
+    return window.self === window.top;
+  } catch {
+    return false;
+  }
+})();
+
 const findWork = (q: string) => {
   const s = q.toLowerCase();
   return WORKS.find(w => w.id === s || w.code.toLowerCase() === s) ?? WORKS.find(w => w.id.includes(s) || w.name.toLowerCase().includes(s));
@@ -165,9 +174,11 @@ export default function Contact() {
           <button className="btn btn--glass glass" type="button" onClick={copy} onPointerMove={onButtonGlow} data-cursor-label="copy">
             {copied ? 'คัดลอกแล้ว ✓' : 'คัดลอกอีเมล'}
           </button>
-          <button className="btn btn--glass glass" type="button" onClick={() => window.print()} onPointerMove={onButtonGlow} data-cursor-label="print">
-            พิมพ์ / PDF
-          </button>
+          {canPrint && (
+            <button className="btn btn--glass glass" type="button" onClick={() => window.print()} onPointerMove={onButtonGlow} data-cursor-label="print">
+              พิมพ์ / PDF
+            </button>
+          )}
         </div>
 
         <div className="contact__grid">
