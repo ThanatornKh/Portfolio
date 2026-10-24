@@ -1034,6 +1034,166 @@ main {
 .editor-code .s a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 /* =========================================================
+   PROCESS — pinned 3-chapter scene
+   ========================================================= */
+.process {
+  position: relative;
+  height: 330vh;
+}
+
+.process-pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(30px, 5vw, 90px);
+  align-items: center;
+  padding: var(--nav-h) var(--gutter) 0;
+}
+
+.process-titles {
+  display: grid;
+  margin-top: 26px;
+}
+
+.p-item {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(50px);
+  pointer-events: none;
+  transition: opacity .7s var(--ease), transform .9s var(--ease);
+}
+
+.p-item.past {
+  transform: translateY(-50px);
+}
+
+.p-item.on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.p-title {
+  font-family: var(--serif);
+  font-size: clamp(56px, 7.4vw, 124px);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+
+.p-desc {
+  margin-top: 26px;
+  max-width: 460px;
+  font-family: var(--th);
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink-2);
+}
+
+.p-tags {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.p-examples {
+  margin-top: 22px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+}
+
+.p-examples button {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--line-2);
+  transition: border-color .3s, color .3s;
+}
+
+.p-examples button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.process-steps {
+  list-style: none;
+  margin-top: clamp(30px, 6vh, 60px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-width: 460px;
+}
+
+.process-steps li {
+  position: relative;
+  padding-top: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--mute);
+  transition: color .4s;
+}
+
+.process-steps li::before,
+.process-steps li::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: var(--line-2);
+}
+
+.process-steps li::after {
+  background: var(--ink);
+  transform: scaleX(var(--fill, 0));
+  transform-origin: left;
+}
+
+.process-steps li.on {
+  color: var(--ink);
+}
+
+.process-art svg {
+  width: 100%;
+  height: auto;
+  max-height: calc(100svh - var(--nav-h) - 40px);
+  overflow: visible;
+}
+
+.process-art text {
+  font-family: var(--mono);
+}
+
+.stage {
+  opacity: 0;
+  transition: opacity .6s var(--ease);
+}
+
+.stage.on {
+  opacity: 1;
+}
+
+.stage .ln {
+  stroke-dasharray: 1;
+  stroke-dashoffset: clamp(0, calc(1 - (var(--t, 0) - var(--o, 0)) * 2.4), 1);
+}
+
+.stage .tx {
+  opacity: clamp(0, calc((var(--t, 0) - var(--o, .5)) * 4), 1);
+}
+
+/* =========================================================
    WORKS — showcase slider
    ========================================================= */
 .showcase {
@@ -2357,6 +2517,43 @@ main {
     height: 170vh;
   }
 
+  .process {
+    height: 300vh;
+  }
+
+  .process-pin {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 10px;
+    padding-top: calc(var(--nav-h) + 20px);
+  }
+
+  .p-title {
+    font-size: clamp(46px, 13vw, 72px);
+  }
+
+  .p-desc {
+    margin-top: 16px;
+    font-size: 14px;
+  }
+
+  .p-examples button {
+    font-size: 19px;
+  }
+
+  .process-steps {
+    margin-top: 22px;
+  }
+
+  .process-art {
+    align-self: center;
+  }
+
+  .process-art svg {
+    max-height: 40svh;
+  }
+
   .stars-copy {
     right: var(--gutter);
     top: calc(var(--nav-h) + 16px);
@@ -2479,12 +2676,14 @@ main {
   }
 
   .hero,
-  .stars-section {
+  .stars-section,
+  .process {
     height: auto;
   }
 
   .hero-pin,
-  .stars-pin {
+  .stars-pin,
+  .process-pin {
     position: relative;
     min-height: 100vh;
   }
@@ -2511,6 +2710,7 @@ main {
   .hero-actions,
   .contact-actions,
   .stars-section,
+  .process,
   .footer-top,
   .footer-mark {
     display: none !important;

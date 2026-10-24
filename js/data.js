@@ -410,6 +410,28 @@ const PROJECTS = [
   },
 ];
 
+/* วิธีทำงาน — ฉากเลื่อน 3 บท (projects = id ของผลงานที่เป็นตัวอย่าง) */
+const PROCESS = [
+  {
+    verb: 'design',
+    desc: 'วิเคราะห์โจทย์และออกแบบระบบก่อนลงมือเขียน — วางโครงหน้าจอ ข้อมูล และ flow การใช้งาน',
+    tags: ['System Analysis', 'UI Layout', 'Database Design'],
+    projects: ['sa-schedule-system', 'sa-activity-planner'],
+  },
+  {
+    verb: 'build',
+    desc: 'พัฒนาได้ทั้ง Frontend และ Backend ตั้งแต่ UI ไปจนถึง Database และเชื่อมต่อกับฮาร์ดแวร์ IoT',
+    tags: ['Next.js', 'React', 'Node.js', 'PostgreSQL', 'ESP32'],
+    projects: ['hypercar-sales', 'smart-parking-3d'],
+  },
+  {
+    verb: 'ship',
+    desc: 'รันระบบด้วย Docker วาง CI/CD แล้ว deploy ขึ้น VPS หรือ Firebase Hosting ให้ใช้งานได้จริง',
+    tags: ['Docker', 'CI/CD', 'VPS', 'Firebase Hosting'],
+    projects: ['equipment-management', 'devilish-hypercars'],
+  },
+];
+
 /* ทักษะ — จัดแบบ spec sheet */
 const SKILLS = [
   { key: 'Frontend', desc: 'สร้างโครงสร้างและออกแบบหน้าเว็บ ทำ Responsive Layout และ Interactivity', tags: ['HTML5', 'CSS', 'JavaScript ES6+', 'TypeScript', 'React', 'Next.js', 'Angular'] },

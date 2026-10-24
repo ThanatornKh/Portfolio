@@ -96,6 +96,116 @@
       <ellipse cx="520" cy="285" rx="30" ry="9" ${S} stroke-dasharray="3 4"/>`,
   };
 
+  // ภาพลายเส้นเฉพาะของแต่ละผลงาน (ไม่มี = ใช้ภาพของหมวด)
+  const T = (x, y, s, size = 12, anchor = 'middle') => `<text x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#0b0b0b">${s}</text>`;
+  const arrow = (x1, y1, x2, y2) => {
+    const a = Math.atan2(y2 - y1, x2 - x1), h = 10;
+    const p1 = [x2 - h * Math.cos(a - .4), y2 - h * Math.sin(a - .4)], p2 = [x2 - h * Math.cos(a + .4), y2 - h * Math.sin(a + .4)];
+    return `<path d="M${x1} ${y1}L${x2} ${y2}M${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${x2} ${y2}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}" ${S}/>`;
+  };
+  const PROJECT_GLYPHS = {
+    'smart-parking-3d': [300, 252, 204, 156].map(c => `<path d="M260 ${c}L400 ${c - 42}L540 ${c}L400 ${c + 42}Z" ${S}${c === 156 ? '' : ' stroke-dasharray="5 4"'}/>`).join('') + `
+      <path d="M260 156V300M540 156V300M400 198V342" ${S}/>
+      <path d="M338 150l22-8 22 8-22 8zM418 162l22-8 22 8-22 8z" ${S}/>
+      <circle cx="580" cy="230" r="4" fill="#0b0b0b"/>
+      <path d="M592 218a16 16 0 0 1 0 24M601 209a28 28 0 0 1 0 42" ${S}/>
+      ${T(612, 290, 'ESP32', 11, 'start')}`,
+    'equipment-management': `
+      <rect x="290" y="110" width="220" height="240" rx="6" ${S}/>
+      <rect x="360" y="98" width="80" height="26" rx="4" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>
+      ${[0, 1, 2, 3].map(i => `<rect x="310" y="${148 + i * 36}" width="16" height="16" ${S}/><path d="M340 ${156 + i * 36}H${470 - i * 22}" ${S}/>`).join('')}
+      <path d="M313 155l5 5 9-10M313 191l5 5 9-10" ${S}/>
+      ${[0, 4, 7, 9, 14, 17, 22, 26, 28, 33, 38, 41, 46, 50, 53, 58, 63, 66, 71, 75].map((o, i) => `<path d="M${330 + o * 2} 300v30" stroke="#0b0b0b" stroke-width="${i % 3 ? 1 : 2.4}"/>`).join('')}`,
+    'fleet-management': `
+      <path d="M150 170C260 120 330 210 430 160S580 110 620 135" ${S} stroke-dasharray="5 6"/>
+      <circle cx="150" cy="170" r="5" fill="#0b0b0b"/>
+      <path d="M620 100c-14 0-22 10-22 22 0 16 22 36 22 36s22-20 22-36c0-12-8-22-22-22z" ${S}/><circle cx="620" cy="121" r="6" ${S}/>
+      <rect x="230" y="210" width="200" height="96" ${S}/>
+      <path d="M430 236h60l40 40v30H430zM442 246h42l26 26h-68z" ${S}/>
+      <circle cx="285" cy="312" r="22" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/><circle cx="485" cy="312" r="22" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>
+      <path d="M190 334H610" ${S}/>`,
+    'angular-first-app': `
+      <rect x="340" y="116" width="120" height="40" ${S}/>${T(400, 140, '&lt;app-root&gt;', 11)}
+      ${[220, 340, 460].map(x => `<rect x="${x}" y="206" width="120" height="40" ${S}/>${arrow(400, 156, x + 60, 204)}`).join('')}
+      ${T(280, 230, 'header', 11)}${T(400, 230, 'main', 11)}${T(520, 230, 'footer', 11)}
+      ${[[350, 'card'], [450, 'card']].map(([x, s]) => `<rect x="${x - 40}" y="290" width="80" height="34" ${S} stroke-dasharray="4 4"/>${T(x, 311, s, 10)}${arrow(400, 246, x, 288)}`).join('')}`,
+    'sa-schedule-system': `
+      <rect x="230" y="120" width="340" height="230" ${S}/>
+      <path d="M230 160H570M300 108v24M500 108v24" ${S}/>
+      ${[1, 2, 3, 4].map(k => `<path d="M${230 + 68 * k} 160V350" stroke="#0b0b0b" stroke-width=".6"/>`).join('')}
+      ${[1, 2, 3].map(k => `<path d="M230 ${160 + 47.5 * k}H570" stroke="#0b0b0b" stroke-width=".6"/>`).join('')}
+      ${[[1, 0], [3, 0], [0, 1], [2, 2], [4, 1], [1, 3]].map(([c, r]) => `<rect x="${234 + 68 * c}" y="${164 + 47.5 * r}" width="60" height="39" fill="rgba(11,11,11,.08)" ${S}/>`).join('')}
+      <rect x="600" y="240" width="44" height="36" rx="4" ${S}/><path d="M610 240v-12a12 12 0 0 1 24 0v12" ${S}/>`,
+    'sa-activity-planner': [210, 330, 450].map((x, ci) => `
+      <rect x="${x}" y="120" width="110" height="230" ${S}/><path d="M${x} 150h110" ${S}/>
+      ${T(x + 55, 140, ['TODO', 'DOING', 'DONE'][ci], 10)}
+      ${Array.from({ length: [2, 3, 1][ci] }, (_, i) => `<rect x="${x + 10}" y="${160 + i * 50}" width="90" height="38" ${S}/><path d="M${x + 20} ${174 + i * 50}h50M${x + 20} ${186 + i * 50}h32" stroke="#0b0b0b" stroke-width=".7"/>`).join('')}`).join('') +
+      `<path d="M528 168l8 8 16-16" stroke="#b8121b" stroke-width="2" fill="none"/>`,
+    'cambodia-culture-music': `
+      <path d="M370 330V220Q400 110 430 220V330M300 330V250Q325 180 350 250V330M450 330V250Q475 180 500 250V330" ${S}/>
+      <path d="M372 250h56M372 280h56M302 280h46M452 280h46M380 190h40" stroke="#0b0b0b" stroke-width=".7" fill="none"/>
+      <path d="M260 330h280v14H260zM240 344h320v12H240z" ${S}/>
+      <path d="M576 150v62M606 140v62M576 150l30-10M576 162l30-10" ${S}/>
+      <ellipse cx="568" cy="213" rx="9" ry="6" fill="#0b0b0b"/><ellipse cx="598" cy="203" rx="9" ry="6" fill="#0b0b0b"/>`,
+    'portfolio-website': `
+      <rect x="220" y="120" width="360" height="230" ${S}/><path d="M220 144h360" ${S}/>
+      <circle cx="234" cy="132" r="3" ${S}/><circle cx="246" cy="132" r="3" ${S}/><circle cx="258" cy="132" r="3" ${S}/>
+      <path d="M250 196h200M250 224h150" stroke="#0b0b0b" stroke-width="7" fill="none"/>
+      <path d="M250 250h240M250 264h200" stroke="#0b0b0b" stroke-width=".8" fill="none"/>
+      <rect x="250" y="286" width="96" height="28" rx="14" fill="#0b0b0b"/><rect x="356" y="286" width="80" height="28" rx="14" ${S}/>
+      <path d="M520 290v34l9-9 7 15 6-3-7-14h12z" fill="#f5f5f3" stroke="#0b0b0b" stroke-width="1.3"/>`,
+    'netpie-device-control': `
+      <path d="M300 250a36 36 0 0 1 22-62 52 52 0 0 1 98-14 40 40 0 0 1 60 40 30 30 0 0 1-6 58H312a30 30 0 0 1-12-22z" ${S}/>
+      ${T(400, 238, 'NETPIE', 13)}
+      ${arrow(370, 282, 370, 318)}${arrow(430, 318, 430, 282)}
+      ${T(446, 304, 'MQTT', 10, 'start')}
+      <rect x="320" y="320" width="160" height="44" rx="4" ${S}/>
+      <rect x="338" y="332" width="44" height="20" rx="10" ${S}/><circle cx="372" cy="342" r="7" fill="#0b0b0b"/>
+      <circle cx="450" cy="342" r="7" fill="#b8121b"/>`,
+    'dht-lcd-alert': `
+      <path d="M300 130v148a24 24 0 1 0 20 0V130a10 10 0 0 0-20 0z" ${S}/>
+      <path d="M310 170v128" stroke="#b8121b" stroke-width="5"/><circle cx="310" cy="298" r="12" fill="#b8121b"/>
+      ${[0, 1, 2, 3, 4, 5].map(i => `<path d="M326 ${150 + i * 22}h${i % 2 ? 6 : 10}" ${S}/>`).join('')}
+      <rect x="380" y="170" width="230" height="96" ${S}/><rect x="394" y="184" width="202" height="68" fill="rgba(11,11,11,.06)" ${S}/>
+      ${T(408, 212, 'TEMP  28.5°C', 15, 'start')}${T(408, 238, 'HUMID 64 %', 15, 'start')}
+      <circle cx="560" cy="310" r="10" fill="#b8121b"/>
+      <path d="M560 284v-8M580 292l6-6M540 292l-6-6M586 310h8M534 310h-8" ${S}/>`,
+    'mqtt-button-publish': `
+      <rect x="240" y="230" width="100" height="96" rx="8" ${S}/>
+      <circle cx="290" cy="278" r="30" ${S}/><circle cx="290" cy="278" r="18" fill="#0b0b0b"/>
+      ${arrow(345, 278, 462, 278)}${T(404, 264, 'publish', 11)}
+      <rect x="380" y="186" width="48" height="32" ${S}/><path d="M380 186l24 18 24-18" ${S}/>
+      <circle cx="520" cy="278" r="50" ${S}/>${T(520, 283, 'MQTT', 14)}
+      ${T(290, 350, 'WOKWI SIM', 10)}`,
+    'mqtt-counter-lcd': `
+      <circle cx="285" cy="260" r="50" ${S}/>${T(285, 265, 'MQTT', 14)}
+      ${arrow(338, 260, 398, 260)}${T(368, 246, 'sub', 11)}
+      <rect x="402" y="212" width="210" height="96" ${S}/><rect x="414" y="224" width="186" height="72" fill="rgba(11,11,11,.06)" ${S}/>
+      ${T(507, 274, '0042', 38)}`,
+    'spring-boot-workshop': `
+      ${[['Controller', 130], ['Service', 202], ['Repository', 274]].map(([s, y]) => `<rect x="260" y="${y}" width="230" height="48" ${S}/>${T(375, y + 29, s, 13)}`).join('')}
+      ${arrow(375, 178, 375, 200)}${arrow(375, 250, 375, 272)}
+      <rect x="560" y="196" width="76" height="110" rx="12" ${S}/><rect x="552" y="180" width="92" height="20" rx="4" ${S}/>
+      ${T(598, 258, '.jar', 15)}
+      ${arrow(494, 250, 552, 250)}`,
+    'vps-deploy-setup': `
+      <circle cx="290" cy="250" r="36" ${S}/><circle cx="290" cy="250" r="12" ${S}/>
+      <path d="M326 250h134M436 250v22M456 250v14" ${S}/>
+      ${arrow(472, 250, 528, 250)}${T(500, 238, 'ssh', 11)}
+      <rect x="540" y="170" width="120" height="160" ${S}/>
+      ${[0, 1, 2].map(i => `<path d="M552 ${188 + i * 48}h96v32h-96z" ${S}/><circle cx="636" cy="${204 + i * 48}" r="4" fill="#0b0b0b"/><path d="M562 ${204 + i * 48}h40" ${S}/>`).join('')}
+      ${T(600, 350, 'VPS', 12)}`,
+    'owasp-juice-shop': `
+      <path d="M400 120l100 35v85c0 60-45 95-100 110-55-15-100-50-100-110v-85z" ${S}/>
+      <ellipse cx="400" cy="256" rx="26" ry="36" ${S}/><circle cx="400" cy="208" r="12" ${S}/>
+      <path d="M374 240h-22M374 260h-24M376 280h-20M426 240h22M426 260h24M424 280h20M390 198l-10-12M410 198l10-12M400 222v70" ${S}/>
+      <circle cx="574" cy="196" r="34" ${S}/><path d="M598 220l40 40" stroke="#0b0b0b" stroke-width="4"/>`,
+    'airflow-pipeline-lab': `
+      ${[[200, 220, 'extract'], [340, 150, 'transform'], [340, 290, 'validate'], [480, 220, 'load']].map(([x, y, s]) => `<rect x="${x}" y="${y}" width="100" height="38" rx="19" ${S}/>${T(x + 50, y + 23, s, 11)}`).join('')}
+      ${arrow(300, 232, 338, 178)}${arrow(300, 246, 338, 300)}${arrow(440, 178, 478, 232)}${arrow(440, 300, 478, 246)}
+      ${T(400, 120, 'DAG', 12)}`,
+  };
+
   function blueprint(p) {
     const c = catById[p.cat];
     let grid = '';
@@ -103,7 +213,7 @@
     for (let y = 0; y <= 500; y += 25) grid += `<line x1="0" y1="${y}" x2="800" y2="${y}" stroke="${y % 100 ? '#ebebe7' : '#dcdcd7'}" stroke-width="${y % 100 ? .6 : .8}"/>`;
     return `<svg class="bp" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${esc(p.name)}">
       <rect width="800" height="500" fill="#f5f5f3"/>${grid}
-      <g>${GLYPHS[c.glyph] || ''}</g>
+      <g>${PROJECT_GLYPHS[p.id] || GLYPHS[c.glyph] || ''}</g>
       <g stroke="#0b0b0b" stroke-width="1" fill="none">
         <path d="M270 378h260M270 371v14M530 371v14M270 378l10-4v8zM530 378l-10-4v8z"/>
       </g>
@@ -402,6 +512,86 @@
     ...profile.map(([k, v], i) => `<span class="ln">  <span class="k">"${k}"</span><span class="p">: </span><span class="s">"${v}"</span><span class="p">${i < profile.length - 1 ? ',' : ''}</span></span>`),
     '<span class="ln"><span class="p">}</span></span>',
   ].join('');
+
+  /* =========================================================
+     PROCESS — ฉากเลื่อน 3 บท: design → build → ship
+     ========================================================= */
+  const processSec = $('#process');
+  const processArt = $('#processArt');
+  const processItems = [];
+  const processSteps = [];
+
+  $('#processTitles').innerHTML = PROCESS.map((s, i) => `
+    <div class="p-item${i === 0 ? ' on' : ''}">
+      <h2 class="p-title">I <span class="script">${esc(s.verb)}</span> it.</h2>
+      <p class="p-desc">${esc(s.desc)}</p>
+      <div class="p-tags">${s.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
+      <div class="p-examples">e.g.${s.projects.filter(id => byId[id]).map(id => `<button data-open="${id}">${esc(byId[id].name)}</button>`).join('')}</div>
+    </div>`).join('');
+  $('#processSteps').innerHTML = PROCESS.map((s, i) => `<li>${pad(i + 1)} ${esc(s.verb)}</li>`).join('');
+  processItems.push(...$$('.p-item'));
+  processSteps.push(...$$('#processSteps li'));
+
+  // ลายเส้นแต่ละบท: ทุกเส้นใช้ pathLength=1 แล้ววาดตาม scroll ผ่าน --t / --o
+  const ln = (d, o, extra = '') => `<path class="ln" pathLength="1" d="${d}" style="--o:${o}" stroke="#0b0b0b" stroke-width="1.4" fill="none" ${extra}/>`;
+  const tx = (x, y, s, o, size = 12, anchor = 'start') => `<text class="tx" x="${x}" y="${y}" font-size="${size}" text-anchor="${anchor}" fill="#0b0b0b" style="--o:${o}">${s}</text>`;
+  const rectD = (x, y, w, h) => `M${x} ${y}h${w}v${h}h${-w}Z`;
+  const STAGES = [
+    // design — wireframe
+    `${tx(40, 40, 'FIG. 02 — DESIGN / WIREFRAME', 0, 12)}
+     ${ln('M140 60H660M140 52v16M660 52v16', 0)}${tx(400, 52, '1440', .1, 11, 'middle')}
+     ${ln(rectD(140, 90, 520, 380), 0)}${ln('M140 122H660', .05)}
+     ${ln('M158 106h8M174 106h8M190 106h8', .08)}${ln('M520 106h40M572 106h40M624 106h20', .1)}
+     ${ln(rectD(170, 146, 460, 110), .12)}${ln('M170 146 630 256M630 146 170 256', .2, 'stroke-width=".6"')}
+     ${[170, 330, 490].map((x, i) => ln(rectD(x, 284, 140, 160), .2 + i * .06) + ln(rectD(x + 14, 298, 112, 64), .26 + i * .06, 'stroke-dasharray="1"') + ln(`M${x + 14} 382h90M${x + 14} 398h70M${x + 14} 414h50`, .3 + i * .06, 'stroke-width=".8"')).join('')}
+     ${ln('M680 200h40M680 360h40', .35, 'stroke-width=".8"')}${tx(728, 204, 'hero', .4, 11)}${tx(728, 364, 'cards', .4, 11)}
+     ${ln('M560 470v34l9-9 7 15 6-3-7-14h12z', .45)}`,
+    // build — code → API → database
+    `${tx(40, 40, 'FIG. 03 — BUILD / FRONTEND ↔ BACKEND ↔ DATABASE', 0, 12)}
+     ${ln(rectD(100, 100, 330, 400), 0)}${ln('M100 132H430', .04)}${tx(116, 121, 'app.ts', .05, 11)}
+     ${[[0, 120], [1, 180], [1, 150], [2, 120], [2, 160], [1, 90], [0, 60], [0, 0], [0, 140], [1, 200], [1, 110], [0, 50]].map(([ind, w], i) => w ? ln(`M${130 + ind * 24} ${160 + i * 26}h${w}`, .06 + i * .02, 'stroke-width="5" stroke-linecap="round" opacity=".85"') : '').join('')}
+     ${ln('M434 200H516M506 194l10 6-10 6', .3)}${tx(475, 190, 'fetch', .35, 11, 'middle')}
+     ${ln(rectD(520, 160, 180, 80), .32)}${tx(610, 205, 'REST API', .4, 13, 'middle')}
+     ${ln('M610 240V318M604 308l6 10 6-10', .4)}
+     ${ln('M530 340v100c0 12 36 22 80 22s80-10 80-22V340', .42)}${ln('M530 340c0-12 36-22 80-22s80 10 80 22-36 22-80 22-80-10-80-22z', .44)}
+     ${ln('M530 380c0 12 36 22 80 22s80-10 80-22', .46, 'stroke-width=".8"')}${tx(610, 430, 'PostgreSQL', .5, 12, 'middle')}`,
+    // ship — containers → pipeline → cloud
+    `${tx(40, 40, 'FIG. 04 — SHIP / CONTAINER → CI/CD → SERVER', 0, 12)}
+     ${[[90, 400], [210, 400], [150, 320]].map(([x, y], i) => ln(rectD(x, y, 110, 74), i * .05) + ln(`M${x + 22} ${y}v74M${x + 44} ${y}v74M${x + 66} ${y}v74M${x + 88} ${y}v74`, .05 + i * .05, 'stroke-width=".7"')).join('')}
+     ${tx(205, 500, 'docker compose', .2, 11, 'middle')}
+     ${ln('M330 437H380', .2)}
+     ${[['build', 410], ['test', 510], ['deploy', 610]].map(([s, x], i) => ln(`M${x + 24} 437a24 24 0 1 1-48 0 24 24 0 1 1 48 0z`, .24 + i * .06) + tx(x, 488, s, .3 + i * .06, 11, 'middle') + (i < 2 ? ln(`M${x + 26} 437H${x + 74}`, .28 + i * .06) : '')).join('')}
+     ${ln('M610 411V300M604 310l6-10 6 10', .42)}
+     ${ln('M500 270a40 40 0 0 1 22-70 56 56 0 0 1 106-14 44 44 0 0 1 64 44 32 32 0 0 1-6 62H516a32 32 0 0 1-16-22z', .45)}
+     ${tx(600, 252, 'VPS · Firebase', .55, 13, 'middle')}
+     ${ln('M560 150l10-10M600 132v-14M640 150l-10-10', .6)}`,
+  ];
+  processArt.innerHTML = `
+    <g stroke="#ebebe7" stroke-width=".6">${Array.from({ length: 17 }, (_, i) => `<path d="M${i * 50} 0V600"/>`).join('')}${Array.from({ length: 13 }, (_, i) => `<path d="M0 ${i * 50}H800"/>`).join('')}</g>
+    ${STAGES.map((s, i) => `<g class="stage${i === 0 ? ' on' : ''}">${s}</g>`).join('')}`;
+  const stageEls = $$('.stage', processArt);
+
+  function updateProcess() {
+    const r = processSec.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    if (span <= 0) { stageEls.forEach(g => g.style.setProperty('--t', 1)); return; }
+    const p = clamp(-r.top / span) * PROCESS.length;
+    const step = Math.min(PROCESS.length - 1, Math.floor(p));
+    const local = reduceMotion ? 1 : clamp((p - step) / .6);
+    processItems.forEach((el, i) => {
+      el.classList.toggle('on', i === step);
+      el.classList.toggle('past', i < step);
+      $$('button', el).forEach(b => b.tabIndex = i === step ? 0 : -1);
+    });
+    processSteps.forEach((li, i) => {
+      li.classList.toggle('on', i === step);
+      li.style.setProperty('--fill', i < step ? 1 : i === step ? clamp(p - step) : 0);
+    });
+    stageEls.forEach((g, i) => {
+      g.classList.toggle('on', i === step);
+      g.style.setProperty('--t', i < step ? 1 : i === step ? local : 0);
+    });
+  }
 
   /* =========================================================
      SHOWCASE (featured slider)
@@ -1002,7 +1192,7 @@
     hudPct.textContent = `${String(Math.round(clamp(y / max) * 100)).padStart(3, '0')}%`;
   }
 
-  const labels = { hero: 'home', about: 'about', works: 'works', skills: 'skills', experience: 'experience', contact: 'contact' };
+  const labels = { hero: 'home', about: 'about', process: 'process', works: 'works', skills: 'skills', experience: 'experience', contact: 'contact' };
   const navCurrent = $('#navCurrent');
   const sectionObs = new IntersectionObserver(entries => {
     entries.forEach(en => {
@@ -1027,6 +1217,7 @@
       updateNav();
       updateHero();
       updateStars();
+      updateProcess();
     });
   }
   function onResize() {
@@ -1035,6 +1226,7 @@
     lastQ = -1;
     updateHero();
     updateStars();
+    updateProcess();
     drawStars(performance.now());
   }
   window.addEventListener('scroll', onScroll, { passive: true });
