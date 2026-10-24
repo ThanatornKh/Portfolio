@@ -775,6 +775,11 @@
     $('#detailScroll').scrollTop = 0;
   }
 
+  // อัปเดต URL ให้แชร์ลิงก์ผลงานได้ (บางเฟรม/เบราว์เซอร์ไม่อนุญาต ก็ข้ามไป)
+  function setHash(h) {
+    try { history.replaceState(null, '', h || location.pathname + location.search); } catch (e) { /* ignore */ }
+  }
+
   function openDetail(id, opener) {
     const p = byId[id];
     if (!p) return;
@@ -784,7 +789,7 @@
     detail.classList.add('open');
     detail.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lock');
-    history.replaceState(null, '', `#work/${id}`);
+    setHash(`#work/${id}`);
     $('#detailClose').focus({ preventScroll: true, focusVisible: false });
   }
 
@@ -794,7 +799,7 @@
     detail.classList.remove('open');
     detail.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lock');
-    history.replaceState(null, '', location.pathname + location.search);
+    setHash('');
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   }
 
