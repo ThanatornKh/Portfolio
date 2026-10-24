@@ -47,7 +47,10 @@ export default function Pipeline() {
   return (
     <section id="pipeline" className={`pipe${reduceMotion ? ' pipe--static' : ''}`} ref={ref}>
       <div className="pipe__stage" ref={stageRef}>
-        <div className="gl-layer pipe__gl" aria-hidden="true">
+        <p className="sr-only" id="pipe-film-desc">
+          อนุภาค 3 มิติเปลี่ยนรูปตามการเลื่อน: กลุ่มข้อมูลดิบ → เกลียว pipeline → โครงข่ายประสาทของโมเดล → ลูกโลกของระบบที่ใช้งานจริง
+        </p>
+        <div className="gl-layer pipe__gl" role="img" aria-describedby="pipe-film-desc">
           {gl && (
             <Suspense fallback={null}>
               <PipelineScene active={inView && !hidden} count={count} />

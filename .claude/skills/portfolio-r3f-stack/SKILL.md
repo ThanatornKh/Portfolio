@@ -16,6 +16,7 @@ description: How this portfolio is built and how to extend it — React + Vite +
 | `src/lib/useDragRotate.ts` | 360° drag with inertia; touch: horizontal swipe only (`touch-action: pan-y`) |
 | `src/gl/*Scene.tsx` | Lazy-loaded R3F canvases. Each takes `active` and switches `frameloop` between `always` and `never`. |
 | `src/gl/Projections.tsx` | Hologram shader over real screenshots; beams from the chip's interface layer |
+| `src/components/UnderTheHood.tsx` | Annotated plate (B&P dashboard) and the Quality Report on paper |
 | `src/components/*` | One file per chapter, plus a CSS file next to it |
 
 ## Rules that keep it smooth
@@ -32,6 +33,17 @@ description: How this portfolio is built and how to extend it — React + Vite +
 - **Lighting.** Use `Environment` with `Lightformer`s and `frames={1}`: reflections with no HDR download.
 - **Procedural textures.** `src/gl/textures.ts` draws on canvas and uses the result as an `emissiveMap`: black = off, white = glow.
 - **Images used as textures** must be same-origin (`public/projects`). Remote images (i.ibb.co) are DOM `<img>` only.
+
+## Rules adopted from `scroll-film-site` (owner-provided skill)
+
+- **One lerp only.** Lenis already smooths scroll, so the camera position, the chip explode and the particle morph map scroll progress **directly**. Only pointer parallax and spin inertia are damped. Two smoothing layers in series feel laggy.
+- **The hero headline stays still.** It only fades as the next scene starts. Captions that replace it sit in the same left column, opposite the object.
+- **Active chapter = the one entering.** Use a "decision band" at the top third: ScrollTrigger `start: 'top 33%'`, `end: 'bottom 33%'`. Set `aria-current` on nav and rail links.
+- **The menu closes three ways:** Esc, a click on empty space, and choosing a link.
+- **Canvas layers** use `height: 100lvh` (no gap when the iOS URL bar collapses). Each has `role="img"` and an `sr-only` description.
+- **Annotated plate** (`UnderTheHood.tsx`): markers are positioned in % of the screenshot. SVG leads run from the note's edge, elbow at 1/3, and end at the marker's rim. `pathLength=1` makes the dash reveal easy. Redraw with a ResizeObserver. Hide the leads when stacked on mobile.
+- **Paper certificate:** scoped tokens (`.paper { --bg; --ink; --line }`). Bars draw from zero **once** (IntersectionObserver adds `.in`, then `transform: scaleX(var(--v))`). That is the only motion in the section.
+- **JSON-LD `Person`** in `index.html`.
 
 ## Theme (sharp, "serious")
 

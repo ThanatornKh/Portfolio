@@ -13,6 +13,9 @@
 
 .hero__gl {
   z-index: 0;
+  bottom: auto;
+  height: 100vh;
+  height: 100lvh;
 }
 
 .hero__fallback {
@@ -289,4 +292,11 @@
 .hero__spin {
   right: var(--gutter);
   top: calc(var(--nav-h) + 30px);
+}
+
+@media (max-width: 900px) {
+  .hero__spin {
+    top: auto;
+    bottom: 200px;
+  }
 }

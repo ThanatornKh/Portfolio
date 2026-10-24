@@ -50,8 +50,9 @@ export default function Nav() {
       if (!el) return;
       ScrollTrigger.create({
         trigger: el,
-        start: 'top 45%',
-        end: 'bottom 45%',
+        // "แถบตัดสิน" ที่ 1/3 บนของจอ: บทที่กำลังเข้ามาคือบทปัจจุบัน
+        start: 'top 33%',
+        end: 'bottom 33%',
         onToggle: self => self.isActive && setChapter(c.id),
       });
     });
@@ -93,7 +94,7 @@ export default function Nav() {
           </div>
           <nav className="nav__links" aria-label="เมนูหลัก">
             {(['works', 'stack', 'contact'] as const).map(id => (
-              <a key={id} href={`#${id}`} onClick={e => go(e, id)} className="mono">
+              <a key={id} href={`#${id}`} onClick={e => go(e, id)} className="mono" aria-current={chapter === id ? 'true' : undefined}>
                 {CHAPTERS.find(c => c.id === id)!.label.replace('Flagship works', 'Works')}
               </a>
             ))}
@@ -114,7 +115,7 @@ export default function Nav() {
 
       <nav className="rail no-print" ref={railRef} aria-label="บทของหน้า">
         {CHAPTERS.map(c => (
-          <a key={c.id} href={`#${c.id}`} onClick={e => go(e, c.id)} className={c.id === chapter ? 'is-active' : ''} data-cursor="none">
+          <a key={c.id} href={`#${c.id}`} onClick={e => go(e, c.id)} className={c.id === chapter ? 'is-active' : ''} aria-current={c.id === chapter ? 'true' : undefined} aria-label={`${c.no} ${c.label}`} data-cursor="none">
             <span className="rail__label mono">{c.label}</span>
             <span className="rail__tick" />
           </a>
@@ -122,7 +123,19 @@ export default function Nav() {
       </nav>
 
       {menuOpen && (
-        <div className="menu" id="menu" ref={menuRef} role="dialog" aria-modal="true" aria-label="เมนู" data-lenis-prevent>
+        <div
+          className="menu"
+          id="menu"
+          ref={menuRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="เมนู"
+          data-lenis-prevent
+          onClick={e => {
+            // ปิดได้ 3 ทาง: Esc, คลิกพื้นที่ว่าง, เลือกลิงก์
+            if (!(e.target as Element).closest('a, button')) setMenu(false);
+          }}
+        >
           <div className="menu__inner wrap">
             <ol className="menu__list">
               {CHAPTERS.map(c => (

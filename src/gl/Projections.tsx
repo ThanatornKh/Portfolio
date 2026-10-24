@@ -67,6 +67,7 @@ export default function Projections() {
   const base = import.meta.env.BASE_URL;
   const maps = useTexture(SCREENS.map(s => `${base}${s.img}`));
   const camera = useThree(s => s.camera);
+  const width = useThree(s => s.size.width);
   const screenRefs = useRef<(THREE.Group | null)[]>([]);
   const labelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const tmp = useMemo(() => new THREE.Vector3(), []);
@@ -108,13 +109,14 @@ export default function Projections() {
     const t = state.clock.elapsedTime;
     const proj = span(sceneProgress.hero, 0.5, 0.8);
     const pos = beams.geometry.getAttribute('position') as THREE.BufferAttribute;
+    const spread = width < 900 ? 0.62 : 1;
     SCREENS.forEach((s, i) => {
       const g = screenRefs.current[i];
       if (!g) return;
       const k = span(proj, i * 0.14, 0.62 + i * 0.14);
       const e = 1 - Math.pow(1 - k, 3);
       g.visible = k > 0.001;
-      g.position.set(s.pos[0] * (0.5 + 0.5 * e), THREE.MathUtils.lerp(EMITTER.y, s.pos[1], e) + Math.sin(t * 0.8 + i) * 0.03 * e, s.pos[2] * (0.5 + 0.5 * e));
+      g.position.set(s.pos[0] * spread * (0.5 + 0.5 * e), THREE.MathUtils.lerp(EMITTER.y, s.pos[1], e) + Math.sin(t * 0.8 + i) * 0.03 * e, s.pos[2] * spread * (0.5 + 0.5 * e));
       g.lookAt(camera.position);
       g.rotateY(s.tilt);
       g.scale.set(0.35 + 0.65 * e, Math.max(0.001, e), 1);

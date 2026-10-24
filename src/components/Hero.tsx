@@ -58,13 +58,13 @@ export default function Hero() {
         end: 'bottom bottom',
         onUpdate: s => {
           sceneProgress.hero = s.progress;
-          root.style.setProperty('--p', s.progress.toFixed(4));
         },
       });
       gsap
         .timeline({ scrollTrigger: { trigger: root, start: 'top top', end: '22% top', scrub: true } })
-        .to('.hero__copy', { y: -90, opacity: 0, filter: 'blur(10px)', ease: 'none' }, 0)
-        .to('.hero__stats', { y: 60, opacity: 0, ease: 'none' }, 0)
+        // headline อยู่นิ่ง (ไม่เลื่อนตาม scroll) แค่จางออกเมื่อฉากถัดไปเริ่ม — ตาม scroll-film-site
+        .to('.hero__copy', { opacity: 0, ease: 'none' }, 0)
+        .to('.hero__stats', { opacity: 0, ease: 'none' }, 0)
         .to('.hero__hint', { opacity: 0, ease: 'none' }, 0);
       // คำบรรยายสองช่วง: exploded view → ฉายเป็นผลงานจริง
       const cap = (sel: string, a: string, b: string, c: string, d: string) => {
@@ -111,7 +111,11 @@ export default function Hero() {
   return (
     <section id="top" className="hero" ref={ref} aria-label="แนะนำตัว">
       <div className="hero__pin" ref={pinRef}>
-        <div className="gl-layer hero__gl" aria-hidden="true">
+        <p className="sr-only" id="hero-film-desc">
+          ฉาก 3 มิติ: ชิปสี่ชั้นแทน full stack (Infrastructure, Data, Logic/API, Interface) ประกอบตัวเอง แล้วแยกชั้นออกเมื่อเลื่อนลง จากนั้นชั้น Interface
+          ฉายโฮโลแกรมหน้าจอผลงานจริง B&amp;P Parking, Fleet Management และ FX Pipeline ลากเพื่อหมุนได้ 360 องศา
+        </p>
+        <div className="gl-layer hero__gl" role="img" aria-describedby="hero-film-desc">
           {gl ? (
             <Suspense fallback={null}>
               <HeroScene active={inView && !hidden} />
@@ -131,8 +135,7 @@ export default function Hero() {
               to <span className="grad">production.</span>
             </h1>
             <p className="hero__sub lead">
-              <strong>{PROFILE.name}</strong> · Full Stack Developer — นิสิตเทคโนโลยีสารสนเทศ ปี 3 {PROFILE.school} สร้างระบบครบตั้งแต่หน้าจอ แอปมือถือ API
-              ฐานข้อมูล จนถึง deploy ขึ้นเซิร์ฟเวอร์จริง · มองหาโอกาสฝึกงาน
+              <strong>{PROFILE.name}</strong> — Full Stack Developer จาก IT {PROFILE.school} ที่สร้างระบบครบตั้งแต่หน้าจอจนถึงเซิร์ฟเวอร์จริง
             </p>
             <div className="hero__cta">
               <a href="#works" className="btn btn--solid" onClick={e => go(e, 'works')} onPointerMove={onButtonGlow} data-cursor-label="explore">

@@ -205,9 +205,9 @@ function Chip() {
       const k = 1 - Math.exp(-dt * 3);
       const spin = spins.hero;
       stepSpin(spin, dt);
-      base.current.y += (sceneProgress.pointerX * 0.35 + Math.sin(t * 0.25) * 0.12 + explode * 0.5 - base.current.y) * k;
+      base.current.y += (sceneProgress.pointerX * 0.35 + Math.sin(t * 0.25) * 0.12 - base.current.y) * k;
       base.current.x += (sceneProgress.pointerY * 0.12 - base.current.x) * k;
-      g.rotation.y = base.current.y + spin.angle;
+      g.rotation.y = base.current.y + explode * 0.5 + spin.angle;
       g.rotation.x = base.current.x + spin.tilt;
     }
   });
@@ -307,7 +307,7 @@ function Rig() {
   const size = useThree(s => s.size);
   const booted = useUI(s => s.booted);
   const introCam = useRef(reduceMotion ? 1 : 0);
-  const v = useMemo(() => ({ pos: new THREE.Vector3(), look: new THREE.Vector3(), A: new THREE.Vector3(5.4, 4.3, 6.6), B: new THREE.Vector3(6.6, 1.25, 6.1), D: new THREE.Vector3(7.6, 2.7, 8.2) }), []);
+  const v = useMemo(() => ({ pos: new THREE.Vector3(), look: new THREE.Vector3(), ptr: new THREE.Vector2(), A: new THREE.Vector3(5.4, 4.3, 6.6), B: new THREE.Vector3(6.6, 1.25, 6.1), D: new THREE.Vector3(7.6, 2.7, 8.2) }), []);
 
   useEffect(() => {
     if (!booted || reduceMotion) return;
@@ -325,10 +325,11 @@ function Rig() {
     v.pos.copy(v.A).lerp(v.B, e).lerp(v.D, d);
     // จอแคบ (มือถือ) ถอยกล้องให้เห็นทั้งชิปและโฮโลแกรม
     v.pos.multiplyScalar((narrow ? 1.5 : 1) * (1 + (1 - introCam.current) * 0.7));
-    v.pos.x += sceneProgress.pointerX * 0.4;
-    v.pos.y += -sceneProgress.pointerY * 0.25;
-    const k = reduceMotion ? 1 : 1 - Math.exp(-dt * 5);
-    camera.position.lerp(v.pos, k);
+    // lerp ชั้นเดียว: Lenis ทำให้ scroll นุ่มแล้ว กล้องจึงตามค่า scroll ตรง ๆ — หน่วงเฉพาะพารัลแลกซ์ของเมาส์
+    const k = reduceMotion ? 1 : 1 - Math.exp(-dt * 4);
+    v.ptr.x += (sceneProgress.pointerX * 0.4 - v.ptr.x) * k;
+    v.ptr.y += (-sceneProgress.pointerY * 0.25 - v.ptr.y) * k;
+    camera.position.set(v.pos.x + v.ptr.x, v.pos.y + v.ptr.y, v.pos.z);
     v.look.set(0, 0.05 + d * 1.05, 0);
     camera.lookAt(v.look);
     // จัดชิปไปทางขวาของข้อความบนจอใหญ่ / ลงล่างบนมือถือ แล้วค่อยกลับกลางตอนแยกชั้น

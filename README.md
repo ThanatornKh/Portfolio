@@ -10,11 +10,12 @@ Scroll-story portfolio with real-time 3D. Built with **React + Vite + TypeScript
 | 01 | About | Holographic profile card, word-by-word reveal, `profile.json` |
 | 02 | Data → Deploy | 6,000 particles morph cloud → helix → neural net → globe (vertex shader). Drag to rotate. |
 | 03 | Flagship works | Sticky stacking cards with an "AI scan" over each screenshot and real metrics |
-| 04 | All projects | Category filters with GSAP Flip |
-| 05 | Tech stack | 3D constellation of every technology used, linked to projects |
-| 06 | Journey | `git log --graph` timeline |
-| 07 | Q&A | Accordion with links into projects |
-| 08 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
+| 04 | Under the hood | Annotated plate of the real B&P Parking dashboard (markers + SVG leader lines) and a paper-style Quality Report whose bars draw once |
+| 05 | All projects | Category filters with GSAP Flip |
+| 06 | Tech stack | 3D constellation of every technology used, linked to projects |
+| 07 | Journey | `git log --graph` timeline |
+| 08 | Q&A | Accordion with links into projects |
+| 09 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
 
 Project pages open as an overlay at `#/work/<id>` (shareable links, works on static hosting).
 
@@ -46,4 +47,4 @@ The build uses relative paths (`base: './'`), so it also works from any sub-fold
 
 ## Skills used to build this
 
-`.claude/skills/` contains the official GSAP skills (MIT, GreenSock), `motion-site-patterns` (patterns extracted from MotionSites / Emergent / React Bits / Magic UI) and `portfolio-r3f-stack` (how this site is put together).
+`.claude/skills/` contains the official GSAP skills (MIT, GreenSock), `motion-site-patterns` (patterns extracted from MotionSites / Emergent / React Bits / Magic UI), `scroll-film-site` (analysis of the ascentatrack.com engine, provided by the owner) and `portfolio-r3f-stack` (how this site is put together).

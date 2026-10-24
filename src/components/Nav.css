@@ -101,7 +101,8 @@
   transition: transform 0.4s var(--ease);
 }
 
-.nav__links a:hover {
+.nav__links a:hover,
+.nav__links a[aria-current] {
   color: var(--ink);
 }
 

@@ -13,6 +13,9 @@
 
 .pipe__gl {
   left: 32%;
+  bottom: auto;
+  height: 100vh;
+  height: 100lvh;
 }
 
 .pipe__shade {

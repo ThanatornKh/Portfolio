@@ -80,7 +80,7 @@ function Particles({ count }: { count: number }) {
     const act = Math.floor(x);
     const target = act + (act < 3 ? smoothstep(0.5, 0.95, x - act) : 0);
     const u = material.uniforms;
-    u.uMorph.value = reduceMotion ? target : u.uMorph.value + (target - u.uMorph.value) * (1 - Math.exp(-dt * 6));
+    u.uMorph.value = target; // ตาม scroll ตรง ๆ (Lenis หน่วงให้แล้ว ไม่ซ้อน easing อีกชั้น)
     u.uTime.value = state.clock.elapsedTime;
     const pts = ref.current;
     if (pts) {

@@ -3,6 +3,7 @@
    ========================================================= */
 import { useRef, useState, type ReactNode } from 'react';
 import { CATEGORIES, PROFILE, SKILLS } from '../data/content';
+import { chapter } from '../data/chapters';
 import { countIn, TECHS, WORKS } from '../data/derived';
 import { gsap, reduceMotion, SplitText, useGSAP } from '../lib/motion';
 import { openWorkById } from '../lib/route';
@@ -148,7 +149,7 @@ export default function Contact() {
       <div className="contact__glow" aria-hidden="true" />
       <div className="wrap">
         <p className="mono contact__kicker">
-          <b>08</b> Contact
+          <b>{chapter('contact').no}</b> Contact
         </p>
         <h2 className="contact__title display">
           Let's build <br />
