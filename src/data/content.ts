@@ -208,7 +208,7 @@ export const PROJECTS: Project[] = [
     year: '2569',
     images: [
       'https://i.ibb.co/Q7cxnZp2/car-new-project.png',
-      'https://i.ibb.co/N2F9fzMb/pg-Admin.png',
+      asset('projects/hypercar-pgadmin.jpg'),
     ],
   },
 
@@ -279,7 +279,7 @@ export const PROJECTS: Project[] = [
     status: 'REPORT',
     metrics: [['Task', 'Image classification']],
     year: '2568',
-    images: ['https://i.ibb.co/kgR1N9Vf/AI.png'],
+    images: [asset('projects/tomato-ai.jpg')],
     links: [{ label: 'ดูเอกสาร', url: 'https://drive.google.com/file/d/1oLcsiPh3tTIaNIxgWfoCaf2vIuGOyBbj/view?usp=drive_link' }],
   },
 
@@ -301,7 +301,7 @@ export const PROJECTS: Project[] = [
     status: 'ONLINE',
     metrics: [['Hosting', 'Firebase']],
     year: '2569',
-    images: ['https://i.ibb.co/qFnK9VGY/Screenshot-2026-03-27-000727.png'],
+    images: [asset('projects/devilish-hero.jpg')],
     links: [{ label: 'เปิดเว็บไซต์', url: 'https://devilish-car.web.app/' }],
   },
   {
@@ -358,7 +358,7 @@ export const PROJECTS: Project[] = [
     status: 'HARDWARE',
     metrics: [['Sensors', 'DHT11 · MQ-2'], ['Protocol', 'MQTT']],
     year: '2569',
-    images: ['https://i.ibb.co/jkrk5YnS/8297.jpg'],
+    images: [asset('projects/smart-home-box.jpg')],
   },
 
   /* ---------- GAME & 3D ---------- */
@@ -379,7 +379,7 @@ export const PROJECTS: Project[] = [
     status: 'PLAYABLE',
     metrics: [['Engine', 'Unity']],
     year: '2567',
-    images: ['https://i.ibb.co/YBGZWnVy/Screenshot-2026-03-27-013752.png'],
+    images: [asset('projects/monkey-game.jpg')],
   },
 ];
 
