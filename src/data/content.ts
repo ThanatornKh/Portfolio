@@ -155,7 +155,13 @@ export const PROJECTS: Project[] = [
     type: 'ระบบใช้งานจริงในองค์กร',
     status: 'IN USE · LAN',
     metrics: [['Forms', '9'], ['API endpoints', '24'], ['Languages', '40+']],
-    note: 'เป็นระบบภายในเครือข่าย LAN ของบริษัท — repo เป็น private จึงไม่มีภาพหน้าจอที่มีข้อมูลจริง',
+    note: 'เป็นระบบภายในเครือข่าย LAN ของบริษัท — ภาพหน้าจอรันจาก repo บนเครื่อง และใช้ข้อมูลสมมติ ไม่ใช่ข้อมูลจริงของโรงแรม',
+    images: [
+      asset('projects/rxv-room-attendant.jpg'),
+      asset('projects/rxv-login.jpg'),
+      asset('projects/rxv-dashboard.jpg'),
+      asset('projects/rxv-mobile.jpg'),
+    ],
     featured: true,
   },
   {
@@ -232,7 +238,14 @@ export const PROJECTS: Project[] = [
     status: 'PRIVATE DATA',
     metrics: [['Rows', '2,213,972'], ['Sources', '10'], ['Tests', '119']],
     year: '2569',
-    note: 'repo เป็น private และข้อมูลห้ามเผยแพร่ — แสดงเฉพาะภาพรวมและตัวเลขสรุป',
+    note: 'repo เป็น private และข้อมูลห้ามเผยแพร่ — แสดงเฉพาะภาพรวมและตัวเลขสรุป (ภาพหน้าจอจากแดชบอร์ดที่รันบนเครื่อง)',
+    images: [
+      asset('projects/thai-home.jpg'),
+      asset('projects/thai-yearly.jpg'),
+      asset('projects/thai-skills.jpg'),
+      asset('projects/thai-salary.jpg'),
+      asset('projects/thai-intern.jpg'),
+    ],
     featured: true,
   },
   {
@@ -300,7 +313,7 @@ export const PROJECTS: Project[] = [
     type: 'Web Application',
     status: 'ONLINE',
     metrics: [['Hosting', 'Firebase']],
-    year: '2569',
+    year: '2568',
     images: [asset('projects/devilish-hero.jpg')],
     links: [{ label: 'เปิดเว็บไซต์', url: 'https://devilish-car.web.app/' }],
   },
@@ -323,7 +336,7 @@ export const PROJECTS: Project[] = [
     type: 'Embedded / IoT',
     status: 'HARDWARE',
     metrics: [['Sensors', 'DHT11 · MQ-2'], ['Protocol', 'MQTT']],
-    year: '2569',
+    year: '2568',
     images: [asset('projects/smart-home-box.jpg')],
   },
 
