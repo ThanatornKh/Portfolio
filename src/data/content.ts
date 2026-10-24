@@ -193,30 +193,6 @@ export const PROJECTS: Project[] = [
     links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/Software_Developer_Coop_Sections_Exam' }],
     featured: true,
   },
-  {
-    id: 'hypercar-sales',
-    cat: 'fullstack',
-    name: 'HyperCar Sales',
-    th: 'เว็บขายรถซูเปอร์คาร์ Full Stack',
-    desc: 'สมัคร/เข้าสู่ระบบ ดูรถ สั่งซื้อ ติดตามออเดอร์ และหน้าแอดมินจัดการสต็อก — React + Node.js/Express REST API',
-    overview: 'เว็บขายรถ HyperCar แบบ Full Stack ผู้ใช้สมัครและเข้าสู่ระบบ ดูรถ สั่งซื้อ ติดตามคำสั่งซื้อ และมีหน้าแอดมินจัดการสต็อกรถ อัปโหลดรูป อัปเดตสถานะออเดอร์ พร้อมแดชบอร์ดสถิติ',
-    highlights: [
-      'REST API: Auth, Cars (CRUD + อัปโหลดรูปด้วย Multer), Orders, Dashboard stats',
-      'แยกสิทธิ์ผู้ใช้/แอดมินด้วย middleware authenticateToken + isAdmin',
-      'Redis cache ข้อมูลรถ และ seed script สร้างข้อมูลตัวอย่าง',
-      'Bruno collection สำหรับทดสอบ API ทุก endpoint',
-      'หน้า Frontend: Home, Cars, Car Detail, Orders, Admin, Login, Register',
-    ],
-    stack: ['React', 'Vite', 'Tailwind CSS', 'Node.js', 'Express', 'MySQL', 'Redis', 'JWT', 'Docker', 'Bruno'],
-    type: 'Full Stack Web Application',
-    status: 'LOCAL',
-    metrics: [['Pages', '7'], ['Cache', 'Redis']],
-    year: '2569',
-    images: [
-      'https://i.ibb.co/Q7cxnZp2/car-new-project.png',
-      asset('projects/hypercar-pgadmin.jpg'),
-    ],
-  },
 
   /* ---------- DATA & AI ---------- */
   {
@@ -368,7 +344,7 @@ export const PROCESS: ProcessStep[] = [
     verb: 'design',
     desc: 'วิเคราะห์โจทย์และออกแบบระบบก่อนลงมือเขียน — UML, โครงหน้าจอ, ข้อมูล และ flow การใช้งาน',
     tags: ['System Analysis', 'UML', 'Database Design', 'UI Flow'],
-    projects: ['bp-parking', 'hypercar-sales'],
+    projects: ['bp-parking', 'rxv-housekeeping'],
   },
   {
     verb: 'build',
