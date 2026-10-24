@@ -18,7 +18,7 @@ export const PROFILE = {
   phone: '061-603-4862',
   github: 'https://github.com/ThanatornKh',
   facebook: 'https://www.facebook.com/tanatorn.qwanmankong?locale=th_TH',
-  photo: 'https://i.ibb.co/pjhgCmzb/9613.jpg',
+  photo: asset('profile.jpg'),
   quote: ['ทำปัจจุบันให้ดี —', 'แล้วจะมีอนาคต'],
   intro: 'ฉันเป็นนักศึกษาสาขาเทคโนโลยีสารสนเทศที่หลงใหลในการพัฒนาซอฟต์แวร์แบบครบวงจร มีความสามารถทั้งฝั่ง Frontend และ Backend สามารถสร้างระบบที่ใช้งานได้จริงตั้งแต่ UI ไปจนถึง Database',
   goal: 'ต้องการหาประสบการณ์ฝึกงาน เพื่อพัฒนาทักษะ และเติบโตในสายงาน Full Stack Development ได้เรียนรู้จากการทำงานจริง ร่วมงานกับทีมที่มีความกระตือรือร้น และมีโอกาสได้สร้างผลงานในอนาคต',
