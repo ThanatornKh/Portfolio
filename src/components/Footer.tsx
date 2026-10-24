@@ -73,7 +73,9 @@ export default function Footer() {
           <i aria-hidden="true">.</i>
         </p>
         <div className="footer__base mono">
-          <span>© 2569 {PROFILE.name}</span>
+          <span>
+            © {tr('2569', '2026')} {PROFILE.name} · {tr('สงวนลิขสิทธิ์', 'All rights reserved')}
+          </span>
           <span>vol.02 · HOLO-OS</span>
           <a href="#top" onClick={e => go(e, 'top')}>
             Back to top ↑

@@ -26,3 +26,10 @@ createRoot(document.getElementById('root')!).render(
     <App />
   </StrictMode>,
 );
+
+// ประกาศลิขสิทธิ์สำหรับคนที่เปิด DevTools
+console.info(
+  '%c© 2026 Thanatorn Khwanmankong — All rights reserved.%c\nThe code, design and content of this site may not be copied, reused or used to train AI without written permission.\nโค้ด ดีไซน์ และเนื้อหาของเว็บนี้ห้ามคัดลอก นำไปใช้ต่อ หรือนำไปฝึก AI โดยไม่ได้รับอนุญาต',
+  'font: 600 13px system-ui; color: #f2f2ef; background: #050505; padding: 6px 10px;',
+  'font: 12px system-ui;',
+);

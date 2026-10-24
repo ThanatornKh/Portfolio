@@ -47,3 +47,17 @@ The build uses relative paths (`base: './'`), so it also works from any sub-fold
 ## Skills used to build this
 
 `.claude/skills/` contains the official GSAP skills (MIT, GreenSock), `motion-site-patterns` (patterns extracted from MotionSites / Emergent / React Bits / Magic UI), `scroll-film-site` (analysis of the ascentatrack.com engine, provided by the owner) and `portfolio-r3f-stack` (how this site is put together).
+
+## License / ลิขสิทธิ์
+
+**All rights reserved.** This repository is public so recruiters and reviewers can read it, but no license is granted — see [LICENSE](LICENSE). Do not copy, reuse or redistribute the code, design or content, and do not use it to train AI models, without written permission.
+
+สงวนลิขสิทธิ์ทั้งหมด — เปิดให้อ่านเพื่อพิจารณาผลงานเท่านั้น ห้ามคัดลอก นำไปใช้ต่อ หรือนำไปฝึก AI โดยไม่ได้รับอนุญาต
+
+What the build does to discourage copying and AI scraping:
+
+- No source maps; the minifier strips comments and `debugger`; every JS/CSS file starts with a copyright notice.
+- `robots.txt` blocks known AI crawlers (GPTBot, ClaudeBot, CCBot, Google-Extended, PerplexityBot, Bytespider …). Crawlers only read it at the domain root, so it takes effect on a custom domain or a `username.github.io` site.
+- `<meta name="robots" content="noai, noimageai">` and `<meta name="tdm-reservation" content="1">` (W3C TDMRep) reserve text-and-data-mining rights.
+
+None of this can stop a determined person: a browser must download the HTML, CSS and JS to show the page. The real protection for the source is a private repository plus the license above.
