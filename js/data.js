@@ -120,16 +120,27 @@ const PROJECTS = [
     cat: 'fullstack',
     name: 'Fleet Management Platform',
     th: 'ระบบจัดการยานพาหนะโลจิสติกส์',
-    desc: 'ระบบจัดการยานพาหนะสำหรับงานโลจิสติกส์ React + Node.js + Docker',
-    overview: 'แพลตฟอร์มจัดการยานพาหนะสำหรับงานโลจิสติกส์ ฝั่งหน้าบ้านเป็น React ฝั่งหลังบ้านเป็น Node.js และรันทั้งระบบด้วย Docker ทำเป็นข้อสอบตำแหน่ง Full Stack Developer สำหรับสหกิจศึกษา',
+    desc: 'ระบบจัดการรถ คนขับ เที่ยววิ่ง และงานซ่อมบำรุง — React + Express + MySQL พร้อม JWT และ Docker',
+    overview: 'แพลตฟอร์มจัดการยานพาหนะสำหรับงานโลจิสติกส์ ทำเป็นข้อสอบตำแหน่ง Software Developer สำหรับสหกิจศึกษา ฝั่งหน้าบ้านเป็น React (Vite + Tailwind CSS) มีกราฟสรุปด้วย Recharts ฝั่งหลังบ้านเป็น REST API ด้วย Node.js / Express + Sequelize ต่อฐานข้อมูล MySQL ยืนยันตัวตนด้วย JWT (access + refresh token) แยกสิทธิ์ ADMIN / DISPATCHER รันทั้งระบบด้วย Docker Compose และมีไฟล์ตั้งค่าสำหรับ deploy บน Render',
     highlights: [
-      'Frontend ด้วย React',
-      'Backend API ด้วย Node.js',
-      'รันทั้งระบบด้วย Docker',
-      'ข้อสอบตำแหน่ง Full Stack Developer (สหกิจศึกษา)',
+      'Dashboard สรุปจำนวนรถ เที่ยววิ่งวันนี้ ระยะทาง และงานซ่อมที่เลยกำหนด',
+      'จัดการรถ / คนขับ / เที่ยววิ่ง พร้อมติดตาม checkpoint ระหว่างทางทีละจุด',
+      'บันทึกงานซ่อมบำรุงและอะไหล่ที่ใช้ พร้อม rule-based alert engine',
+      'Login ด้วย JWT (access + refresh token) แยกบทบาท ADMIN / DISPATCHER',
+      'Audit log บันทึกการเปลี่ยนแปลงข้อมูลทุกครั้ง',
+      'Docker Compose สำหรับรันทั้งระบบ และ render.yaml สำหรับ deploy',
     ],
-    stack: ['React', 'Node.js', 'JavaScript', 'Docker'],
+    stack: ['React', 'Vite', 'Tailwind CSS', 'Recharts', 'Node.js', 'Express', 'Sequelize', 'MySQL', 'JWT', 'Docker'],
     type: 'ข้อสอบสหกิจศึกษา',
+    year: '2569',
+    images: [
+      'assets/projects/fleet-dashboard.jpg',
+      'assets/projects/fleet-trip.jpg',
+      'assets/projects/fleet-vehicles.jpg',
+      'assets/projects/fleet-login.jpg',
+    ],
+    links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/Software_Developer_Coop_Sections_Exam' }],
+    featured: true,
   },
   {
     id: 'angular-first-app',
@@ -201,16 +212,49 @@ const PROJECTS = [
     id: 'cambodia-culture-music',
     cat: 'web',
     name: 'Cambodia Culture & Music',
-    th: 'สื่อการเรียนรู้กัมพูชา',
-    desc: 'สื่อการเรียนรู้ประเทศกัมพูชา ทั้งภูมิศาสตร์ วัฒนธรรม และดนตรีเขมร',
-    overview: 'เว็บไซต์สื่อการเรียนรู้เกี่ยวกับประเทศกัมพูชา แบ่งเนื้อหาเป็นภูมิศาสตร์ วัฒนธรรม และดนตรีเขมร',
+    th: 'สื่อการเรียนรู้ราชอาณาจักรกัมพูชา',
+    desc: 'เว็บสื่อการเรียนรู้กัมพูชา — ภูมิศาสตร์ วัฒนธรรม และเครื่องดนตรีเขมร 20 ชิ้น เปิดบนมือถือผ่าน QR',
+    overview: 'สื่อการเรียนรู้แบบเว็บเพจเดียวเกี่ยวกับราชอาณาจักรกัมพูชา ธีมสีขาว–ทองแบบวัด วาดภาพนครวัด ลายกระหนก และไอคอนทั้งหมดด้วย SVG แบ่งเนื้อหา 6 หัวข้อ ตั้งแต่ภูมิศาสตร์ วัฒนธรรม ไปจนถึงเครื่องดนตรีเขมร การประสมวง บทเพลง และบทบาทของดนตรีในสังคม ออกแบบให้เปิดบนมือถือได้ทันทีด้วยการสแกน QR',
     highlights: [
-      'เนื้อหาภูมิศาสตร์ของกัมพูชา',
-      'วัฒนธรรมและประเพณี',
-      'ดนตรีเขมร',
+      'ภูมิศาสตร์ — ภูมิประเทศ ภูมิอากาศ และพืชพรรณที่สำคัญ',
+      'วัฒนธรรม — การแต่งกาย ประเพณี การแสดง อาหาร และความเชื่อ',
+      'เครื่องดนตรีเขมร 20 ชิ้น แบ่งเป็น ดีด · สี · ตี · เป่า พร้อมภาพและการโต้ตอบ',
+      'การประสมวง 7 วง · บทเพลง 6 หมวด · บทบาทของดนตรี 5 ด้าน',
+      'ภาพนครวัดและลวดลายวาดด้วย SVG · สคริปต์ build ใส่ content hash กันแคชเก่า',
     ],
-    stack: ['HTML', 'CSS', 'JavaScript'],
+    stack: ['HTML', 'CSS', 'JavaScript', 'SVG', 'Python'],
     type: 'สื่อการเรียนรู้',
+    year: '2569',
+    images: [
+      'assets/projects/khmer-hero.jpg',
+      'assets/projects/khmer-geography.jpg',
+      'assets/projects/khmer-culture.jpg',
+    ],
+    links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/cambodia-culture-music' }],
+  },
+  {
+    id: 'bp-parking',
+    cat: 'web',
+    name: 'B&P Parking',
+    th: 'ต้นแบบเว็บที่จอดรถอัจฉริยะ',
+    desc: 'เว็บต้นแบบระบบที่จอดรถอัจฉริยะหลายหน้า — แผนที่ช่องจอดสด คู่มือ แอปมือถือ และแดชบอร์ดผู้ดูแล',
+    overview: 'เว็บต้นแบบ (prototype) ของระบบที่จอดรถอัจฉริยะ B&P Parking แยกเป็นหน้า HTML หน้าละไฟล์ แต่ละหน้าเป็นแอป React ที่ใช้ asset ร่วมกัน ทำงานแบบออฟไลน์ได้ทั้งหมด ลดขนาดจากไฟล์ bundle เดียว 5.2 MB เหลือราว 130 KB ต่อหน้า และมีเวอร์ชัน static สำหรับนำเข้า Figma',
+    highlights: [
+      'หน้าแรกพร้อม intro curtain',
+      'แผนที่ช่องจอดแบบเรียลไทม์ แยกชั้นและโซน',
+      'ตัวอย่างแอปมือถือ และคู่มือการใช้งาน',
+      'แดชบอร์ดผู้ดูแล — อัตราการใช้งาน รายได้ และกิจกรรมล่าสุด',
+      'แตก bundle 5.2 MB เป็นหลายหน้า ~130 KB/หน้า ใช้งานออฟไลน์ได้',
+    ],
+    stack: ['React', 'HTML', 'JavaScript', 'Figma'],
+    type: 'Web Prototype',
+    year: '2569',
+    images: [
+      'assets/projects/bp-home.jpg',
+      'assets/projects/bp-live-map.jpg',
+      'assets/projects/bp-admin.jpg',
+    ],
+    links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/bp-parking-white' }],
   },
   {
     id: 'portfolio-website',
@@ -218,7 +262,7 @@ const PROJECTS = [
     name: 'Portfolio Website',
     th: 'เว็บไซต์ Portfolio',
     desc: 'เว็บ Portfolio สำหรับสมัครงานตำแหน่ง Full Stack Developer — เว็บที่คุณกำลังดูอยู่',
-    overview: 'เว็บไซต์ Portfolio รวมผลงานทั้งหมดแยกตามหมวดหมู่ เขียนด้วย HTML, CSS และ JavaScript ล้วน รองรับทุกขนาดหน้าจอ และสั่งพิมพ์เป็น PDF ได้',
+    overview: 'เว็บไซต์ Portfolio แบบ scroll-storytelling เล่าเรื่องเป็นบท ๆ ตั้งแต่ซูมเข้าจอคอม ข้อความที่ค่อย ๆ สว่างตามการเลื่อน แกลเลอรีเลื่อนแนวนอน แผนที่ดาวของเทคโนโลยี ไปจนถึงโลโก้ที่ประกอบจากพิกเซล เขียนด้วย HTML, CSS และ JavaScript ล้วน ไม่ใช้ไลบรารี รองรับทุกขนาดหน้าจอ และพิมพ์เป็น PDF ได้',
     highlights: [
       'รวมผลงานแยกหมวดหมู่ พร้อมหน้ารายละเอียดของแต่ละโปรเจกต์',
       'Responsive รองรับมือถือ แท็บเล็ต และเดสก์ท็อป',
@@ -227,6 +271,11 @@ const PROJECTS = [
     stack: ['HTML', 'CSS', 'JavaScript'],
     type: 'Personal Website',
     year: '2569',
+    images: [
+      'assets/projects/portfolio-manifesto.jpg',
+      'assets/projects/portfolio-constellation.jpg',
+      'assets/projects/portfolio-faq.jpg',
+    ],
     links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/Portfolio' }],
   },
 
@@ -357,6 +406,32 @@ const PROJECTS = [
 
   /* ---------- DATA & AI ---------- */
   {
+    id: 'fx-multi-source-pipeline',
+    cat: 'data',
+    name: 'FX Multi-Source Pipeline',
+    th: 'ไปป์ไลน์อัตราแลกเปลี่ยนเงินบาทจาก 3 แหล่ง',
+    desc: 'รวมอัตราแลกเปลี่ยน THB กับ JPY · USD · EUR · KRW ย้อนหลัง 6 ปี จาก 3 แหล่ง ด้วย Airflow + PostgreSQL + Streamlit',
+    overview: 'โปรเจกต์ Final รายวิชา 02739452 เก็บอัตราแลกเปลี่ยนเงินบาทเทียบ JPY, USD, EUR และ KRW รายวันย้อนหลัง 6 ปี จาก 3 แหล่ง ได้แก่ Frankfurter API (ECB), Yahoo Finance และ x-rates.com (web scraping) รวมเป็นชุดข้อมูลเดียวด้วย Apache Airflow เก็บใน PostgreSQL และแสดงผลผ่าน Streamlit dashboard รันทั้งระบบด้วย Docker Compose',
+    highlights: [
+      'Airflow DAG แยก TaskGroup ต่อแหล่งข้อมูล รันขนานกัน + Dynamic Task Mapping',
+      'โหลดแบบ UPSERT รันซ้ำได้โดยข้อมูลไม่ซ้ำ · merge + dedup ข้ามแหล่ง แม้บางแหล่งล้มเหลว',
+      'Quality gate 5 ข้อ แยกข้อมูลไป publish หรือ quarantine',
+      'Scraping แบบสุภาพ — จำกัด 1 request/วินาที และไม่เกิน 2 task พร้อมกัน',
+      'Dashboard 3 หน้า: แนวโน้มราคา + เทียบแหล่ง, สรุปวันนี้เทียบค่าเฉลี่ย 90 วัน, Pipeline Status',
+    ],
+    stack: ['Python', 'Apache Airflow', 'PostgreSQL', 'Streamlit', 'BeautifulSoup', 'Docker'],
+    type: 'โปรเจกต์ Final รายวิชา',
+    year: '2569',
+    images: [
+      'assets/projects/fx-dashboard.jpg',
+      'assets/projects/fx-dag.jpg',
+      'assets/projects/fx-today.jpg',
+      'assets/projects/fx-status.jpg',
+    ],
+    links: [{ label: 'ดูซอร์สโค้ด', url: 'https://github.com/ThanatornKh/02739452-15-6621653778' }],
+    featured: true,
+  },
+  {
     id: 'tomato-leaf-disease',
     cat: 'data',
     name: 'Tomato Leaf Disease Detection',
@@ -429,6 +504,34 @@ const PROCESS = [
     desc: 'รันระบบด้วย Docker วาง CI/CD แล้ว deploy ขึ้น VPS หรือ Firebase Hosting ให้ใช้งานได้จริง',
     tags: ['Docker', 'CI/CD', 'VPS', 'Firebase Hosting'],
     projects: ['equipment-management', 'devilish-hypercars'],
+  },
+];
+
+/* คำถามที่พบบ่อย (Asked before hiring) — ใส่ [[project-id]] เพื่อทำเป็นลิงก์ไปที่ผลงาน */
+const FAQ = [
+  {
+    q: 'ตอนนี้เรียนอะไร อยู่ชั้นปีไหน?',
+    a: 'นิสิตปีที่ 3 สาขาเทคโนโลยีสารสนเทศ คณะศิลปศาสตร์และวิทยาศาสตร์ มหาวิทยาลัยเกษตรศาสตร์ (ปีการศึกษา 2568) เรียนครอบคลุม Internet, Database, Web Dev, Mobile App, IoT และ Software Engineering',
+  },
+  {
+    q: 'ถนัดงานด้านไหนที่สุด?',
+    a: 'Full Stack — ทำได้ทั้งฝั่ง Frontend และ Backend สร้างระบบที่ใช้งานได้จริงตั้งแต่ UI ไปจนถึง Database เช่น [[fleet-management]] และ [[hypercar-sales]]',
+  },
+  {
+    q: 'เคยทำระบบที่ deploy ใช้งานจริงไหม?',
+    a: 'เคย — [[devilish-hypercars]] เปิดใช้งานจริงบน Firebase Hosting, [[equipment-management]] วาง CI/CD และ deploy ขึ้น VPS ส่วน [[fleet-management]] รันด้วย Docker Compose และมีไฟล์ตั้งค่าสำหรับ deploy บน Render',
+  },
+  {
+    q: 'นอกจากเว็บ ทำอะไรได้อีกบ้าง?',
+    a: 'งาน IoT บนบอร์ด ESP32 กับ MQTT / NETPIE เช่น [[smoke-heat-detection]], งานข้อมูลด้วย Apache Airflow เช่น [[fx-multi-source-pipeline]], งาน AI เช่น [[tomato-leaf-disease]] และเกมด้วย Unity',
+  },
+  {
+    q: 'กำลังมองหาอะไร?',
+    a: 'โอกาสฝึกงานในสาขา Full Stack Development, Frontend, Backend หรือ Mobile Development ที่ให้โอกาสพัฒนาทักษะและเติบโตไปพร้อมกับทีม',
+  },
+  {
+    q: 'ติดต่อทางไหนได้บ้าง?',
+    a: 'อีเมล Qwanmankong@gmail.com · โทร 061-603-4862 · GitHub github.com/ThanatornKh — ยินดีนำเสนอ Portfolio เพิ่มเติมและพูดคุยรายละเอียดตามต้องการ',
   },
 ];
 

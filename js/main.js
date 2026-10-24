@@ -423,7 +423,6 @@
   const heroCopy = $('#heroCopy');
   const heroStats = $('#heroStats');
   const hint = $('#scrollHint');
-  const hud = $('.hud');
   const pixCanvas = $('#pixels');
   const pctx = pixCanvas.getContext('2d');
   let geo = null, cells = null, lastQ = -1;
@@ -491,7 +490,7 @@
     heroStats.style.opacity = 1 - clamp(p / .14);
     heroStats.style.transform = `translateY(${60 * clamp(p / .2)}px)`;
     hint.style.opacity = p > .01 ? 0 : 1;
-    hud.classList.toggle('off', p < 1);
+    rail.classList.toggle('off', p < .98);
     drawPixels(clamp((p - .68) / .26));
   }
 
@@ -594,81 +593,68 @@
   }
 
   /* =========================================================
-     SHOWCASE (featured slider)
+     CH.03 FLAGSHIP — แกลเลอรีเลื่อนแนวนอน (เลื่อนลง = เลื่อนไปทางขวา)
      ========================================================= */
-  const stageEl = $('#showcaseStage');
-  const progress = $('#showcaseProgress');
-  const showcase = $('#showcase');
-  let current = 0;
+  const flagSec = $('#works');
+  const flagTrack = $('#flagTrack');
+  const flagBar = $('#flagBar');
+  const flagIndex = $('#flagIndex');
+  $('#flagTotal').textContent = pad(featured.length);
 
-  stageEl.innerHTML = featured.map((p, i) => `
-    <article class="slide${i === 0 ? ' active' : ''}" aria-roledescription="slide" aria-label="${i + 1} / ${featured.length}">
-      <div class="slide-media" data-open="${p.id}">${media(p)}</div>
-      <div class="slide-info">
-        <div class="slide-num">${pad(i + 1)} / ${pad(featured.length)} — ${esc(p.path)}</div>
-        <div class="slide-cat">${esc(catById[p.cat].name)}</div>
-        <h3 class="slide-name">${esc(p.name)}</h3>
-        <div class="slide-th">${esc(p.th)}</div>
-        <p class="slide-desc">${esc(p.desc)}</p>
-        <dl class="slide-specs">
-          <div><dt>Stack</dt><dd>${esc(p.stack.slice(0, 3).join(' · '))}</dd></div>
-          <div><dt>Type</dt><dd>${esc(p.type)}</dd></div>
-          <div><dt>Year</dt><dd>${esc(p.year || '—')}</dd></div>
-        </dl>
-        <div><button class="pill pill--solid" data-open="${p.id}">Discover <span>→</span></button></div>
-      </div>
-    </article>`).join('');
+  flagTrack.innerHTML = `
+    <div class="fl-intro">
+      <h2 class="split-title">Selected <span class="script">works</span></h2>
+      <p>ผลงานเด่น ${featured.length} ชิ้น จากทั้งหมด ${ordered.length} ชิ้น — เลื่อนลงเพื่อดูทีละชิ้น กดที่ผลงานเพื่อเปิดรายละเอียด</p>
+      <div class="hint"><i></i>scroll</div>
+    </div>
+    ${featured.map((p, i) => `
+      <article class="fl-panel" data-open="${p.id}" tabindex="0" role="button" aria-label="ดูรายละเอียด ${esc(p.name)}">
+        <div class="fl-media">${media(p)}<span class="fl-badge">${p.code} · ${esc(p.year || '—')}</span></div>
+        <div class="fl-info">
+          <div class="fl-no">${pad(i + 1)}</div>
+          <div><div class="fl-cat">${esc(catById[p.cat].name)}</div><h3 class="fl-name">${esc(p.name)}</h3></div>
+          <span class="pill fl-go">Discover <span>→</span></span>
+          <p class="fl-desc">${esc(p.desc)}</p>
+        </div>
+      </article>`).join('')}
+    <div class="fl-outro">
+      <b>+${ordered.length - featured.length} more</b>
+      <p class="section-lead">ผลงานที่เหลือทั้งหมดอยู่ในบทถัดไป แยกตามหมวดหมู่</p>
+      <div><a class="pill pill--solid" href="#collection-sec">The collection <span>↓</span></a></div>
+    </div>`;
+  const flagPanels = $$('.fl-panel', flagTrack);
+  let flagDist = 0;
 
-  progress.innerHTML = featured.map((p, i) => `<button aria-label="ผลงานเด่น ${i + 1}: ${esc(p.name)}"><i></i></button>`).join('');
-  const slides = $$('.slide', stageEl);
-  const bars = $$('button', progress);
-
-  function go(n) {
-    current = (n + slides.length) % slides.length;
-    slides.forEach((s, i) => {
-      s.classList.toggle('active', i === current);
-      s.toggleAttribute('aria-hidden', i !== current);
-      $$('button, [data-open]', s).forEach(b => b.tabIndex = i === current ? 0 : -1);
-    });
-    bars.forEach((b, i) => {
-      b.classList.remove('active');
-      b.classList.toggle('done', i < current);
-    });
-    void progress.offsetWidth; // restart animation
-    bars[current].classList.add('active');
-    $('#showcaseIndex').textContent = `${pad(current + 1)} / ${pad(slides.length)}`;
+  function measureFlag() {
+    flagTrack.style.transform = 'none';
+    const last = flagTrack.lastElementChild;
+    const gutter = parseFloat(getComputedStyle(flagTrack).paddingLeft) || 0;
+    flagDist = Math.max(0, last.offsetLeft + last.offsetWidth + gutter - window.innerWidth);
+    flagSec.style.height = reduceMotion ? '' : `${flagDist + window.innerHeight}px`;
   }
 
-  bars.forEach((b, i) => b.addEventListener('click', () => go(i)));
-  $('#showPrev').addEventListener('click', () => go(current - 1));
-  $('#showNext').addEventListener('click', () => go(current + 1));
-  if (!reduceMotion) {
-    progress.addEventListener('animationend', e => {
-      if (e.target.parentElement === bars[current]) go(current + 1);
+  function updateFlag() {
+    if (reduceMotion) return;
+    const r = flagSec.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    const p = span > 0 ? clamp(-r.top / span) : 0;
+    flagTrack.style.transform = `translate3d(${(-flagDist * p).toFixed(1)}px, 0, 0)`;
+    flagBar.style.transform = `scaleX(${p})`;
+    let best = 0, bd = Infinity;
+    flagPanels.forEach((el, i) => {
+      const b = el.getBoundingClientRect();
+      const c = b.left + b.width / 2 - window.innerWidth / 2;
+      el.style.setProperty('--px', `${(-c * .06).toFixed(1)}px`);
+      if (Math.abs(c) < bd) { bd = Math.abs(c); best = i; }
     });
+    flagIndex.textContent = pad(best + 1);
   }
 
-  // หยุดเลื่อนอัตโนมัติเมื่อ hover / ไม่อยู่ในจอ / เปิดหน้ารายละเอียด
-  const pause = { hover: false, offscreen: true, detail: false };
-  const syncPause = () => showcase.classList.toggle('paused', pause.hover || pause.offscreen || pause.detail);
-  showcase.addEventListener('mouseenter', () => { pause.hover = true; syncPause(); });
-  showcase.addEventListener('mouseleave', () => { pause.hover = false; syncPause(); });
-  showcase.addEventListener('focusin', () => { pause.hover = true; syncPause(); });
-  showcase.addEventListener('focusout', () => { pause.hover = false; syncPause(); });
-  new IntersectionObserver(([en]) => { pause.offscreen = !en.isIntersecting; syncPause(); }, { threshold: .35 }).observe(showcase);
-
-  // swipe บนมือถือ
-  let touchX = null;
-  stageEl.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-  stageEl.addEventListener('touchend', e => {
-    if (touchX === null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
-    if (Math.abs(dx) > 50) go(current + (dx < 0 ? 1 : -1));
-    touchX = null;
+  // เปิดผลงานด้วยคีย์บอร์ด (Enter / Space) บน panel
+  flagTrack.addEventListener('keydown', e => {
+    const el = e.target.closest('.fl-panel');
+    if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); openDetail(el.dataset.open, el); }
   });
-
-  syncPause();
-  go(0);
 
   /* =========================================================
      FILTERS + GROUPED COLLECTION
@@ -681,17 +667,17 @@
     return `<button class="filter" role="tab" data-filter="${c.id}" aria-selected="${i === 0}">${esc(c.name)}<sup>${pad(n)}</sup></button>`;
   }).join('');
 
-  collection.innerHTML = CATEGORIES.map(c => {
+  collection.innerHTML = CATEGORIES.map((c, ci) => {
     const items = ordered.filter(p => p.cat === c.id);
     return `
       <section class="group" data-group="${c.id}" aria-labelledby="g-${c.id}">
-        <header class="group-head reveal">
-          <div class="group-code">${c.code}/</div>
-          <div>
-            <h3 class="group-name" id="g-${c.id}">${esc(c.name)}</h3>
-            <p class="group-desc">${esc(c.th)} — ${esc(c.desc)}</p>
-          </div>
+        <header class="group-side reveal">
+          <div class="group-num">${pad(ci + 1)}</div>
+          <div class="group-code">${c.code}/ — ${esc(c.th)}</div>
+          <h3 class="group-name" id="g-${c.id}">${esc(c.name)}</h3>
+          <p class="group-desc">${esc(c.desc)}</p>
           <div class="group-count">${pad(items.length)} ${items.length > 1 ? 'projects' : 'project'}</div>
+          <div class="group-meter"><i></i></div>
         </header>
         <div class="cards">
           ${items.map(p => `
@@ -706,6 +692,17 @@
         </div>
       </section>`;
   }).join('');
+  const groups = $$('.group', collection);
+
+  // แถบความคืบหน้าในแต่ละหมวด (ขณะเลื่อนผ่านการ์ด)
+  function updateGroups() {
+    const vh = window.innerHeight;
+    groups.forEach(g => {
+      if (g.hidden) return;
+      const r = g.getBoundingClientRect();
+      g.style.setProperty('--g', clamp((vh * .6 - r.top) / Math.max(1, r.height - vh * .3)).toFixed(3));
+    });
+  }
 
   function setFilter(id, scroll) {
     $$('.filter', filters).forEach(b => b.setAttribute('aria-selected', b.dataset.filter === id));
@@ -787,9 +784,8 @@
     detail.classList.add('open');
     detail.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lock');
-    pause.detail = true; syncPause();
     history.replaceState(null, '', `#work/${id}`);
-    $('#detailClose').focus({ preventScroll: true });
+    $('#detailClose').focus({ preventScroll: true, focusVisible: false });
   }
 
   function closeDetail() {
@@ -798,7 +794,6 @@
     detail.classList.remove('open');
     detail.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lock');
-    pause.detail = false; syncPause();
     history.replaceState(null, '', location.pathname + location.search);
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   }
@@ -1131,10 +1126,29 @@
       <div class="spec-tags">${s.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>
     </div>`).join('');
 
-  $('#timeline').innerHTML = EXPERIENCE.map((x, i) => `
-    <div class="commit">
+  // git log: ผลงานที่ระบุปี เรียงจากใหม่ไปเก่า + การศึกษาเป็น commit แรก
+  const shortHash = str => hashStr(str).toString(16).padStart(8, '0').slice(0, 7);
+  const years = [...new Set(ordered.filter(p => p.year).map(p => p.year))].sort((a, b) => b - a);
+  let headDone = false;
+  $('#timeline').innerHTML = years.map(y => `
+    <div class="commit-year reveal">${y}</div>
+    ${ordered.filter(p => p.year === y).map(p => {
+      const head = !headDone ? (headDone = true) : false;
+      return `
+      <div class="commit commit--project reveal">
+        <div class="commit-graph"></div>
+        <div class="commit-meta"><b>${shortHash(p.id)}</b>${head ? '<span class="head">(HEAD → main)</span>' : ''}<span class="type">${esc(p.type)}</span></div>
+        <div>
+          <button class="commit-role" data-open="${p.id}">${esc(p.name)}</button>
+          <div class="commit-msg">feat(${catById[p.cat].code.toLowerCase()}): ${esc(p.th)}</div>
+        </div>
+        <div class="commit-chip">${esc(catById[p.cat].name)}</div>
+      </div>`;
+    }).join('')}`).join('') + EXPERIENCE.map(x => `
+    <div class="commit-year reveal">${esc(x.date.split(/\s/)[0])}</div>
+    <div class="commit reveal">
       <div class="commit-graph"></div>
-      <div class="commit-meta"><b>${hashStr(x.role + x.org).toString(16).padStart(8, '0').slice(0, 7)}</b>${i === 0 ? '<span class="head">(HEAD → main)</span>' : ''}${esc(x.date)}</div>
+      <div class="commit-meta"><b>${shortHash(x.role + x.org)}</b><span class="head">(initial commit)</span><span class="type">${esc(x.date)}</span></div>
       <div>
         <div class="commit-role">${esc(x.role)}</div>
         <div class="commit-org">${esc(x.org)}</div>
@@ -1146,8 +1160,8 @@
   /* =========================================================
      MENU + FOOTER CATEGORY LINKS
      ========================================================= */
-  $('#menuCats').innerHTML = CATEGORIES.map(c => `<li><a href="#works" data-cat="${c.id}">${esc(c.name)}<small>${pad(countIn(c.id))}</small></a></li>`).join('');
-  $('#footerCats').insertAdjacentHTML('beforeend', CATEGORIES.map(c => `<a href="#works" data-cat="${c.id}">${esc(c.name)}</a>`).join(''));
+  $('#menuCats').innerHTML = CATEGORIES.map(c => `<li><a href="#collection-sec" data-cat="${c.id}">${esc(c.name)}<small>${pad(countIn(c.id))}</small></a></li>`).join('');
+  $('#footerCats').insertAdjacentHTML('beforeend', CATEGORIES.map(c => `<a href="#collection-sec" data-cat="${c.id}">${esc(c.name)}</a>`).join(''));
 
   document.addEventListener('click', e => {
     const a = e.target.closest('[data-cat]');
@@ -1173,11 +1187,10 @@
   $$('.menu-list a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
 
   /* =========================================================
-     NAV + HUD
+     NAV + CHAPTER RAIL + PROGRESS
      ========================================================= */
   const nav = $('#nav');
-  const hudPath = $('#hudPath');
-  const hudPct = $('#hudPct');
+  const progressBar = $('#progressBar');
   let lastY = window.scrollY;
   function updateNav() {
     const y = window.scrollY;
@@ -1189,21 +1202,185 @@
     }
     lastY = y;
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    hudPct.textContent = `${String(Math.round(clamp(y / max) * 100)).padStart(3, '0')}%`;
+    progressBar.style.transform = `scaleX(${clamp(y / max)})`;
   }
 
-  const labels = { hero: 'home', about: 'about', process: 'process', works: 'works', skills: 'skills', experience: 'experience', contact: 'contact' };
+  const CHAPTERS = [
+    ['hero', 'Prologue', 'home'], ['about', 'Hello, world', 'about'], ['process', 'How I work', 'process'],
+    ['works', 'Flagship', 'flagship'], ['collection-sec', 'Collection', 'collection'], ['skills', 'Constellation', 'skills'],
+    ['experience', 'git log', 'git-log'], ['faq', 'Q&A', 'faq'], ['contact', 'Contact', 'contact'],
+  ];
+  const rail = $('#rail');
+  rail.innerHTML = CHAPTERS.map(([id, name], i) => `<a href="#${id === 'hero' ? 'top' : id}" data-ch="${id}"><span>${esc(name)}&nbsp;</span>${pad(i)}</a>`).join('');
   const navCurrent = $('#navCurrent');
   const sectionObs = new IntersectionObserver(entries => {
     entries.forEach(en => {
       if (!en.isIntersecting) return;
       const id = en.target.id;
-      navCurrent.textContent = `~/${labels[id]}`;
-      hudPath.textContent = `~/thanatorn/portfolio/${labels[id]}`;
+      const ch = CHAPTERS.find(c => c[0] === id);
+      navCurrent.textContent = `~/${ch[2]}`;
+      $$('a', rail).forEach(a => a.classList.toggle('active', a.dataset.ch === id));
       $$('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.section === id));
+      en.target.classList.add('is-active');
     });
   }, { rootMargin: '-45% 0px -50% 0px' });
-  Object.keys(labels).forEach(id => sectionObs.observe(document.getElementById(id)));
+  CHAPTERS.forEach(([id]) => sectionObs.observe(document.getElementById(id)));
+
+  /* =========================================================
+     CH.01 MANIFESTO — คำค่อย ๆ สว่างขึ้นตามการเลื่อน
+     ========================================================= */
+  const manifesto = $('#manifesto');
+  const mText = $('#manifestoText');
+  const mMeter = $('#manifestoMeter');
+  const rawText = mText.textContent.trim().replace(/\s+/g, ' ');
+  const segmenter = window.Intl && Intl.Segmenter ? new Intl.Segmenter('th', { granularity: 'word' }) : null;
+  const mParts = segmenter ? [...segmenter.segment(rawText)].map(s => s.segment) : rawText.split(/(\s+)/);
+  const HL = /^(Frontend|Backend|UI|Database|ครบวงจร)$/;
+  mText.innerHTML = mParts.map(w => /^\s+$/.test(w) ? w : `<span class="mw${HL.test(w) ? ' hl' : ''}">${esc(w)}</span>`).join('');
+  const mWords = $$('.mw', mText);
+  let mLast = -1;
+
+  function updateManifesto() {
+    const r = manifesto.getBoundingClientRect();
+    const span = r.height - window.innerHeight;
+    const p = reduceMotion || span <= 0 ? 1 : clamp(-r.top / (span * .85));
+    const n = Math.round(p * mWords.length);
+    if (n !== mLast) {
+      mWords.forEach((w, i) => w.classList.toggle('on', i < n));
+      mLast = n;
+    }
+    mMeter.style.transform = `scaleX(${p})`;
+  }
+
+  /* =========================================================
+     SPLIT TITLES — หัวข้อเลื่อนขึ้นจากหน้ากากทีละคำ
+     ========================================================= */
+  $$('.split-title').forEach(el => {
+    let k = 0;
+    const out = [];
+    [...el.childNodes].forEach(node => {
+      if (node.nodeType === 3) {
+        node.textContent.split(/(\s+)/).forEach(w => {
+          if (!w) return;
+          out.push(/^\s+$/.test(w) ? ' ' : `<span class="w"><span style="--i:${k++}">${esc(w)}</span></span>`);
+        });
+      } else {
+        const free = node.classList && node.classList.contains('script');
+        out.push(`<span class="w${free ? ' w--free' : ''}"><span style="--i:${k++}">${node.outerHTML}</span></span>`);
+      }
+    });
+    el.innerHTML = out.join('');
+  });
+
+  /* =========================================================
+     CH.07 ASKED BEFORE HIRING — คำถาม + เมฆตัวอักษร
+     ========================================================= */
+  const linkify = s => esc(s).replace(/\[\[([a-z0-9-]+)\]\]/g, (m, id) => byId[id] ? `<button data-open="${id}">${esc(byId[id].name)}</button>` : m);
+  $('#faqList').innerHTML = FAQ.map((f, i) => `
+    <details class="faq-item reveal"${i === 0 ? ' open' : ''}>
+      <summary><small>${pad(i + 1)}</small><span>${esc(f.q)}</span><i></i></summary>
+      <div class="faq-a">${linkify(f.a)}</div>
+    </details>`).join('');
+
+  // เมฆที่วาดด้วยตัวอักษร ASCII (value noise) — เวอร์ชัน developer ของเมฆ dither
+  const faqSec = $('#faq');
+  const faqCanvas = $('#faqCanvas');
+  const fctx = faqCanvas.getContext('2d');
+  const CHARS = ' .·:-=+*#';
+  const h2 = (x, y) => {
+    let h = Math.imul(x, 374761393) + Math.imul(y, 668265263) | 0;
+    h = Math.imul(h ^ (h >>> 13), 1274126177);
+    return ((h ^ (h >>> 16)) >>> 0) / 4294967295;
+  };
+  const vnoise = (x, y) => {
+    const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+    const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+    const a = h2(xi, yi), b = h2(xi + 1, yi), c = h2(xi, yi + 1), d = h2(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  };
+  const fbm = (x, y) => vnoise(x, y) * .55 + vnoise(x * 2.1, y * 2.1) * .3 + vnoise(x * 4.3, y * 4.3) * .15;
+  let faqW = 0, faqH = 0, faqCell = 14, faqVisible = false, faqRaf = 0, faqLast = 0;
+
+  function sizeFaq() {
+    const r = faqSec.getBoundingClientRect();
+    faqW = r.width; faqH = r.height;
+    faqCell = faqW < 700 ? 13 : 15;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    faqCanvas.width = faqW * dpr;
+    faqCanvas.height = faqH * dpr;
+    fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    drawFaq(performance.now());
+  }
+
+  function drawFaq(time) {
+    const t = time / 1000;
+    fctx.clearRect(0, 0, faqW, faqH);
+    fctx.font = `${faqCell - 2}px "JetBrains Mono", monospace`;
+    fctx.textAlign = 'center';
+    fctx.textBaseline = 'middle';
+    const cols = Math.ceil(faqW / faqCell), rows = Math.ceil(faqH / faqCell);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // เว้นกลางจอให้อ่านง่าย: เมฆหนาที่ขอบ บางตรงกลาง
+        const dx = (x / cols - .5) * 2, dy = (y / rows - .5) * 2;
+        const edge = clamp(Math.max(Math.abs(dx) * 1.25, Math.abs(dy) * .9) - .35, 0, 1);
+        const n = fbm(x * .06 + t * .04, y * .09 - t * .015);
+        const v = clamp((n - .42) / .32) * (.25 + edge * .95);
+        const idx = Math.min(CHARS.length - 1, Math.floor(v * CHARS.length));
+        if (idx <= 0) continue;
+        fctx.fillStyle = `rgba(11,11,11,${(.08 + v * .2).toFixed(3)})`;
+        fctx.fillText(CHARS[idx], x * faqCell + faqCell / 2, y * faqCell + faqCell / 2);
+      }
+    }
+  }
+
+  function faqLoop(time) {
+    if (time - faqLast > 90) { drawFaq(time); faqLast = time; }
+    faqRaf = faqVisible && !reduceMotion ? requestAnimationFrame(faqLoop) : 0;
+  }
+  new IntersectionObserver(([en]) => {
+    faqVisible = en.isIntersecting;
+    if (faqVisible && !faqRaf && !reduceMotion) faqRaf = requestAnimationFrame(faqLoop);
+  }).observe(faqSec);
+
+  /* =========================================================
+     EPILOGUE — โลโก้ท้ายเว็บประกอบตัวจากพิกเซล
+     ========================================================= */
+  const fmWrap = $('#footerMark');
+  const fmCanvas = $('#footerPixels');
+  const fmCtx = fmCanvas.getContext('2d');
+  let fmCells = [], fmLast = -1, fmW = 0, fmH = 0;
+
+  function sizeFooterMark() {
+    const r = fmWrap.getBoundingClientRect();
+    fmW = r.width; fmH = r.height;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    fmCanvas.width = fmW * dpr;
+    fmCanvas.height = fmH * dpr;
+    fmCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const size = Math.max(10, Math.round(fmH / 14));
+    const rnd = seeded(99);
+    fmCells = [];
+    for (let y = 0; y < fmH; y += size) for (let x = 0; x < fmW; x += size) {
+      fmCells.push({ x, y, s: size, th: rnd() * .85 + (x / fmW) * .15 });
+    }
+    fmLast = -1;
+  }
+
+  function updateFooterMark() {
+    const r = fmWrap.getBoundingClientRect();
+    let q = reduceMotion ? 1 : clamp((window.innerHeight - r.top) / (r.height + window.innerHeight * .3));
+    q = Math.round(q * 100) / 100;
+    if (q === fmLast) return;
+    fmLast = q;
+    fmCtx.clearRect(0, 0, fmW, fmH);
+    if (q >= 1) return;
+    for (const c of fmCells) {
+      if (c.th < q) continue;
+      fmCtx.fillStyle = c.th < q + .05 ? '#0b0b0b' : '#f5f5f3';
+      fmCtx.fillRect(c.x, c.y, c.s + .5, c.s + .5);
+    }
+  }
 
   /* =========================================================
      SCROLL / RESIZE LOOP
@@ -1218,15 +1395,26 @@
       updateHero();
       updateStars();
       updateProcess();
+      updateManifesto();
+      updateFlag();
+      updateGroups();
+      updateFooterMark();
     });
   }
   function onResize() {
     measureHero();
+    measureFlag();
     layoutStars();
+    sizeFaq();
+    sizeFooterMark();
     lastQ = -1;
     updateHero();
     updateStars();
     updateProcess();
+    updateManifesto();
+    updateFlag();
+    updateGroups();
+    updateFooterMark();
     drawStars(performance.now());
   }
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -1238,7 +1426,7 @@
   onResize();
   updateNav();
   // วาดใหม่หลังฟอนต์โหลดเสร็จ (ใช้ใน canvas)
-  if (document.fonts) document.fonts.ready.then(() => { layoutStars(); drawStars(performance.now()); });
+  if (document.fonts) document.fonts.ready.then(() => { layoutStars(); drawStars(performance.now()); measureFlag(); updateFlag(); });
 
   /* =========================================================
      REVEAL ON SCROLL
@@ -1251,7 +1439,7 @@
       }
     });
   }, { threshold: .08, rootMargin: '0px 0px -40px 0px' });
-  $$('.reveal').forEach(el => revealObs.observe(el));
+  $$('.reveal, .chapter-mark, .split-title').forEach(el => revealObs.observe(el));
 
   /* =========================================================
      PRINT
