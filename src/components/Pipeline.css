@@ -1,0 +1,214 @@
+.pipe {
+  position: relative;
+  height: 420vh;
+}
+
+.pipe__stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+.pipe__gl {
+  left: 32%;
+}
+
+.pipe__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 30%, rgba(5, 5, 5, 0.6) 42%, transparent 60%);
+}
+
+.pipe__inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: var(--nav-h);
+}
+
+.pipe .sec-head {
+  margin-bottom: 40px;
+}
+
+.pipe .sec-head__title {
+  font-size: clamp(30px, 3.6vw, 60px);
+}
+
+.pipe__acts {
+  position: relative;
+  display: grid;
+  max-width: 560px;
+}
+
+.pipe__act {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(8px);
+  transition:
+    opacity 0.6s var(--ease),
+    transform 0.8s var(--ease),
+    filter 0.6s var(--ease);
+  pointer-events: none;
+}
+
+.pipe__act.is-on {
+  opacity: 1;
+  transform: none;
+  filter: none;
+  pointer-events: auto;
+}
+
+.pipe__no {
+  font-size: 10px;
+  color: var(--mute);
+}
+
+.pipe__act h3 {
+  margin-top: 14px;
+  font-size: clamp(28px, 3.2vw, 52px);
+  font-weight: 500;
+}
+
+.pipe__act .lead {
+  margin-top: 18px;
+  font-size: 17px;
+}
+
+.pipe__act .chips {
+  margin-top: 22px;
+}
+
+.pipe__act .chip {
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.pipe__act .chip:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.pipe__steps {
+  display: flex;
+  gap: 10px;
+  margin-top: 48px;
+  max-width: 560px;
+  font-size: 10px;
+}
+
+.pipe__steps li {
+  flex: 1;
+  display: grid;
+  gap: 10px;
+  color: var(--faint);
+  transition: color 0.4s;
+}
+
+.pipe__steps li.is-done {
+  color: var(--ink-2);
+}
+
+.pipe__steps i {
+  height: 2px;
+  background: var(--line-2);
+  position: relative;
+  overflow: hidden;
+}
+
+.pipe__steps i::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform-origin: left;
+  transform: scaleX(clamp(0, calc(var(--p, 0) * 4 - var(--i)), 1));
+}
+
+.pipe__meta {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 28px;
+  font-size: 10px;
+  text-transform: none;
+}
+
+.pipe__meta b {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .pipe {
+    height: 340vh;
+  }
+
+  .pipe__gl {
+    left: 0;
+    top: 30%;
+    opacity: 0.85;
+  }
+
+  .pipe__shade {
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 22%, rgba(5, 5, 5, 0.5) 50%, transparent 75%);
+  }
+
+  .pipe__inner {
+    justify-content: flex-start;
+    padding-top: calc(var(--nav-h) + 24px);
+  }
+
+  .pipe .sec-head {
+    margin-bottom: 20px;
+  }
+
+  .pipe__act .lead {
+    font-size: 15px;
+  }
+
+  .pipe__steps {
+    position: absolute;
+    left: var(--gutter);
+    right: var(--gutter);
+    bottom: 56px;
+    margin: 0;
+  }
+}
+
+/* reduced motion: ไม่ปักหมุด แสดงทุกองก์เรียงกัน */
+.pipe--static {
+  height: auto;
+}
+
+.pipe--static .pipe__stage {
+  position: relative;
+  height: auto;
+  padding-block: 120px;
+}
+
+.pipe--static .pipe__acts {
+  gap: 48px;
+}
+
+.pipe--static .pipe__act {
+  grid-area: auto;
+  opacity: 1;
+  transform: none;
+  filter: none;
+  pointer-events: auto;
+}
+
+.pipe--static .pipe__steps,
+.pipe--static .pipe__meta {
+  display: none;
+}
+
+.pipe__spin {
+  right: var(--gutter);
+  top: calc(var(--nav-h) + 30px);
+}

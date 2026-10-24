@@ -1,0 +1,95 @@
+.holo {
+  --px: 50%;
+  --py: 50%;
+  --rx: 0deg;
+  --ry: 0deg;
+  --active: 0;
+  width: 100%;
+  max-width: 420px;
+  perspective: 1100px;
+  touch-action: pan-y;
+}
+
+.holo__body {
+  position: relative;
+  padding: 10px;
+  border-radius: 0;
+  background: #0b0b0b;
+  border: 1px solid var(--line-2);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.9);
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform 0.6s var(--ease), box-shadow 0.4s;
+  will-change: transform;
+}
+
+.holo:hover .holo__body {
+  transition: transform 0.12s linear, box-shadow 0.4s;
+}
+
+.holo__tile {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: 0;
+  overflow: hidden;
+  isolation: isolate;
+  background: #0a1220;
+}
+
+.holo__tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(0.85) contrast(1.08);
+  transition: filter 0.8s var(--ease);
+}
+
+.holo:hover .holo__tile img {
+  filter: grayscale(0.2) contrast(1.05);
+}
+
+.holo__fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+}
+
+.holo__foil,
+.holo__glare,
+.holo__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* ฟอยล์: spectrum + แถบเฉียง + falloff ตามเมาส์ · blend แบบ color-dodge */
+.holo__foil {
+  background-image:
+    repeating-linear-gradient(0deg, hsl(2 100% 73%) 5%, hsl(53 100% 69%) 10%, hsl(93 100% 69%) 15%, hsl(176 100% 76%) 20%, hsl(228 100% 74%) 25%, hsl(260 100% 76%) 30%, hsl(2 100% 73%) 35%),
+    repeating-linear-gradient(-45deg, #0e152e 0%, hsl(180 10% 60%) 3.8%, hsl(180 29% 66%) 4.5%, hsl(180 10% 60%) 5.2%, #0e152e 10%, #0e152e 12%),
+    radial-gradient(farthest-corner circle at var(--px) var(--py), rgba(0, 0, 0, 0.1) 12%, rgba(0, 0, 0, 0.15) 20%, rgba(0, 0, 0, 0.25) 120%);
+  background-position: 0 var(--py), var(--px) var(--py), center;
+  background-size: 400% 400%, 300% 300%, 200% 200%;
+  background-blend-mode: color, hard-light;
+  mix-blend-mode: color-dodge;
+  opacity: calc(0.04 + var(--active) * 0.26);
+  transition: opacity 0.4s;
+}
+
+.holo__glare {
+  background: radial-gradient(farthest-corner circle at var(--px) var(--py), rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.08) 30%, transparent 60%);
+  mix-blend-mode: overlay;
+  opacity: calc(0.3 + var(--active) * 0.6);
+}
+
+.holo__scan {
+  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 4px);
+  mix-blend-mode: screen;
+}
+
+.holo__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 8px 4px;
+}
