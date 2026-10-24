@@ -95,6 +95,14 @@ export const PROJECTS: Project[] = [
     metrics: [['Robot tests', '115'], ['Roles', '3'], ['Pipeline', 'CI/CD → VPS']],
     year: '2569',
     role: 'งานคู่ — รับผิดชอบฝั่ง Mobile App ของลูกค้า (Expo / React Native)',
+    note: 'ภาพหน้าจอรันจาก repo บนเครื่อง และใช้ข้อมูลสมมติ (ลูกค้า/รถ/ใบซ่อมตัวอย่าง)',
+    images: [
+      asset('projects/fsc-app.jpg'),
+      asset('projects/fsc-app-2.jpg'),
+      asset('projects/fsc-dashboard.jpg'),
+      asset('projects/fsc-jobs.jpg'),
+      asset('projects/fsc-parts.jpg'),
+    ],
     links: [
       { label: 'เปิดระบบจริง', url: 'https://fixstatuscar.duckdns.org' },
       { label: 'ดูซอร์สโค้ด', url: 'https://github.com/ExDevilish/fixstatuscar' },
