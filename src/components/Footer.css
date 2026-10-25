@@ -20,7 +20,7 @@
 
 .footer__cols .mono {
   margin-bottom: 10px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .footer__cols a,
@@ -72,7 +72,7 @@
   margin-top: 28px;
   padding-top: 20px;
   border-top: 1px solid var(--line);
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .footer__base a:hover {
@@ -86,5 +86,30 @@
 
   .footer__base {
     flex-direction: column;
+  }
+}
+
+/* มือถือ: ลิงก์สูงพอให้นิ้วกดโดนง่าย (~40px) */
+@media (max-width: 600px) {
+  .footer__cols {
+    gap: 24px 16px;
+  }
+
+  .footer__cols > div {
+    gap: 0;
+  }
+
+  .footer__cols a,
+  .footer__cols span {
+    padding-block: 9px;
+  }
+
+  .footer__base {
+    gap: 6px;
+  }
+
+  .footer__base a {
+    display: inline-block;
+    padding-block: 10px;
   }
 }

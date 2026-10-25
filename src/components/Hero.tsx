@@ -6,7 +6,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useL } from '../data/localize';
 import { WORKS } from '../data/derived';
-import { gsap, reduceMotion, ScrollTrigger, SplitText, useGSAP } from '../lib/motion';
+import { gsap, isNarrow, reduceMotion, ScrollTrigger, SplitText, useGSAP } from '../lib/motion';
 import { sceneProgress, spins, useUI } from '../lib/store';
 import { useDragRotate } from '../lib/useDragRotate';
 import { hasWebGL, useInView, usePageHidden } from '../lib/useInView';
@@ -67,7 +67,9 @@ export default function Hero() {
         // headline อยู่นิ่ง (ไม่เลื่อนตาม scroll) แค่จางออกเมื่อฉากถัดไปเริ่ม — ตาม scroll-film-site
         .to('.hero__copy', { opacity: 0, ease: 'none' }, 0)
         .to('.hero__stats', { opacity: 0, ease: 'none' }, 0)
-        .to('.hero__hint', { opacity: 0, ease: 'none' }, 0);
+        .to('.hero__hint', { opacity: 0, ease: 'none' }, 0)
+        // มือถือ: ป้าย drag อยู่ล่างจอ (ที่เดียวกับตัวเลข) → ค่อยโผล่เมื่อตัวเลขจางไป
+        .fromTo('.hero__spin', { opacity: isNarrow() ? 0 : 1 }, { opacity: 1, ease: 'none' }, 0);
       // คำบรรยายสองช่วง: exploded view → ฉายเป็นผลงานจริง
       const cap = (sel: string, a: string, b: string, c: string, d: string) => {
         gsap.fromTo(sel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, ease: 'none', scrollTrigger: { trigger: root, start: `${a} top`, end: `${b} top`, scrub: true } });

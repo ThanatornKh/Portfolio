@@ -86,6 +86,7 @@ const UP = new THREE.Vector3(0, 1, 0);
 
 /** ระยะกล้องตอนล็อกโฟกัส (ก่อนคูณสัดส่วนจอ) — ดาวกลุ่มถอยมากกว่าให้เห็นดาวลูกครบ */
 const FOCUS_DIST = { hub: 4.8, leaf: 3.4 };
+const HALF_FOV = Math.tan(THREE.MathUtils.degToRad(20));
 
 /** สถานะโฟกัสที่ Graph เขียนทุกเฟรม แล้ว CameraRig อ่าน (ไม่ผ่าน React state) */
 interface Focus {
@@ -400,6 +401,12 @@ function CameraRig({ focus }: { focus: Focus }) {
     first.current = false;
     // ตอนล็อก ยกภาพขึ้นครึ่งหนึ่งของแผงข้อมูลด้านล่าง ดาวที่ล็อกจึงอยู่กลาง "พื้นที่ที่มองเห็นจริง"
     const { width: w, height: h } = state.size;
+    // กล่องแนวตั้ง (มือถือ): ขยายมุมกล้องแนวตั้งให้แนวนอนกว้างเท่ากล่องจัตุรัส กลุ่มดาวจึงไม่ล้นข้าง
+    const fov = Math.max(40, THREE.MathUtils.radToDeg(2 * Math.atan(HALF_FOV / (w / h))));
+    if (Math.abs(cam.fov - fov) > 0.01) {
+      cam.fov = fov;
+      cam.updateProjectionMatrix();
+    }
     lift.current += ((focus.on ? Math.min(64, h * 0.08) : 0) - lift.current) * k;
     const y = Math.round(lift.current);
     if (!cam.view || cam.view.fullWidth !== w || cam.view.fullHeight !== h || cam.view.offsetY !== y) cam.setViewOffset(w, h, 0, y, w, h);

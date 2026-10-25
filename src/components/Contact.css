@@ -75,13 +75,13 @@ a.contact__card:hover .contact__arrow {
 
 .contact__card--static .contact__arrow {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-micro);
   letter-spacing: 0.08em;
   color: var(--mute);
 }
 
 .contact__card .mono {
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .contact__val {
@@ -111,7 +111,7 @@ a.contact__card:hover .contact__arrow {
   gap: 7px;
   padding: 12px 16px;
   border-bottom: 1px solid var(--line);
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .term__bar i {
@@ -213,8 +213,24 @@ a.contact__card:hover .contact__arrow {
   }
 
   .term__out {
-    height: 280px;
+    height: 220px;
     font-size: 12px;
+  }
+
+  /* ปุ่มหลักเต็มแถว ปุ่มรองแบ่งครึ่งแถว */
+  .contact__cta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .contact__cta > :first-child,
+  .contact__cta > :last-child:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+
+  .contact__cta .btn {
+    padding-inline: 12px;
   }
 
   .term__out .k {
