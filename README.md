@@ -7,15 +7,14 @@ Scroll-story portfolio with real-time 3D. Built with **React + Vite + TypeScript
 | # | Section | What happens |
 |---|---|---|
 | 00 | Hero — *From pixels to production* | A 4-layer "stack core" chip assembles after the preloader, explodes on scroll (Infra · Data · Logic · Interface), then projects holograms of real project screens. Drag to rotate 360°. |
-| 01 | Inside the core | Scroll dives into the same AI chip: the 10 works are memory banks on the die, data packets run over the bus into an 8×8 tensor core pulsing in waves, and a hex-dump hologram rises above it. A HUD reads the bank as a real memory dump (the project's own bytes) plus decoded fields. Banks cycle on their own; click a bank or a code button to lock it, then open the project. Drag to rotate. |
-| 02 | About | Holographic profile card, word-by-word reveal, `profile.json` |
-| 03 | Data → Deploy | 6,000 particles morph cloud → helix → neural net → globe (vertex shader). Drag to rotate. |
-| 04 | Flagship works | Sticky stacking cards with an "AI scan" over each screenshot and real metrics |
-| 05 | All projects | Category filters with GSAP Flip |
-| 06 | Tech stack | 3D constellation of every technology used, linked to projects. Click a star (or a group in the list) to lock focus on it: the camera flies to the clearest angle and orbits it. Esc or a click on empty space releases. |
-| 07 | Journey | `git log --graph` timeline |
-| 08 | Q&A | Accordion with links into projects |
-| 09 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
+| 01 | About | Holographic profile card, word-by-word reveal, `profile.json` |
+| 02 | Data → Deploy | 6,000 particles morph cloud → helix → neural net → globe (vertex shader). Drag to rotate. |
+| 03 | Flagship works | Sticky stacking cards with an "AI scan" over each screenshot and real metrics |
+| 04 | All projects | Category filters with GSAP Flip |
+| 05 | Tech stack | 3D constellation of every technology used, linked to projects. Click a star (or a group in the list) to lock focus on it: the camera flies to the clearest angle and orbits it. Esc or a click on empty space releases. |
+| 06 | Journey | `git log --graph` timeline |
+| 07 | Q&A | Accordion with links into projects |
+| 08 | Contact | Interactive terminal (`help`, `ls`, `open <project>`, `stack` …) |
 
 Behind every chapter runs a faint **circuit-board background**: PCB traces drift with parallax and light pulses run along them, faster while you scroll. It pauses under the full-screen 3D chapters and the project overlay.
 

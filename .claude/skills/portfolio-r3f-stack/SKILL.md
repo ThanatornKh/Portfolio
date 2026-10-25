@@ -74,14 +74,7 @@ description: How this portfolio is built and how to extend it — React + Vite +
    - `metrics` decode with ScrambleText.
 4. **Hologram hover** (`.hol`): scanlines, a light sweep and a 1.5px RGB split via `drop-shadow`.
 5. **Sticky stacking cards**: the previous card scales to about 0.9 and dims, desktop only (`gsap.matchMedia`).
-6. **Inside the core** (`CoreScene.tsx` + `Core.tsx`).
-   - Works are memory banks on a die; Manhattan bus routes carry instanced packets into an 8×8 instanced tensor core.
-   - The camera is bound to scroll (`sceneProgress.core`): top view → down the bus → close on the core.
-   - The HUD dump is real bytes (`TextEncoder` of name · status · code), not random hex.
-   - **Framing around overlays:** `Core.tsx` measures the free area between the heading and the HUD with `offset*` (unaffected by GSAP transforms) into `coreFrame`. The Rig centres the chip there with `setViewOffset`. On portrait screens it widens `fov` so the horizontal field matches landscape.
-   - On narrow screens the heading fades away (`--fade` from `--p`) to give the chip room; the Rig uses the same range.
-   - Reduced motion uses `frameloop="demand"`, so call `invalidate()` after async content (drei `Text` fonts) and after any measurement change (`coreFrame.redraw`).
-7. **Circuit background** (`CircuitBackground.tsx`).
+6. **Circuit background** (`CircuitBackground.tsx`).
    - Static traces are drawn once to their own canvas and moved with `translate3d` (GPU). Only the pulses are redrawn each frame.
    - It hides and stops when a full-screen 3D chapter touches both the top and bottom strips of the viewport (two IntersectionObservers with `rootMargin` -99%), or when the project overlay is open.
    - Sections must not paint an opaque background, or they hide it.
