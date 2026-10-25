@@ -1,6 +1,6 @@
 /* =========================================================
    CIRCUIT BACKGROUND — พื้นหลังทั้งเว็บ: ลายวงจรบนแผงชิปจาง ๆ + แสงข้อมูลวิ่งตามเส้น
-   - เข้าธีมเดียวกับชิป AI ใน Hero / Inside the core
+   - เข้าธีมเดียวกับชิป AI ใน Hero
    - เลื่อนหน้า = ลายวงจรเลื่อนช้ากว่าเนื้อหา (parallax) และแสงวิ่งเร็วขึ้นตามความเร็วที่เลื่อน
    - เมาส์ = แสงสปอตจาง ๆ ตามตำแหน่ง
    - ประหยัด: ลายวงจรวาดครั้งเดียวลง canvas แยก แล้วเลื่อนด้วย transform (GPU) · ทุกเฟรมวาดแค่แสงที่วิ่ง
@@ -196,7 +196,7 @@ export default function CircuitBackground() {
       schedule();
     };
 
-    // ฉาก 3D เต็มจอ (Hero / Inside the core / Data → Deploy) และหน้ารายละเอียดผลงานทับพื้นหลังอยู่แล้ว
+    // ฉาก 3D เต็มจอ (Hero / Data → Deploy) และหน้ารายละเอียดผลงานทับพื้นหลังอยู่แล้ว
     // → ซ่อนทั้งชั้นและหยุดวาด · "เต็มจอ" = ฉากแตะทั้งแถบบนสุดและล่างสุดของจอ (IO 2 ตัว แม่นที่ขอบกว่าใช้ threshold)
     let detailOpen = !!useUI.getState().openId;
     const hits = { top: new Set<Element>(), bottom: new Set<Element>() };
@@ -219,7 +219,7 @@ export default function CircuitBackground() {
           { rootMargin: edge === 'top' ? '0px 0px -99% 0px' : '-99% 0px 0px 0px' },
         ),
     );
-    ['#top', '#core', '#pipeline'].forEach(s => {
+    ['#top', '#pipeline'].forEach(s => {
       const el = document.querySelector(s);
       if (el) observers.forEach(o => o.observe(el));
     });

@@ -7,7 +7,6 @@ import CircuitBackground from './components/CircuitBackground';
 import TargetCursor from './components/TargetCursor';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
-import Core from './components/Core';
 import About from './components/About';
 import Pipeline from './components/Pipeline';
 import Flagship from './components/Flagship';
@@ -51,7 +50,6 @@ export default function App() {
       <Nav />
       <main id="main">
         <Hero />
-        <Core />
         <About />
         <Pipeline />
         <Flagship />

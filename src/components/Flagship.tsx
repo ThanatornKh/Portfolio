@@ -1,5 +1,5 @@
 /* =========================================================
-   04 · FLAGSHIP — การ์ดซ้อนแบบ sticky (React Bits ScrollStack / MotionSites "sticky project cards")
+   03 · FLAGSHIP — การ์ดซ้อนแบบ sticky (React Bits ScrollStack / MotionSites "sticky project cards")
    การ์ดใบก่อนหดและมืดลงเมื่อใบถัดไปเลื่อนขึ้นมาทับ
    ========================================================= */
 import { useRef } from 'react';
