@@ -101,11 +101,16 @@
   padding-top: 6px;
   border-top: 1px solid rgba(255, 255, 255, 0.35);
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-micro);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink-2);
   pointer-events: none;
+}
+
+.proj-label--end {
+  transform: translateX(-100%);
+  text-align: right;
 }
 
 .proj-label b {
@@ -140,7 +145,7 @@
 }
 
 .hero__stats dt {
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .hero__stats dd {
@@ -159,7 +164,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   writing-mode: vertical-rl;
 }
 
@@ -204,7 +209,7 @@
 }
 
 .chip-label .mono {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   color: var(--ink);
 }
 
@@ -216,7 +221,7 @@
 .chip-label p {
   margin-top: 2px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: var(--fs-micro);
   color: var(--mute);
   letter-spacing: 0.02em;
 }
@@ -274,8 +279,25 @@
     display: none;
   }
 
+  .chip-label {
+    gap: 6px;
+  }
+
   .chip-label i {
-    flex-basis: 24px;
+    flex-basis: 16px;
+  }
+
+  .chip-label .mono {
+    letter-spacing: 0.06em;
+  }
+
+  /* ป้ายจอโฮโลแกรม: เหลือรหัส + สถานะ ไม่ให้ล้นขอบจอ */
+  .proj-label {
+    letter-spacing: 0.06em;
+  }
+
+  .proj-label__name {
+    display: none;
   }
 }
 
@@ -297,6 +319,6 @@
 @media (max-width: 900px) {
   .hero__spin {
     top: auto;
-    bottom: 200px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
   }
 }

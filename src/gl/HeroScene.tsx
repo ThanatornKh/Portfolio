@@ -53,6 +53,7 @@ function Chip() {
   const intro = useRef({ a: reduceMotion ? 1 : 0, b: reduceMotion ? 1 : 0, c: reduceMotion ? 1 : 0, d: reduceMotion ? 1 : 0 });
   const flash = useRef([0, 0, 0, 0]);
   const locked = useRef([reduceMotion, reduceMotion, reduceMotion, reduceMotion]);
+  const narrow = useThree(s => s.size.width < 900);
   const tex = useMemo(() => ({ trace: traceTexture(), socket: socketTexture(), die: dieTexture(), ui: uiTexture(), scan: scanTexture() }), []);
 
   const mats = useMemo(() => {
@@ -173,7 +174,8 @@ function Chip() {
       }
       flash.current[i] = Math.max(0, flash.current[i] - dt * 1.6);
       const label = labelRefs.current[i];
-      if (label) label.style.opacity = String(span(explode, 0.35 + i * 0.12, 0.7 + i * 0.1) * (1 - proj * 0.65));
+      // มือถือ: ป้ายชั้นหายหมดตอนโฮโลแกรมขึ้น (จอแคบ ป้ายจะทับป้ายผลงาน)
+      if (label) label.style.opacity = String(span(explode, 0.35 + i * 0.12, 0.7 + i * 0.1) * (1 - proj * (narrow ? 1 : 0.65)));
     });
     emissives.forEach((m, i) => {
       m.emissiveIntensity = baseEmissive[i] * (0.9 + 0.1 * Math.sin(t * 1.4 + i)) + flash.current[i] * 3;
@@ -302,6 +304,7 @@ function LayerLabel({ i, innerRef }: { i: number; innerRef: (el: HTMLDivElement 
 }
 
 /* ---------- กล้อง: มุม 3/4 → มุมข้างเห็นชั้นแยก → เข้าใกล้ ---------- */
+const PORTRAIT_HALF_W = Math.tan(THREE.MathUtils.degToRad(19)); // ครึ่งมุมกว้างแนวนอนบนจอแนวตั้ง
 function Rig() {
   const camera = useThree(s => s.camera) as THREE.PerspectiveCamera;
   const size = useThree(s => s.size);
@@ -322,9 +325,15 @@ function Rig() {
     const e = smooth(span(p, 0.06, 0.48));
     const d = smooth(span(p, 0.5, 0.78)); // ถอยออกให้เห็นโฮโลแกรมที่ฉายขึ้นมา
     const narrow = size.width < 900;
+    // มือถือแนวตั้ง: ช่วงแรกคงมุมเดิม (ชิปเต็มความกว้างใต้ข้อความ) แล้วค่อยกางมุมกล้องตอนแยกชั้น
+    // ให้เห็นกว้างพอสำหรับป้ายชั้นทางขวา · ช่วงโฮโลแกรมเข้าใกล้ขึ้นให้จอผลงานเต็มความกว้าง
+    const aspect = size.width / size.height;
+    const portrait = aspect < 0.85;
+    const pf = portrait ? e : 0;
+    camera.fov = THREE.MathUtils.lerp(30, portrait ? THREE.MathUtils.radToDeg(2 * Math.atan(PORTRAIT_HALF_W / aspect)) : 30, pf);
+    const far = portrait ? THREE.MathUtils.lerp(1.5, 0.95 - 0.25 * d, pf) : narrow ? 1.5 : 1;
     v.pos.copy(v.A).lerp(v.B, e).lerp(v.D, d);
-    // จอแคบ (มือถือ) ถอยกล้องให้เห็นทั้งชิปและโฮโลแกรม
-    v.pos.multiplyScalar((narrow ? 1.5 : 1) * (1 + (1 - introCam.current) * 0.7));
+    v.pos.multiplyScalar(far * (1 + (1 - introCam.current) * 0.7));
     // lerp ชั้นเดียว: Lenis ทำให้ scroll นุ่มแล้ว กล้องจึงตามค่า scroll ตรง ๆ — หน่วงเฉพาะพารัลแลกซ์ของเมาส์
     const k = reduceMotion ? 1 : 1 - Math.exp(-dt * 4);
     v.ptr.x += (sceneProgress.pointerX * 0.4 - v.ptr.x) * k;
@@ -333,8 +342,12 @@ function Rig() {
     v.look.set(0, 0.05 + d * 1.05, 0);
     camera.lookAt(v.look);
     // จัดชิปไปทางขวาของข้อความบนจอใหญ่ / ลงล่างบนมือถือ แล้วค่อยกลับกลางตอนแยกชั้น
+    // มือถือแนวตั้งตอนแยกชั้น: เลื่อนชิปไปซ้ายเล็กน้อยเพื่อเว้นที่ให้ป้ายชั้นทางขวา (กลับกลางตอนโฮโลแกรม)
     const off = 1 - e;
-    camera.setViewOffset(size.width, size.height, narrow ? 0 : -size.width * 0.26 * off, narrow ? -size.height * 0.16 * off : 0, size.width, size.height);
+    const split = portrait ? e * (1 - d) : 0;
+    const ox = narrow ? size.width * 0.1 * split : -size.width * 0.26 * off;
+    const oy = narrow ? -size.height * 0.16 * off + size.height * 0.05 * split : 0;
+    camera.setViewOffset(size.width, size.height, ox, oy, size.width, size.height);
   });
   return null;
 }

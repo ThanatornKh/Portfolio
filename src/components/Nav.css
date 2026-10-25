@@ -120,7 +120,7 @@
   border-radius: 0;
   border: 1px solid var(--line-2);
   color: var(--ink-2);
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .nav__status i {
@@ -212,7 +212,7 @@
 .rail__label {
   position: absolute;
   right: 26px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   text-transform: none;
   white-space: nowrap;
   color: var(--ink-2);
@@ -318,6 +318,51 @@
   }
 }
 
+/* มือถือ: ให้ปุ่มเมนูอยู่ในจอเสมอ — ซ่อนคำว่า Menu (ยังอ่านออกเสียงได้) และลดระยะห่าง */
+@media (max-width: 600px) {
+  .nav__inner {
+    gap: 12px;
+  }
+
+  .nav__name {
+    letter-spacing: 0.16em;
+  }
+
+  .nav__menu {
+    padding: 0;
+  }
+
+  .nav__menu .mono {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .burger {
+    width: 40px;
+    height: 40px;
+  }
+
+  .burger i:nth-child(1) { top: 16px; }
+  .burger i:nth-child(2) { top: 22px; }
+  .burger.is-x i:nth-child(1),
+  .burger.is-x i:nth-child(2) { top: 19px; }
+
+  .lang {
+    height: 40px;
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 370px) {
+  .nav__name {
+    display: none;
+  }
+}
+
 /* ---------- สลับภาษา TH / EN ---------- */
 .lang {
   display: inline-flex;
@@ -325,7 +370,7 @@
   gap: 6px;
   height: 34px;
   padding: 0 12px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   letter-spacing: 0.1em;
   color: var(--mute);
   border: 1px solid var(--line-2);

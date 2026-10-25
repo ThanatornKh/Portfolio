@@ -68,7 +68,7 @@
 }
 
 .pipe__no {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   color: var(--mute);
 }
 
@@ -102,7 +102,7 @@
   gap: 10px;
   margin-top: 48px;
   max-width: 560px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .pipe__steps li {
@@ -137,7 +137,7 @@
   position: absolute;
   right: var(--gutter);
   bottom: 28px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   text-transform: none;
 }
 
@@ -174,13 +174,29 @@
     font-size: 15px;
   }
 
+  /* ชิปผลงานกดได้ → สูงพอให้นิ้วกด */
+  .pipe__act .chip {
+    height: 34px;
+  }
+
   .pipe__steps {
     position: absolute;
     left: var(--gutter);
     right: var(--gutter);
     bottom: 56px;
     margin: 0;
+    letter-spacing: 0.06em;
   }
+
+  /* แสดงชื่อเฉพาะองก์ปัจจุบัน ที่เหลือเป็นเลข — ไม่ตัดบรรทัด */
+  .pipe__steps li {
+    white-space: nowrap;
+  }
+
+  .pipe__steps li:not(.is-now) .pipe__word {
+    display: none;
+  }
+
 }
 
 /* reduced motion: ไม่ปักหมุด แสดงทุกองก์เรียงกัน */
@@ -214,4 +230,12 @@
 .pipe__spin {
   right: var(--gutter);
   top: calc(var(--nav-h) + 30px);
+}
+
+/* มือถือ: ป้าย drag ไปอยู่เหนือแถบองก์ด้านล่าง (บนจุดอนุภาค) ไม่ทับเส้นหัวข้อ — ต้องอยู่หลังกฎหลักด้านบน */
+@media (max-width: 900px) {
+  .pipe__spin {
+    top: auto;
+    bottom: 100px;
+  }
 }

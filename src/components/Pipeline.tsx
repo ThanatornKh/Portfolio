@@ -91,9 +91,11 @@ export default function Pipeline() {
           </div>
           <ol className="pipe__steps mono" aria-hidden="true">
             {AI_ACTS.map((a, i) => (
-              <li key={a.word} className={i <= act ? 'is-done' : ''}>
+              <li key={a.word} className={`${i <= act ? 'is-done' : ''}${i === act ? ' is-now' : ''}`}>
                 <i style={{ ['--i' as string]: i }} />
-                {pad(i + 1)} {a.word}
+                <span>
+                  {pad(i + 1)} <span className="pipe__word">{a.word}</span>
+                </span>
               </li>
             ))}
           </ol>

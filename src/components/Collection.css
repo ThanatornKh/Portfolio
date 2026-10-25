@@ -19,7 +19,7 @@
 
 .coll__tabs button sup {
   margin-left: 4px;
-  font-size: 9px;
+  font-size: var(--fs-micro);
   color: var(--mute);
 }
 
@@ -92,7 +92,7 @@
   padding: 4px 8px;
   border: 1px solid var(--line-2);
   background: rgba(5, 5, 5, 0.78);
-  font-size: 9px;
+  font-size: var(--fs-micro);
   color: var(--ink-2);
 }
 
@@ -125,7 +125,7 @@
 .card__meta {
   display: flex;
   gap: 12px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
 }
 
 .card__code {
@@ -165,4 +165,35 @@
 .card .chips {
   margin-top: auto;
   padding-top: 10px;
+}
+
+/* มือถือ: ปุ่มหมวดเป็นตาราง 2 คอลัมน์ กว้างเท่ากัน (เดิมขึ้นบรรทัดใหม่แบบฟันปลา) */
+@media (max-width: 600px) {
+  .coll__tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+  }
+
+  .coll__tabs button {
+    height: auto;
+    min-height: 44px;
+    padding: 8px 6px;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+
+  .coll__tabs button sup {
+    margin-left: 3px;
+    vertical-align: baseline;
+    top: 0;
+  }
+
+  .coll__tabs button sup::before {
+    content: '· ';
+  }
+
+  .coll__tabs button:first-child {
+    grid-column: 1 / -1;
+  }
 }

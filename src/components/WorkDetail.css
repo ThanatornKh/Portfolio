@@ -127,12 +127,12 @@
 
 .wd__noimg {
   margin-top: 12px;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   text-transform: none;
 }
 
 .wd__path {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   text-transform: none;
 }
 
@@ -173,7 +173,7 @@
 }
 
 .wd__callout .mono {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   color: var(--amber);
 }
 
@@ -229,7 +229,7 @@
 }
 
 .wd__meta dt {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   padding-top: 4px;
 }
 

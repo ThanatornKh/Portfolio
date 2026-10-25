@@ -109,7 +109,9 @@ export default function Projections() {
     const t = state.clock.elapsedTime;
     const proj = span(sceneProgress.hero, 0.5, 0.8);
     const pos = beams.geometry.getAttribute('position') as THREE.BufferAttribute;
-    const spread = width < 900 ? 0.62 : 1;
+    // จอแคบ: ย่อจอลงและกางห่างขึ้นเล็กน้อย จอ (และป้ายใต้จอ) จึงไม่ทับกัน
+    const spread = width < 900 ? 0.75 : 1;
+    const sc = width < 900 ? 0.8 : 1;
     SCREENS.forEach((s, i) => {
       const g = screenRefs.current[i];
       if (!g) return;
@@ -119,7 +121,7 @@ export default function Projections() {
       g.position.set(s.pos[0] * spread * (0.5 + 0.5 * e), THREE.MathUtils.lerp(EMITTER.y, s.pos[1], e) + Math.sin(t * 0.8 + i) * 0.03 * e, s.pos[2] * spread * (0.5 + 0.5 * e));
       g.lookAt(camera.position);
       g.rotateY(s.tilt);
-      g.scale.set(0.35 + 0.65 * e, Math.max(0.001, e), 1);
+      g.scale.set((0.35 + 0.65 * e) * sc, Math.max(0.001, e) * sc, 1);
       const u = mats[i].uniforms;
       u.uTime.value = t;
       u.uOpacity.value = Math.min(1, k * 1.6);
@@ -153,9 +155,10 @@ export default function Projections() {
             <mesh material={mats[i]}>
               <planeGeometry args={[W, H]} />
             </mesh>
-            <Html position={[-W / 2, -H / 2 - 0.08, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
-              <div className="proj-label" ref={el => { labelRefs.current[i] = el; }} style={{ opacity: 0 }}>
-                <b>{w?.code}</b> {w?.name} <em>· {w?.status}</em>
+            {/* จอขวาสุด: ป้ายชิดขอบขวาของจอ ไม่ล้นขอบจอมือถือ */}
+            <Html position={[i === SCREENS.length - 1 ? W / 2 : -W / 2, -H / 2 - 0.08, 0]} zIndexRange={[20, 0]} style={{ pointerEvents: 'none' }}>
+              <div className={`proj-label${i === SCREENS.length - 1 ? ' proj-label--end' : ''}`} ref={el => { labelRefs.current[i] = el; }} style={{ opacity: 0 }}>
+                <b>{w?.code}</b> <span className="proj-label__name">{w?.name}</span> <em>· {w?.status}</em>
               </div>
             </Html>
           </group>

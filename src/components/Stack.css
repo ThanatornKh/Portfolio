@@ -185,6 +185,15 @@
   }
 }
 
+/* มือถือ: กลุ่มดาวกว้างกว่าสูง → กล่องเกือบจัตุรัส ไม่เหลือที่ว่างบน/ล่าง */
+@media (max-width: 600px) {
+  .stack__gl {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 1 / 1.12;
+  }
+}
+
 .stack__spin {
   left: 16px;
   top: 16px;
@@ -267,7 +276,7 @@
 .stack__lock kbd {
   padding: 1px 5px;
   font: inherit;
-  font-size: 10px;
+  font-size: var(--fs-micro);
   border: 1px solid var(--line-2);
 }
 

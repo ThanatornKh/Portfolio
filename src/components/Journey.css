@@ -89,7 +89,7 @@ button.log__btn:hover {
 }
 
 .log__meta {
-  font-size: 10px;
+  font-size: var(--fs-micro);
   text-transform: none;
   white-space: nowrap;
 }
